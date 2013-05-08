@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="pt-BR">
+<head id="Head1" runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Desafio UFC</title>
+    <link type="text/css" href="@Url.Content("~/Content/css/style.css")" rel="stylesheet" />
+    <link type="text/css" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link type="text/css" href="http://fonts.googleapis.com/css?family=Oxygen" rel="stylesheet" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+    <!-- The HTML5 Shim is required for older browsers, mainly older versions IE -->
+    <!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    <script>
+        $(function () {
+            $(document).tooltip();
+        });
+    </script>
+    <style type="text/css">
+        .ui-tooltip { background: #fff; padding: 5px 5px; color: Black; border-radius: 2px; font: 12px 'Oxygen', Sans-Serif; border: none; box-shadow:none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="header">
+            <div id="logo">
+                <a id="linklogo" href="@Url.Action("Index", "Home")"></a>
+            </div>
+            <div id="menu">
+                @{ Html.RenderAction("MenuTop", "Conta"); }
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div id="conteudo">
+            @RenderBody()
+        </div>
+        <div class="clear">
+        </div>
+        <div id="footer">
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+﻿@model EmpreendaVc.Domain.Grupo
+@Html.HiddenFor(model => model.Id)
+<p>
+    Nome do Grupo:<br />
+    @Html.TextBoxFor(model => model.Nome, new { size = 40 })
+</p>
+<p>
+    Privacidade:<br />
+    @Html.RadioButtonFor(model => model.IsFechado, false) Aberto<br />
+    @Html.RadioButtonFor(model => model.IsFechado, true) Fechado
+</p>
+<p>
+    Cards:<br />
+    @Html.RadioButtonFor(model => model.IsPreliminar, false) Apenas Principal<br />
+    @Html.RadioButtonFor(model => model.IsPreliminar, true) Principal e Preliminar
+</p>
+<p>
+    Data de Início:<br />
+    @Model.Inicio.ToShortDateString()
+    @if (Model.Id != 0)
+    { <a class="btnzerar">Zerar!</a> }
+</p>
+<p>
+    <input type="submit" value="Salvar" />
+    <a class="btnvoltar" href="@Url.Action("MeusGrupos")">Voltar</a>
+</p>
+
+<script type="text/javascript">
+    $(".btnzerar").click(function () {
+        $('<div></div>').appendTo('body').html('<div>Tem certeza que deseja zerar?</div>')
+        .dialog({
+            modal: true, title: 'message', zIndex: 10000, autoOpen: true,
+            width: 'auto', resizable: false,
+            buttons: {
+                Sim: function () {
+                    window.location.href = "@Url.Action("Zerar", "Grupo", new { id = Model.Id })";
+                    $(this).dialog("close");
+                },
+                Não: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function (event, ui) {
+                $(this).remove();
+            }
+        });
+    });
+</script>

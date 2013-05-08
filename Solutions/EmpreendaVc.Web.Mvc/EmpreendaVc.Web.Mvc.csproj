@@ -1,0 +1,491 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{39613BA0-1206-4A4B-A16A-C1F2A22D1267}</ProjectGuid>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EmpreendaVc.Web.Mvc</RootNamespace>
+    <AssemblyName>EmpreendaVc.Web.Mvc</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Build\Signing\EmpreendaVc.snk</AssemblyOriginatorKeyFile>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExcludeGeneratedDebugSymbol>true</ExcludeGeneratedDebugSymbol>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ActionMailer.Net">
+      <HintPath>..\..\ReferencedAssemblies\ActionMailer.Net.Mvc-v0.6.2\ActionMailer.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="ActionMailer.Net.Mvc, Version=0.6.2.0, Culture=neutral, PublicKeyToken=e62db3114c02a1c2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ActionMailer.Net.Mvc-v0.6.2\ActionMailer.Net.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\Packages\Castle.Core.2.5.2\lib\NET35\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\..\Packages\Castle.Windsor.2.5.3\lib\NET40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonServiceLocator.WindsorAdapter">
+      <HintPath>..\..\Packages\CommonServiceLocator.WindsorAdapter.1.0\lib\NET35\CommonServiceLocator.WindsorAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.4.1.10715.0\lib\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook, Version=6.0.5.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\Facebook\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Web.Mvc">
+      <HintPath>..\..\ReferencedAssemblies\Facebook\Facebook.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\..\Packages\FluentNHibernate.1.2.0.712\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Hammock">
+      <HintPath>..\packages\Hammock.1.2.9\lib\4.0\Hammock.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\..\ReferencedAssemblies\HtmlAgilityPack\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\Packages\Iesi.Collections.3.1.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.0.4.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\Packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Mvc2Futures.2.0.50217.0\lib\Microsoft.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcContrib">
+      <HintPath>..\packages\MvcContrib.2.0.95.0\lib\MvcContrib.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcContrib.FluentHtml">
+      <HintPath>..\packages\MvcContrib.Mvc3.FluentHtml-ci.3.0.91.0\lib\MvcContrib.FluentHtml.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\Packages\NHibernate.3.1.0.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.ByteCode.Castle">
+      <HintPath>..\..\Packages\NHibernate.Castle.3.1.0.4000\lib\Net35\NHibernate.ByteCode.Castle.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpArch.Domain">
+      <HintPath>..\..\ReferencedAssemblies\SharpArchitecture\SharpArch.Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpArch.NHibernate">
+      <HintPath>..\..\ReferencedAssemblies\SharpArchitecture\SharpArch.NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpArch.Web.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\SharpArchitecture\SharpArch.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\ASP.NET MVC\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Twitterizer2">
+      <HintPath>..\packages\twitterizer.2.4.0.26532\lib\net40\Twitterizer2.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="CastleWindsor\AutomappingConfiguration.cs" />
+    <Compile Include="CastleWindsor\ComponentRegistrar.cs" />
+    <Compile Include="Controllers\AdmController.cs" />
+    <Compile Include="Controllers\ContaController.cs" />
+    <Compile Include="Controllers\ControllerCustom.cs" />
+    <Compile Include="Controllers\ClubeController.cs" />
+    <Compile Include="Controllers\ErroController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MensagemController.cs" />
+    <Compile Include="Controllers\RouteRegistrar.cs" />
+    <Compile Include="Controllers\SendMailController.cs" />
+    <Compile Include="Controllers\ViewModels\ClassificacaoModel.cs" />
+    <Compile Include="Controllers\ViewModels\ErrorDictionary.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="ImageHandler.ashx.cs">
+      <DependentUpon>ImageHandler.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EmpreendaVcWebMvcContext.cs" />
+    <Compile Include="Models\HtmlToPdfBuilder.cs" />
+    <Compile Include="Models\PdfResult.cs" />
+    <Compile Include="Util\DecimalModelBinder.cs" />
+    <Compile Include="Util\DecimalNullableModelBinder.cs" />
+    <Compile Include="Util\HtmlExtensions.cs" />
+    <Compile Include="Util\ImageHelper.cs" />
+    <Compile Include="Util\ModelStateDictionaryExtensions.cs" />
+    <Compile Include="Util\UrlHelperExtension.cs" />
+    <Compile Include="Util\Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\EmpreendaVc.Web.Mvc.dll" />
+    <Content Include="bin\EmpreendaVc.Web.Mvc.pdb" />
+    <Content Include="Content\adm\date_input.css" />
+    <Content Include="Content\adm\green.css" />
+    <Content Include="Content\adm\ie.css" />
+    <Content Include="Content\adm\images\avatar.gif" />
+    <Content Include="Content\adm\images\avatar_f.gif" />
+    <Content Include="Content\adm\images\avatar_m.gif" />
+    <Content Include="Content\adm\images\blank.gif" />
+    <Content Include="Content\adm\images\cal.jpg" />
+    <Content Include="Content\adm\images\chb.gif" />
+    <Content Include="Content\adm\images\circle.gif" />
+    <Content Include="Content\adm\images\close.png" />
+    <Content Include="Content\adm\images\error.gif" />
+    <Content Include="Content\adm\images\fancybox-x.png" />
+    <Content Include="Content\adm\images\fancybox-y.png" />
+    <Content Include="Content\adm\images\fancybox.png" />
+    <Content Include="Content\adm\images\fancy_close.png" />
+    <Content Include="Content\adm\images\fancy_loading.png" />
+    <Content Include="Content\adm\images\fancy_nav_left.png" />
+    <Content Include="Content\adm\images\fancy_nav_right.png" />
+    <Content Include="Content\adm\images\fancy_shadow_e.png" />
+    <Content Include="Content\adm\images\fancy_shadow_n.png" />
+    <Content Include="Content\adm\images\fancy_shadow_ne.png" />
+    <Content Include="Content\adm\images\fancy_shadow_nw.png" />
+    <Content Include="Content\adm\images\fancy_shadow_s.png" />
+    <Content Include="Content\adm\images\fancy_shadow_se.png" />
+    <Content Include="Content\adm\images\fancy_shadow_sw.png" />
+    <Content Include="Content\adm\images\fancy_shadow_w.png" />
+    <Content Include="Content\adm\images\fancy_title_left.png" />
+    <Content Include="Content\adm\images\fancy_title_main.png" />
+    <Content Include="Content\adm\images\fancy_title_over.png" />
+    <Content Include="Content\adm\images\fancy_title_right.png" />
+    <Content Include="Content\adm\images\gradient.png" />
+    <Content Include="Content\adm\images\handle.png" />
+    <Content Include="Content\adm\images\hsep.gif" />
+    <Content Include="Content\adm\images\icon_lupa.png" />
+    <Content Include="Content\adm\images\imgb.gif" />
+    <Content Include="Content\adm\images\imgo.gif" />
+    <Content Include="Content\adm\images\imgt.gif" />
+    <Content Include="Content\adm\images\info.gif" />
+    <Content Include="Content\adm\images\jquery.wysiwyg.gif" />
+    <Content Include="Content\adm\images\line.gif" />
+    <Content Include="Content\adm\images\lupa_adm.png" />
+    <Content Include="Content\adm\images\mac.png" />
+    <Content Include="Content\adm\images\mbg.jpg" />
+    <Content Include="Content\adm\images\mbgg.jpg" />
+    <Content Include="Content\adm\images\mbgh.jpg" />
+    <Content Include="Content\adm\images\mbgr.jpg" />
+    <Content Include="Content\adm\images\msg_beer.png" />
+    <Content Include="Content\adm\images\msg_error.png" />
+    <Content Include="Content\adm\images\msg_info.png" />
+    <Content Include="Content\adm\images\msg_success.png" />
+    <Content Include="Content\adm\images\nav\calendar.png" />
+    <Content Include="Content\adm\images\nav\clipboard.png" />
+    <Content Include="Content\adm\images\nav\cloud.png" />
+    <Content Include="Content\adm\images\nav\dashboard.png" />
+    <Content Include="Content\adm\images\nav\downloads.png" />
+    <Content Include="Content\adm\images\nav\face.jpg" />
+    <Content Include="Content\adm\images\nav\maps.png" />
+    <Content Include="Content\adm\images\nav\media.png" />
+    <Content Include="Content\adm\images\nav\pages.png" />
+    <Content Include="Content\adm\images\nav\rss.png" />
+    <Content Include="Content\adm\images\nav\settings.png" />
+    <Content Include="Content\adm\images\nav\support.png" />
+    <Content Include="Content\adm\images\nav\support_alt.png" />
+    <Content Include="Content\adm\images\nav\terminal.png" />
+    <Content Include="Content\adm\images\nav\users.png" />
+    <Content Include="Content\adm\images\onoff.gif" />
+    <Content Include="Content\adm\images\pdf.png" />
+    <Content Include="Content\adm\images\planilha.png" />
+    <Content Include="Content\adm\images\prsep.gif" />
+    <Content Include="Content\adm\images\prstr.png" />
+    <Content Include="Content\adm\images\rainbow.png" />
+    <Content Include="Content\adm\images\rdio.gif" />
+    <Content Include="Content\adm\images\sb.gif" />
+    <Content Include="Content\adm\images\sbr.gif" />
+    <Content Include="Content\adm\images\sorta.gif" />
+    <Content Include="Content\adm\images\sortd.gif" />
+    <Content Include="Content\adm\images\srch.gif" />
+    <Content Include="Content\adm\images\srch_loader.gif" />
+    <Content Include="Content\adm\images\st_offline.png" />
+    <Content Include="Content\adm\images\st_online.png" />
+    <Content Include="Content\adm\images\st_warning.png" />
+    <Content Include="Content\adm\images\success.gif" />
+    <Content Include="Content\adm\images\thumb1.jpg" />
+    <Content Include="Content\adm\images\thumb2.jpg" />
+    <Content Include="Content\adm\images\thumb3.jpg" />
+    <Content Include="Content\adm\images\thumb4.jpg" />
+    <Content Include="Content\adm\images\trigger.png" />
+    <Content Include="Content\adm\images\tt.png" />
+    <Content Include="Content\adm\images\warning.gif" />
+    <Content Include="Content\adm\jquery.fancybox.css" />
+    <Content Include="Content\adm\jquery.minicolors.css" />
+    <Content Include="Content\adm\jquery.wysiwyg.css" />
+    <Content Include="Content\adm\js\custom.js" />
+    <Content Include="Content\adm\js\excanvas.js" />
+    <Content Include="Content\adm\js\images\buttons.gif" />
+    <Content Include="Content\adm\js\images\toolbar.gif" />
+    <Content Include="Content\adm\js\jquery.cleditor.css" />
+    <Content Include="Content\adm\js\jquery.cleditor.js" />
+    <Content Include="Content\adm\js\jquery.cleditor.min.js" />
+    <Content Include="Content\adm\js\jquery.date_input.js" />
+    <Content Include="Content\adm\js\jquery.date_input.min.js" />
+    <Content Include="Content\adm\js\jquery.fancybox.js" />
+    <Content Include="Content\adm\js\jquery.minicolors.min.js" />
+    <Content Include="Content\adm\js\jquery.tablesorter.js" />
+    <Content Include="Content\adm\js\jquery.tipsy.js" />
+    <Content Include="Content\adm\js\jquery.visualize.js" />
+    <Content Include="Content\adm\js\jquery.visualize.tooltip.js" />
+    <Content Include="Content\adm\js\jquery.wysiwyg.js" />
+    <Content Include="Content\adm\red.css" />
+    <Content Include="Content\adm\style.css" />
+    <Content Include="Content\adm\tipsy.css" />
+    <Content Include="Content\adm\visualize.css" />
+    <Content Include="Content\adm\wysiwyg.css" />
+    <Content Include="Content\css\style.css" />
+    <Content Include="Content\img\adm.png" />
+    <Content Include="Content\img\apagar.png" />
+    <Content Include="Content\img\busca.png" />
+    <Content Include="Content\img\convidar.png" />
+    <Content Include="Content\img\entrar.png" />
+    <Content Include="Content\img\excluir.png" />
+    <Content Include="Content\img\logo.png" />
+    <Content Include="Content\img\meusgrupos.png" />
+    <Content Include="Content\js\fullcalendar\fullcalendar.css" />
+    <Content Include="Content\js\fullcalendar\fullcalendar.js" />
+    <Content Include="Content\js\fullcalendar\fullcalendar.min.js" />
+    <Content Include="Content\js\fullcalendar\fullcalendar.print.css" />
+    <Content Include="Content\js\fullcalendar\gcal.js" />
+    <Content Include="Content\js\Jqgrid\grid.locale-en.js" />
+    <Content Include="Content\js\Jqgrid\grid.locale-pt-br.js" />
+    <Content Include="Content\js\Jqgrid\jquery.jqGrid.min.js" />
+    <Content Include="Content\js\jquery-ui.min.js" />
+    <Content Include="Content\js\jquery.meio.mask.min.js" />
+    <Content Include="Content\js\jquery.ui.datepicker-pt-BR.js" />
+    <Content Include="Content\js\jquery.visualize.js" />
+    <Content Include="Content\js\jquery.wysiwyg.js" />
+    <Content Include="Content\js\modernizr-1.7.js" />
+    <Content Include="Content\js\modernizr-1.7.min.js" />
+    <Content Include="Content\js\script.js" />
+    <Content Include="EmpreendaVc.Web.Mvc.Publish.xml" />
+    <Content Include="Global.asax" />
+    <Content Include="Views\Conta\Cadastro.cshtml" />
+    <Content Include="Views\Conta\CadastroSucesso.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdm.cshtml" />
+    <Content Include="Views\Shared\_MenuTop.cshtml" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EmpreendaVc.Domain\EmpreendaVc.Domain.csproj">
+      <Project>{8DEF56CD-601E-443C-9DCE-C4EC54C0B6A6}</Project>
+      <Name>EmpreendaVc.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EmpreendaVc.Infrastructure\EmpreendaVc.Infrastructure.csproj">
+      <Project>{9544D94B-9B6E-4B61-8A09-88382205BF86}</Project>
+      <Name>EmpreendaVc.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EmpreendaVc.Tasks\EmpreendaVc.Tasks.csproj">
+      <Project>{C9AAC14B-E695-4508-83B7-ACB8FC5A7284}</Project>
+      <Name>EmpreendaVc.Tasks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NHibernate.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AppLogs\" />
+    <Folder Include="Content\js\audiojs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SendMail\ConfirmaCadastro.html.cshtml" />
+    <Content Include="Views\SendMail\PasswordReset.html.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ImageHandler.ashx" />
+    <None Include="Content\adm\images\nav\Thumbs.db" />
+    <Content Include="Views\SendMail\_LayoutEmail.cshtml" />
+    <Content Include="Views\Adm\DetalheUsuario.cshtml" />
+    <Content Include="Views\Adm\GridUsuario.cshtml" />
+    <Content Include="Views\Adm\Index.cshtml" />
+    <Content Include="Views\Mensagem\Index.cshtml" />
+    <Content Include="Views\Jogo\Index.cshtml" />
+    <Content Include="Views\Jogo\Luta.cshtml" />
+    <Content Include="Views\Clube\Index.cshtml" />
+    <Content Include="Views\Adm\_FormLuta.cshtml" />
+    <Content Include="Views\Conta\Ativar.cshtml" />
+    <Content Include="Views\Conta\Login.cshtml" />
+    <Content Include="Views\Conta\RecuperarSenha.cshtml" />
+    <Content Include="Views\Conta\_Form.cshtml" />
+    <Content Include="Views\Adm\DetalheEvento.cshtml" />
+    <Content Include="Views\Adm\DetalheGrupo.cshtml" />
+    <Content Include="Views\Adm\GridEvento.cshtml" />
+    <Content Include="Views\Adm\GridGrupo.cshtml" />
+    <Content Include="Views\Adm\GridLutador.cshtml" />
+    <Content Include="Views\Adm\Login.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Clube\_Form.cshtml" />
+    <Content Include="Views\Home\Contato.cshtml" />
+    <Content Include="Views\SendMail\Contato.html.cshtml" />
+    <Content Include="Views\Clube\Plantel.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>6</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>16151</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

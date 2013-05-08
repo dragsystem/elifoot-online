@@ -29,23 +29,26 @@ namespace EmpreendaVc.Domain
 
         public virtual string IP { get; set; }
 
-        public virtual DateTime CreatedDate { get; set; }
-        public virtual DateTime EditDate { get; set; }
-
-        public virtual IList<Grupo> AdmGrupos { get; set; }
-
-        public virtual IList<UsuarioGrupo> Grupos { get; set; }
-
-        public virtual IList<Convite> Convites { get; set; }
-
-        public virtual IList<Jogo> Jogos { get; set; }
+        public virtual DateTime DataCriado { get; set; }
+        public virtual DateTime DataLogin { get; set; }
 
         public virtual string Guid { get; set; }
 
+        public virtual Clube Clube { get; set; }
+
+        public virtual int Reputacao { get; set; }
+
+        public virtual int ReputacaoGeral { get; set; }
+
+        public virtual IList<Noticia> Noticias { get; set; }        
+
         public Usuario()
         {
-            CreatedDate = DateTime.Now;
-            EditDate = DateTime.Now;
+            DataCriado = DateTime.Now;
+            DataLogin = DateTime.Now;
+            Noticias = new List<Noticia>();
+            Reputacao = 30;
+            ReputacaoGeral = 0;
         }
     }
 }

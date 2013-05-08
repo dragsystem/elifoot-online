@@ -1,0 +1,32 @@
+﻿@model EmpreendaVc.Domain.Usuario
+@{
+    Layout = "~/Views/SendMail/_LayoutEmail.cshtml";
+}
+
+<div style="margin-left:7px; margin-top: 40px;">
+<table style="font-family: Arial; font-size: 16px; color: #333;">
+    <tr>
+        <td>
+            Caro <span style="color:#1B3C7F; font-weight:bold;">@Model.NomeCompleto</span>,
+        </td>
+    </tr>
+    <tr>
+            <td>
+                <div style="height:20px;"></div>
+            </td>
+        </tr>
+    <tr>
+        <td>
+            <p>Obrigado por se cadastrar no Desafio UFC! </p>
+
+            <p>Você só precisa agora ativar seu cadastro clicando no link:<br />
+                <a href="http://www.desafioufc.com/Conta/Ativar?id=@Model.Guid" target="_blank">http://www.desafioufc.com/Conta/Ativar?id=@Model.Guid</a>
+            </p>
+            
+            <p>Qualquer dúvida entre em contato com nossa equipe!</p>
+
+            <p>Obrigado por fazer parte de nossa comunidade.</p>
+        </td>
+    </tr>
+</table>
+</div>

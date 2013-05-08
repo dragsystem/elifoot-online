@@ -1,0 +1,33 @@
+﻿@model EmpreendaVc.Domain.Usuario
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="subheader">
+    <h2>Área de Login</h2>
+</div>
+
+<div id="left">
+@using (Html.BeginForm("Login"))
+{
+    @Html.AntiForgeryToken()
+    <div id="login">
+        @Html.ValidationSummary(true)
+        <p>
+            E-mail: <br /> @Html.TextBoxFor(model => model.Email, new { size = 60 })
+        </p>
+        <p>
+            Senha: <br /> @Html.PasswordFor(model => model.Senha, new { size = 20 })
+        </p>
+        <p>
+            @Html.ActionLink("Esqueci minha senha", "RecuperarSenha") <br />
+            @Html.ActionLink("Não sou cadastrado", "Cadastro")
+        </p>
+        <p>
+            <input type="submit" value="Entrar" />
+        </p>
+
+    </div>
+}
+</div>

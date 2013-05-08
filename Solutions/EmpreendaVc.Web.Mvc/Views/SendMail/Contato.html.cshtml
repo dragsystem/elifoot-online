@@ -1,0 +1,24 @@
+﻿@model EmpreendaVc.Domain.Contato
+@{
+    Layout = "~/Views/SendMail/_LayoutEmail.cshtml";
+}
+<div style="margin-left: 7px; margin-top: 40px;">
+    <table style="font-family: Arial; font-size: 16px; color: #333;">
+        <tr>
+            <td>
+                Mensagem de:<span style="color: #1B3C7F; font-weight: bold;">@Model.Nome</span><br />
+                Email:<span style="color: #1B3C7F; font-weight: bold;">@Model.Email</span><br />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Assunto:<span style="color: #1B3C7F; font-weight: bold;">@Model.Assunto</span><br />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Mensagem:<span style="color: #1B3C7F; font-weight: bold;">@Model.Mensagem</span><br />
+            </td>
+        </tr>
+    </table>
+</div>

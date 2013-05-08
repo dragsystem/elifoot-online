@@ -1,0 +1,21 @@
+﻿@model EmpreendaVc.Domain.Usuario
+           
+<p>
+    Nome Completo: <br />
+    @Html.TextBoxFor(model => model.NomeCompleto, new { size = 60 }) 
+</p>
+<p>
+    E-mail: <br />
+    @Html.TextBoxFor(model => model.Email, new { size = 60 })
+</p>
+<p>
+    Senha: <br />
+    @Html.PasswordFor(model => model.Senha, new { size = 20 })
+</p>
+<p>
+    Confirme a Senha: <br />
+    @Html.Password("ConfirmaSenha", null, new { size = 20 })
+</p>
+<p>
+    <input type="submit" value="Cadastrar" />
+</p>
