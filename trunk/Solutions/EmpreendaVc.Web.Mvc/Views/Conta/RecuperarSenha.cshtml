@@ -1,0 +1,29 @@
+﻿@model EmpreendaVc.Domain.Usuario
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="subheader">
+    <h2>Recuperar Senha</h2>
+</div>
+
+<div id="left">
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div id="login">
+        @Html.ValidationSummary(true)
+        <p>
+            Digite seu e-mail que uma nova senha será enviada para você.
+        </p>
+        <p>
+            E-mail: @Html.TextBoxFor(model => model.Email, new { size = 60 })
+        </p>
+        <p>
+            <input type="submit" value="Recuperar" />
+        </p>
+
+    </div>
+}
+</div>

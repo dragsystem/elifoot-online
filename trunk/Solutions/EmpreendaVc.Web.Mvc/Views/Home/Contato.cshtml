@@ -1,0 +1,52 @@
+﻿@model EmpreendaVc.Domain.Contato
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="subheader">
+    <h2>
+        Contato</h2>
+    <div class="clear">
+    </div>
+</div>
+<div id="left">
+    @{ Html.RenderAction("Index", "Mensagem"); }
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        if (Model.Usuario != null)
+        {
+            @Html.HiddenFor(model => model.Usuario.Id)
+            @Html.HiddenFor(model => model.Nome)
+            @Html.HiddenFor(model => model.Email)
+            <p>
+                Nome: @Model.Usuario.NomeCompleto</p>
+            <p>
+                E-mail: @Model.Usuario.Email</p>
+        }
+        else
+        {
+            <p>
+                Nome:<br />
+                @Html.TextBoxFor(model => model.Nome, new { size = 80 })
+            </p>
+            <p>
+                E-mail:<br />
+                @Html.TextBoxFor(model => model.Email, new { size = 80 })
+            </p>
+        }
+        
+        <p>
+            Assunto:<br />
+            @Html.TextBoxFor(model => model.Assunto, new { size = 80 })
+        </p>
+        
+        <p>
+            Mensagem:<br />
+            @Html.TextAreaFor(model => model.Mensagem, new { style = "width: 425px; height: 80px;" })
+        </p>
+        
+        <input type="submit" value="Enviar" />      
+    }
+</div>

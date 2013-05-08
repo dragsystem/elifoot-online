@@ -1,0 +1,54 @@
+﻿@model IList<EmpreendaVc.Web.Mvc.Controllers.ViewModels.ClassificacaoModel>
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="subheader">
+    <h2>
+        Bem vindo</h2>
+</div>
+
+<div id="left">
+    Texto
+</div>
+
+<div id="right">
+    <h3>Ranking Geral</h3>
+    @{ var i = 1;
+       var userview = ViewBag.Usuario != null ? Model.SingleOrDefault(x => x.Usuario.Id == ((EmpreendaVc.Domain.Usuario)ViewBag.Usuario).Id) : null;
+       }
+
+    <table style="width: 100%;">
+        <tr>
+            <th>P</th>
+            <th>Nome</th>
+            <th>Pontos</th>
+        </tr>
+    @foreach (var item in Model)
+    {        
+        if (i < 15 || userview == null || (userview != null && Model.IndexOf(userview) < 16))
+        {
+            <tr>
+                <td>@i</td>
+                <td>@item.Usuario.NomeCompleto</td>
+                <td>@item.Pontos</td>
+            </tr>
+            if (i >= 15)
+            {
+                break;
+            }
+        }
+        else
+        {
+            <tr>
+                <td>@Model.IndexOf(userview)</td>
+                <td>@userview.Usuario.NomeCompleto</td>
+                <td>@userview.Pontos</td>
+            </tr>
+            break;
+        }
+        i++;        
+    }
+    </table>
+</div>

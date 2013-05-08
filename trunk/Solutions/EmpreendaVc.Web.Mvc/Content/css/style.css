@@ -1,0 +1,49 @@
+﻿body { margin: 0px; background: #000; font-family: 'Oxygen', 'Trebuchet MS', Sans-Serif; font-size: 15px; color: #767676; }
+a { text-decoration: none; color: White; }
+a:hover { text-decoration: none; color: #FFCC00; }
+
+h2 { color: #fff; text-transform: uppercase; font-size: 42px; font-weight: bold; letter-spacing: -2px; font-family: 'Trebuchet MS'; margin:0px; display: block; height: 55px; width: 700px; float:left; }
+h3 { font-size: 25px; text-transform: uppercase; font-weight: bold; margin:0px; display: block; font-family: 'Trebuchet MS'; text-align: center; }
+
+table { margin-top: 10px;  }
+table th { background: #272727; border-radius: 3px; text-align: center; color: White; font-weight: normal; padding: 8px; }
+table td { border-bottom: 1px solid #272727; padding: 8px; font-size: 12px; text-align: center; }
+
+#main { width: 980px; margin: 0 auto;  }
+
+    #header { width: 980px; height: 181px; background: url('../img/bgtop.png') no-repeat; border-bottom: 4px solid #FFCC00; }
+        #logo { width: 240px; height: 120px; margin: 15px; margin-top: 30px; float: left; background: url('../img/logo.png') no-repeat; }
+            #linklogo { display: block; width: 240px; height: 120px; }
+        #menu { float: right; margin-top: 60px; text-align: right; }
+            #menu ul { margin-right: 20px; }
+            #menu ul li { display: block; margin-left: 20px; float: left; list-style-type: none; font-family: 'Trebuchet MS', Sans-Serif; color: White; text-transform: uppercase; font-size: 13px; }
+
+    #conteudo { width: 100%; background: #000; }
+        #subheader { width: 950px; margin-left: 4px; padding: 10px; }
+            #subheader ul li { display: block; margin-left: 20px; float: right; list-style-type: none; }
+                .grupo-criar { display: block; width: 30px; height: 30px; margin-left: 10px; background: url('../img/criar.png') no-repeat; }
+                .grupo-meus { display: block; width: 30px; height: 30px; margin-left: 10px; background: url('../img/meusgrupos.png') no-repeat; }
+                .grupo-buscar { display: block; width: 30px; height: 30px; margin-left: 10px; background: url('../img/busca.png') no-repeat; }
+                .grupo-entrar { display: block; width: 30px; height: 30px; margin-left: 10px; background: url('../img/entrar.png') no-repeat; }
+                .grupo-adm { display: block; width: 30px; height: 30px; margin-left: 10px; background: url('../img/adm.png') no-repeat; }
+                .grupo-convidar { display: block; width: 30px; height: 30px; margin-left: 10px; background: url('../img/convidar.png') no-repeat; }
+                .grupo-excluir { display: block; width: 30px; height: 30px; margin-left: 10px; background: url('../img/excluir.png') no-repeat; }
+        #total { width: 950px; margin-left: 4px; padding: 10px; }
+        #left { width: 665px; float: left; padding: 10px; }
+        #right { width: 270px; float: right; padding: 10px; }
+
+.btexcluir { display: block; width: 20px; height: 20px; margin-left: 10px; background: url('../img/apagar.png') no-repeat; }
+
+.div-grupos { float: left; width: 300px; margin-right: 10px; }
+
+.clear { clear: both; }
+
+.msg-alerta { padding: 15px; background: #FFF193; color: #000; border: 1px solid #FFCC00; border-radius: 3px; font-weight: bold; }
+.msg-ok { padding: 15px; background: #E2EEBF; color: #425115; border: 1px solid #648B38; border-radius: 3px; font-weight: bold; }
+.msg-erro { padding: 15px; background: #F3D9D8; color: #772422; border: 1px solid #772422; border-radius: 3px; font-weight: bold; }
+.validation-summary-errors { background: #FFAAAA; color: #990000; border: 1px solid #990000; border-radius: 3px; }
+
+/*************** INPUTS ***************/
+input[type="text"], textarea, input[type="password"]  { color: #767676; border: 1px solid #434343; border-radius: 3px; background: #141414; padding: 10px; font-size: 11px; }
+
+input[type="submit"] { border-radius: 3px; padding: 10px; color: #fff; background: #f6c01f; font-size: 14px; font-weight: bold; text-transform: uppercase; border: none; cursor: pointer; }

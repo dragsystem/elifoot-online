@@ -1,0 +1,36 @@
+﻿@model EmpreendaVc.Domain.Grupo
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";}
+<div id="subheader">
+    <h2>
+        Grupo: @Model.Nome</h2>
+
+    
+    @{ Html.RenderAction("MenuGrupoInterno", new { id = Model.Id }); }
+    <div class="clear"></div>
+    <p>
+    Administrador: @Model.Adm.NomeCompleto<br />
+    Inicio: @Model.Inicio.ToShortDateString()
+    </p>
+</div>
+
+
+<div id="left">
+    @{ Html.RenderAction("Index", "Mensagem"); }
+    <table>
+        <tr>
+            <th>
+                P
+            </th>
+            <th>
+                Nome
+            </th>
+            <th>
+                Pontos
+            </th>
+        </tr>
+        @{ Html.RenderAction("PontosGrupo", new { id = Model.Id }); }
+    </table>
+</div>
+

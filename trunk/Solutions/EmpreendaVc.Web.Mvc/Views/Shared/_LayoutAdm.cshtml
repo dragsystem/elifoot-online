@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="pt-BR">
+<head id="Head1" runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Sistema de controle - @ViewBag.Title</title>
+    <link rel="stylesheet" type="text/css" media="all" href="@Url.Content("~/Content/adm/style.css")" />
+    <link rel="stylesheet" type="text/css" media="all" href="@Url.Content("~/Content/adm/visualize.css")" />
+    <link rel="stylesheet" type="text/css" media="all" href="@Url.Content("~/Content/adm/date_input.css")" />
+    <link rel="stylesheet" type="text/css" media="all" href="@Url.Content("~/Content/adm/jquery.minicolors.css")" />
+    <link rel="stylesheet" type="text/css" media="all" href="@Url.Content("~/Content/adm/jquery.wysiwyg.css")" />
+    <link rel="stylesheet" type="text/css" media="all" href="@Url.Content("~/Content/adm/jquery.fancybox.css")" />
+    <link rel="stylesheet" type="text/css" media="all" href="@Url.Content("~/Content/adm/tipsy.css")" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.8.16/jquery-ui.min.js"></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/custom.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/excanvas.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.date_input.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.date_input.min.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.fancybox.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.minicolors.min.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.tablesorter.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.tipsy.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.visualize.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.visualize.tooltip.js")'></script>
+    <script type="text/javascript" src='@Url.Content("~/Content/adm/js/jquery.wysiwyg.js")'></script>
+
+    @RenderSection("AddCss", false)
+</head>
+<body>
+    <div id="header">
+        <h1>
+            <a href="#">Sistema de controle</a></h1>
+        <form class="searchform" method="post" action="">
+        <input type="text" value="Buscar..." class="text">
+        <input type="submit" value="" class="submit">
+        <div class="loading">
+        </div>
+        <div class="quickresults">
+        </div>
+        </form>
+        <div class="userprofile">
+            <ul>
+                <li><a href="#">
+                    <img alt="" src='@Url.Content("~/Content/adm/images/avatar.gif")'>
+                    @if ((bool)Session["ADM"])
+                    {<text>Administrador</text>}
+                </a>
+                    <ul>
+                        <li><a href="@Url.Action("GridUsuario", "Adm")">Usuários</a></li>
+                        <li><a href="#">Relatórios</a></li>
+                        <li><a href="#">Sair</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    @if ((bool)Session["ADM"])
+    {
+        <div id="sidebar">
+            <ul id="nav">
+                <li><a href="@Url.Action("Login", "Adm")"><strong>
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/dashboard.png")'>
+                    Início</strong></a></li>
+                <li><a href="@Url.Action("GridUsuario", "Adm")">
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/users.png")'>
+                    Usuários</a></li>
+                <li><a href="@Url.Action("GridGrupo", "Adm")">
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/dashboard.png")'>
+                    Grupos</a></li>
+                <li><a href="@Url.Action("GridEvento", "Adm")">
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/dashboard.png")'>
+                    Eventos</a></li>
+                <li><a href="@Url.Action("GridLutador", "Adm")">
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/dashboard.png")'>
+                    Lutadores</a></li>
+                <li><a href="@Url.Action("Login", "Adm")">
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/downloads.png")'>
+                    Sair</a></li>
+            </ul>
+        </div>
+    }
+    else
+    {
+        <div id="sidebar">
+            <ul id="nav">
+                <li><a href="@Url.Action("Login", "Adm")"><strong>
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/dashboard.png")'>
+                    Início</strong></a></li>
+                <li><a href="@Url.Action("Login", "Adm")">
+                    <img alt="" src='@Url.Content("~/Content/adm/images/nav/settings.png")'>
+                    Sair</a></li>
+            </ul>
+        </div>
+    }
+    @RenderBody()
+    @RenderSection("AddJs", false)
+</body>
+</html>
