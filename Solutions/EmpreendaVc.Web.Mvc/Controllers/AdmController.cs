@@ -17,18 +17,18 @@ namespace EmpreendaVc.Web.Mvc.Controllers
     public class AdmController : ControllerCustom
     {
         private readonly INHibernateRepository<Usuario> usuarioRepository;
-        private readonly INHibernateRepository<Clube> grupoRepository;
+        private readonly INHibernateRepository<Clube> clubeRepository;
         private readonly IAuthenticationService authenticationService;
         private readonly INHibernateRepository<Jogador> lutadorRepository;
 
         public AdmController(
             IAuthenticationService authenticationService,
-            INHibernateRepository<Clube> grupoRepository,
+            INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Usuario> usuarioRepository,
             INHibernateRepository<Jogador> lutadorRepository)
         {
             this.usuarioRepository = usuarioRepository;
-            this.grupoRepository = grupoRepository;
+            this.clubeRepository = clubeRepository;
             this.authenticationService = authenticationService;
             this.lutadorRepository = lutadorRepository;
         }
@@ -71,11 +71,11 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             }
         }
 
-        public ActionResult GridGrupo()
+        public ActionResult GridClube()
         {
             if ((bool)Session["ADM"])
             {
-                var lst = grupoRepository.GetAll();
+                var lst = clubeRepository.GetAll();
                 return View(lst);
             }
             else
@@ -129,11 +129,11 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             }
         }
 
-        public ActionResult DetalheGrupo(int id)
+        public ActionResult DetalheClube(int id)
         {
             if ((bool)Session["ADM"])
             {
-                return View(grupoRepository.Get(id));
+                return View(clubeRepository.Get(id));
             }
             else
             {

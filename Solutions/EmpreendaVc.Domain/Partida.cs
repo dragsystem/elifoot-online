@@ -11,11 +11,13 @@ namespace EmpreendaVc.Domain
     [DisplayName("JogadorPedido")]
     public class Partida : Entity
     {
-        public virtual Jogador Jogador { get; set; }
+        public virtual Divisao Divisao { get; set; }
 
         public virtual string Tipo { get; set; }
 
         public virtual int Mao { get; set; }
+
+        public virtual int Dia { get; set; }
 
         public virtual int Rodada { get; set; }
 

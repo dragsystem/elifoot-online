@@ -186,6 +186,7 @@
     <Compile Include="Controllers\ContaController.cs" />
     <Compile Include="Controllers\ControllerCustom.cs" />
     <Compile Include="Controllers\ClubeController.cs" />
+    <Compile Include="Controllers\EngineController.cs" />
     <Compile Include="Controllers\ErroController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MensagemController.cs" />
@@ -415,10 +416,9 @@
     <Content Include="Views\Conta\Login.cshtml" />
     <Content Include="Views\Conta\RecuperarSenha.cshtml" />
     <Content Include="Views\Conta\_Form.cshtml" />
-    <Content Include="Views\Adm\DetalheEvento.cshtml" />
-    <Content Include="Views\Adm\DetalheGrupo.cshtml" />
+    <Content Include="Views\Adm\DetalheClube.cshtml" />
     <Content Include="Views\Adm\GridEvento.cshtml" />
-    <Content Include="Views\Adm\GridGrupo.cshtml" />
+    <Content Include="Views\Adm\GridClube.cshtml" />
     <Content Include="Views\Adm\GridLutador.cshtml" />
     <Content Include="Views\Adm\Login.cshtml">
       <SubType>Code</SubType>
@@ -427,6 +427,7 @@
     <Content Include="Views\Home\Contato.cshtml" />
     <Content Include="Views\SendMail\Contato.html.cshtml" />
     <Content Include="Views\Clube\Plantel.cshtml" />
+    <Content Include="Views\Engine\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
