@@ -15,7 +15,7 @@ namespace EmpreendaVc.Domain
                 
         public virtual decimal Valor { get; set; }
 
-        public virtual int Rodada { get; set; }
+        public virtual int Dia { get; set; }
 
         public JogadorPedido()
         {

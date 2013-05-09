@@ -17,9 +17,7 @@ namespace EmpreendaVc.Domain
 
         public virtual bool Espontaneo { get; set; }
 
-        public virtual int Rodada { get; set; }
-
-        public virtual bool Finalizada { get; set; }
+        public virtual int Dia { get; set; }
 
         public virtual LeilaoOferta OfertaVencedora { get; set; }
 

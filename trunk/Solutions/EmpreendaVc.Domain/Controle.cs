@@ -15,7 +15,7 @@ namespace EmpreendaVc.Domain
                 
         public virtual int Ano { get; set; }
 
-        public virtual int Rodada { get; set; }
+        public virtual int Dia { get; set; }
 
         public virtual int Taca { get; set; }
 

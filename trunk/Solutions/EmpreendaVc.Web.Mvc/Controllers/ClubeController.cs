@@ -22,15 +22,15 @@
 
         private readonly IUsuarioRepository usuarioRepository;
         private readonly IAuthenticationService authenticationService;
-        private readonly INHibernateRepository<Clube> grupoRepository;
+        private readonly INHibernateRepository<Clube> clubeRepository;
 
         public ClubeController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
-            INHibernateRepository<Clube> grupoRepository)
+            INHibernateRepository<Clube> clubeRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
-            this.grupoRepository = grupoRepository;
+            this.clubeRepository = clubeRepository;
         }
 
         public ActionResult Index(int id)
