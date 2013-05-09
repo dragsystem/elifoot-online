@@ -22,6 +22,8 @@ namespace EmpreendaVc.Domain
 
         public virtual Divisao Divisao { get; set; }
 
+        public virtual bool Taca { get; set; }
+
         public virtual int ReputacaoAI { get; set; }
 
         public virtual int Socios { get; set; }
@@ -45,6 +47,7 @@ namespace EmpreendaVc.Domain
             Escalacao = new List<Escalacao>();
             Partidas = new List<Partida>();
             Ofertas = new List<LeilaoOferta>();
+            DelayTroca = 0;
         }
     }
 }
