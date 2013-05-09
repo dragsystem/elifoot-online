@@ -84,6 +84,7 @@
     <Compile Include="Contato.cs" />
     <Compile Include="Clube.cs" />
     <Compile Include="Controle.cs" />
+    <Compile Include="NoticiaUsuario.cs" />
     <Compile Include="Noticia.cs" />
     <Compile Include="DivisaoTabela.cs" />
     <Compile Include="Divisao.cs" />
