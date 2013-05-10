@@ -1,0 +1,22 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.UsuarioOferta>
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        var clube = item.Clube;
+    
+    @: Proposta de @clube.Nome (@clube.Divisao.Nome)<br />
+    @: Dinheiro: $@clube.Dinheiro.ToString("N2")
+    @: <a href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = true })">Aceitar</a>
+    @: <a href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = false })">Rejeitar</a>
+
+    }
+}
+else
+{
+    @: Você não possui propostas.
+}

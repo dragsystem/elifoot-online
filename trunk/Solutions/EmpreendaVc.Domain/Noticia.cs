@@ -35,8 +35,6 @@ namespace EmpreendaVc.Domain
 
         public virtual UsuarioOferta UsuarioOferta { get; set; }
 
-        public virtual IList<NoticiaUsuario> NoticiaUsuarios { get; set; }
-
         public Noticia()
         {
         }   

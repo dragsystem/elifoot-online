@@ -23,14 +23,47 @@
         private readonly IUsuarioRepository usuarioRepository;
         private readonly IAuthenticationService authenticationService;
         private readonly INHibernateRepository<Clube> clubeRepository;
+        private readonly INHibernateRepository<Jogador> jogadorRepository;
+        private readonly INHibernateRepository<Controle> controleRepository;
+        private readonly INHibernateRepository<Leilao> leilaoRepository;
+        private readonly INHibernateRepository<LeilaoOferta> leilaoofertaRepository;
+        private readonly INHibernateRepository<Divisao> divisaoRepository;
+        private readonly INHibernateRepository<Partida> partidaRepository;
+        private readonly INHibernateRepository<Gol> golRepository;
+        private readonly INHibernateRepository<DivisaoTabela> divisaotabelaRepository;
+        private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
+        private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
+        private readonly INHibernateRepository<Noticia> noticiaRepository;
 
         public ClubeController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
-            INHibernateRepository<Clube> clubeRepository)
+            INHibernateRepository<Clube> clubeRepository,
+            INHibernateRepository<Jogador> jogadorRepository,
+            INHibernateRepository<Controle> controleRepository,
+            INHibernateRepository<Leilao> leilaoRepository,
+            INHibernateRepository<LeilaoOferta> leilaoofertaRepository,
+            INHibernateRepository<Divisao> divisaoRepository,
+            INHibernateRepository<Partida> partidaRepository,
+            INHibernateRepository<Gol> golRepository,
+            INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
+            INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
+            INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
+            INHibernateRepository<Noticia> noticiaRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
             this.clubeRepository = clubeRepository;
+            this.jogadorRepository = jogadorRepository;
+            this.controleRepository = controleRepository;
+            this.leilaoRepository = leilaoRepository;
+            this.leilaoofertaRepository = leilaoofertaRepository;
+            this.divisaoRepository = divisaoRepository;
+            this.partidaRepository = partidaRepository;
+            this.golRepository = golRepository;
+            this.divisaotabelaRepository = divisaotabelaRepository;
+            this.jogadorpedidoRepository = jogadorpedidoRepository;
+            this.usuarioofertaRepository = usuarioofertaRepository;
+            this.noticiaRepository = noticiaRepository;
         }
 
         public ActionResult Index(int id)
@@ -44,9 +77,161 @@
             var usuario = authenticationService.GetUserAuthenticated();
 
             if (usuario.Clube == null)
-                return RedirectToAction("Noticias", "Conta");
+                return RedirectToAction("Index", "Conta");
 
             return View(usuario.Clube);
+        }
+
+        [Authorize]
+        public ActionResult JogadorRenovar(int id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var jogador = jogadorRepository.Get(id);
+            var clube = jogador.Clube;
+
+            if (usuario.Clube == null || usuario.Clube.Id != clube.Id)
+                return RedirectToAction("Index", "Conta");
+
+            return View(jogador);
+        }
+
+        [Authorize]
+        [Transaction]
+        [HttpPost]
+        public ActionResult JogadorRenovar(FormCollection form)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var jogador = jogadorRepository.Get(Convert.ToInt32(form["Valor"]));
+            var clube = jogador.Clube;
+
+            var valor = Convert.ToDecimal(form["Valor"]);
+
+            if (jogador != null)
+            {
+                if (valor >= (jogador.Salario + (jogador.Salario / 100) * 30))
+                {
+                    jogador.Salario = valor;
+                    jogador.Contrato = true;
+                    jogadorRepository.SaveOrUpdate(jogador);
+
+                    TempData["MsgOk"] = jogador.Nome + " aceitou sua proposta e renovou até o final da temporada!";
+                    return RedirectToAction("Plantel", "Clube");
+                }
+            }
+
+            TempData["MsgErro"] = jogador.Nome + " rejeitou o contrato proposto.";
+            return View(jogador);
+        }
+
+        [Authorize]
+        public ActionResult JogadorVender(int id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var jogador = jogadorRepository.Get(id);
+            var clube = jogador.Clube;
+            var verificaleilao = leilaoRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id && x.OfertaVencedora == null);
+
+            if (usuario.Clube == null || usuario.Clube.Id != clube.Id)
+                return RedirectToAction("Index", "Conta");
+
+            if (clube.Jogadores.Count() < 15)
+            {
+                TempData["MsgErro"] = "Você já possui o número mínimo de jogadores.";
+                return View();
+            }
+            else if (verificaleilao.Count() > 0)
+            {
+                TempData["MsgErro"] = "Este jogador já está sendo leiloado. Se quiser alterar cancele o leilão atual.";
+                return View();
+            }
+            else
+            {
+                var leilao = new Leilao() { Jogador = jogador };
+                return View(leilao);                
+            }
+        }
+
+        [Authorize]
+        [Transaction]
+        [HttpPost]
+        public ActionResult JogadorVender(FormCollection form)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var leilao = new Leilao();
+            var controle = controleRepository.GetAll().FirstOrDefault();
+
+            TryUpdateModel(leilao, form);
+
+            if (leilao.IsValid())
+            {
+                leilao.Dia = controle.Dia++;
+                leilao.Espontaneo = false;
+                leilaoRepository.SaveOrUpdate(leilao);
+
+                TempData["MsgOk"] = leilao.Jogador.Nome + " será vendido no próximo leilão!";
+                return RedirectToAction("Plantel", "Clube");
+            }
+
+            TempData["MsgErro"] = "Erro na validação dos campos!";
+            return View(leilao);
+        }        
+
+        public ActionResult Classificacao(int iddivisao)
+        {
+            var divisaotabela = divisaotabelaRepository.GetAll().Where(x => x.Divisao.Id == iddivisao).OrderBy(x => x.Posicao);
+
+            return View(divisaotabela);
+        }
+
+        [Authorize]
+        public ActionResult JogadorPedido()
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var pedidos = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
+
+            if (pedidos.Count() > 0)
+                return View(pedidos);
+            else
+                return View();
+        }
+
+        [Authorize]
+        [Transaction]
+        public ActionResult JogadorPedidoResposta(int id, bool resposta)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var pedido = jogadorpedidoRepository.Get(id);
+            var jogador = jogadorRepository.Get(pedido.Jogador.Id);
+
+            if (resposta)
+            {
+                jogador.Contrato = true;
+                jogador.Salario = pedido.Salario;
+                jogadorRepository.SaveOrUpdate(jogador);                
+            }
+            else
+            {
+                var rnd = new Random();
+
+                if (rnd.Next(0, 2) == 1)
+                {
+                    var controle = controleRepository.GetAll().FirstOrDefault();
+                    var leilao = new Leilao();
+                    leilao.Dia = controle.Dia++;
+                    leilao.Espontaneo = true;
+                    leilao.Jogador = jogador;
+                    leilao.Valor = jogador.H * 50000;
+
+                    leilaoRepository.SaveOrUpdate(leilao);
+                }
+            }
+
+            jogadorpedidoRepository.Delete(pedido);
+            return RedirectToAction("Plantel", "Clube");
         }
     }
 }

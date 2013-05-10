@@ -1,0 +1,21 @@
+﻿@model string
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Index</title>
+</head>
+<body>
+    <div>
+        @if (string.IsNullOrEmpty(Model))
+        {
+            @:Feito.
+        }
+        else
+        {
+            @Model
+        }
+    </div>
+</body>
+</html>

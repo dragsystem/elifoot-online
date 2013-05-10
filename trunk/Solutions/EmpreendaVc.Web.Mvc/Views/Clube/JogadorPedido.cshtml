@@ -1,0 +1,21 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.JogadorPedido>
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        var jogador = item.Jogador;
+    
+    @: @jogador.Nome está solicitando uma renovação de contrato com aumento salarial de $@jogador.Salario.ToString("N2") para $@item.Salario.ToString("N2") 
+    @: <a href="@Url.Action("JogadorPedidoResposta", new { id = item.Id, resposta = true })">Aceitar</a>
+    @: <a href="@Url.Action("JogadorPedidoResposta", new { id = item.Id, resposta = false })">Rejeitar</a>
+
+    }
+}
+else
+{
+    @: Você não possui propostas.
+}

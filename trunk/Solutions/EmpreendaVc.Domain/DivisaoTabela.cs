@@ -21,6 +21,8 @@ namespace EmpreendaVc.Domain
 
         public virtual int GC { get; set; }
 
+        public virtual int J { get; set; }
+
         public virtual int V { get; set; }
 
         public virtual int E { get; set; }
@@ -31,10 +33,13 @@ namespace EmpreendaVc.Domain
 
         public virtual int Posicao { get; set; }
 
+        public virtual decimal Aproveitamento { get { return (Pontos / (J * 3)) * 100; } }
+
         public DivisaoTabela()
         {
             GP = 0;
             GC = 0;
+            J = 0;
             V = 0;
             E = 0;
             D = 0;
