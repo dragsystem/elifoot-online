@@ -1,0 +1,21 @@
+﻿@model EmpreendaVc.Domain.Jogador
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+@using (Html.BeginForm())
+{
+    Html.AntiForgeryToken();
+    @Html.Hidden("Jogador", Model.Id)
+
+    @this.Select("Valor").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString() : "")
+
+    <input type="submit" value="Confirmar" />
+    
+}
+<a href="@Url.Action("Plantel", "Clube")">Cancelar</a>

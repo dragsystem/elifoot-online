@@ -42,13 +42,13 @@ namespace EmpreendaVc.Domain
 
         public virtual int DelayTroca { get; set; }
 
-        public virtual IList<NoticiaUsuario> Noticias { get; set; }        
+        public virtual IList<Noticia> Noticias { get; set; }        
 
         public Usuario()
         {
             DataCriado = DateTime.Now;
             DataLogin = DateTime.Now;
-            Noticias = new List<NoticiaUsuario>();
+            Noticias = new List<Noticia>();
             Reputacao = 30;
             ReputacaoGeral = 0;
         }

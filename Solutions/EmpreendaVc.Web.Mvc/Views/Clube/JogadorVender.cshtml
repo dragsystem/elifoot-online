@@ -1,0 +1,25 @@
+﻿@model EmpreendaVc.Domain.Leilao
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+@if (Model != null)
+{
+    using (Html.BeginForm())
+    {
+        Html.AntiForgeryToken();
+        @Html.HiddenFor(x => x.Jogador.Id)
+
+        @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model != null ? Model.Valor.ToString() : "")
+
+    <input type="submit" value="Confirmar" />
+    
+    }
+}
+<a href="@Url.Action("Plantel", "Clube")">Cancelar</a>

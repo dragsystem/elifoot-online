@@ -1,0 +1,32 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.DivisaoTabela>
+
+<table>
+    <tr>
+        <th colspan="2">Clube</th>
+        <th>P</th>
+        <th>J</th>
+        <th>V</th>
+        <th>E</th>
+        <th>D</th>
+        <th>GP</th>
+        <th>GC</th>
+        <th>SG</th>
+        <th>%</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Posicao</td>
+            <td>@item.Clube.Nome</td>
+            <td>@item.Pontos</td>
+            <td>@item.J</td>
+            <td>@item.V</td>
+            <td>@item.E</td>
+            <td>@item.D</td>
+            <td>@item.GP</td>
+            <td>@item.GC</td>
+            <td>@item.Saldo</td>
+            <td>@item.Aproveitamento.ToString("N2")</td>
+        </tr>
+    }
+</table>

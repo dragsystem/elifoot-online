@@ -360,7 +360,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_LayoutAdm.cshtml" />
-    <Content Include="Views\Shared\_MenuTop.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -408,8 +407,6 @@
     <Content Include="Views\Adm\GridUsuario.cshtml" />
     <Content Include="Views\Adm\Index.cshtml" />
     <Content Include="Views\Mensagem\Index.cshtml" />
-    <Content Include="Views\Jogo\Index.cshtml" />
-    <Content Include="Views\Jogo\Luta.cshtml" />
     <Content Include="Views\Clube\Index.cshtml" />
     <Content Include="Views\Adm\_FormLuta.cshtml" />
     <Content Include="Views\Conta\Ativar.cshtml" />
@@ -428,6 +425,12 @@
     <Content Include="Views\SendMail\Contato.html.cshtml" />
     <Content Include="Views\Clube\Plantel.cshtml" />
     <Content Include="Views\Engine\Index.cshtml" />
+    <Content Include="Views\Conta\Index.cshtml" />
+    <Content Include="Views\Clube\JogadorVender.cshtml" />
+    <Content Include="Views\Clube\JogadorRenovar.cshtml" />
+    <Content Include="Views\Clube\Classificacao.cshtml" />
+    <Content Include="Views\Conta\UsuarioOferta.cshtml" />
+    <Content Include="Views\Clube\JogadorPedido.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

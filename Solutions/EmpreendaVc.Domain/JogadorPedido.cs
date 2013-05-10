@@ -8,12 +8,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EmpreendaVc.Domain
 {
-    [DisplayName("UsuarioOferta")]
+    [DisplayName("JogadorPedido")]
     public class JogadorPedido : Entity
     {
         public virtual Jogador Jogador { get; set; }
                 
-        public virtual decimal Valor { get; set; }
+        public virtual decimal Salario { get; set; }
 
         public virtual int Dia { get; set; }
 

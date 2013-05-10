@@ -21,12 +21,31 @@
 
         private readonly IUsuarioRepository usuarioRepository;
         private readonly IAuthenticationService authenticationService;
+        private readonly INHibernateRepository<Clube> clubeRepository;
+        private readonly INHibernateRepository<Divisao> divisaoRepository;
+        private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
+        private readonly INHibernateRepository<Controle> controleRepository;
 
         public ContaController(IUsuarioRepository usuarioRepository,
-            IAuthenticationService authenticationService)
+            IAuthenticationService authenticationService,
+            INHibernateRepository<Clube> clubeRepository,
+            INHibernateRepository<Divisao> divisaoRepository,
+            INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
+            INHibernateRepository<Controle> controleRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
+            this.clubeRepository = clubeRepository;
+            this.divisaoRepository = divisaoRepository;
+            this.usuarioofertaRepository = usuarioofertaRepository;
+            this.controleRepository = controleRepository;
+        }
+
+        public ActionResult Index()
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            return View(usuario);
         }
 
         public ActionResult Cadastro()
@@ -34,7 +53,7 @@
             var usuario = new Usuario();
 
             return View(usuario);
-        }
+        }        
 
         [HttpPost]
         [Transaction]
@@ -42,8 +61,6 @@
         {
             var usuario = new Usuario();
             TryUpdateModel(usuario, collection);
-
-
 
             if (usuario.NomeCompleto != null)
             {
@@ -178,8 +195,7 @@
         public ActionResult MenuTop()
         {
             var usuario = authenticationService.GetUserAuthenticated();
-
-
+            
             if (usuario == null)
                 return View("_MenuTop");
             else
@@ -198,6 +214,19 @@
                     usuario.IsAtivo = true;
 
                     usuarioRepository.SaveOrUpdate(usuario);
+
+                    var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Id;
+                    var controle = controleRepository.GetAll().FirstOrDefault();
+
+                    foreach (var clube in clubeRepository.GetAll().Where(x => x.Divisao.Id == ultdivisao && x.Usuario == null))
+                    {
+                        var usuariooferta = new UsuarioOferta();
+
+                        usuariooferta.Clube = clube;
+                        usuariooferta.Dia = controle.Dia;
+                        usuariooferta.Usuario = usuario;
+                        usuarioofertaRepository.SaveOrUpdate(usuariooferta);
+                    }
                 }
             }
             catch (Exception ex)
@@ -260,6 +289,47 @@
         {
             this.authenticationService.SignOut();
             return this.RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        public ActionResult UsuarioOferta()
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            var ofertas = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
+
+            if (ofertas.Count() > 0)
+                return View(ofertas);
+            else
+                return View();
+        }
+
+        [Authorize]
+        [Transaction]
+        public ActionResult UsuarioOfertaResposta(int id, bool resposta)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var usuariooferta = usuarioofertaRepository.Get(id);
+
+            if (resposta)
+            {
+                usuario.Clube = usuariooferta.Clube;
+                usuarioRepository.SaveOrUpdate(usuario);
+
+                var ofertas = usuarioofertaRepository.GetAll().Where(x => x.Clube.Id == usuariooferta.Clube.Id);
+
+                foreach (var item in ofertas)
+                {
+                    usuarioofertaRepository.Delete(item);
+                }
+
+                return RedirectToAction("Plantel", "Clube");
+            }
+            else
+            {
+                usuarioofertaRepository.Delete(usuariooferta);
+                return RedirectToAction("UsuarioOferta");
+            }            
         }
     }
 }

@@ -16,7 +16,7 @@
                 <td>@Util.RetornaPosicao(jog.Posicao)</td>
                 <td>@jog.H</td>
                 <td>$@jog.Salario.ToString("N2")</td>
-                <td>@(jog.Contrato ? Html.Raw("<span class='plantel-contrato' />") : Html.Raw("<a class='plantel-renovar' />");)</td>
+                <td>@if (jog.Contrato) { <span class='plantel-contrato' /> } else { <a class="plantel-renovar" href="@Url.Action("JogadorRenovar", new { id = jog.Id })" /> }</td>
                 <td><a class="plantel-vender" href="@Url.Action("JogadorVender", new { id = jog.Id })" /></td>
             </tr>
         }
@@ -32,7 +32,7 @@
 </div>
 
 <div id="plantel-classificacao">
-    @{ Html.RenderAction("Classificacao"); }
+    @{ Html.RenderAction("Classificacao", new { iddivisao = Model.Divisao.Id }); }
 </div>
 
 <div id="plantel-financas">

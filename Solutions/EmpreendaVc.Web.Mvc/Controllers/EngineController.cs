@@ -36,7 +36,6 @@
         private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Noticia> noticiaRepository;
-        private readonly INHibernateRepository<NoticiaUsuario> noticiausuarioRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -51,8 +50,7 @@
             INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
-            INHibernateRepository<Noticia> noticiaRepository,
-            INHibernateRepository<NoticiaUsuario> noticiausuarioRepository)
+            INHibernateRepository<Noticia> noticiaRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -68,7 +66,6 @@
             this.jogadorpedidoRepository = jogadorpedidoRepository;
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.noticiaRepository = noticiaRepository;
-            this.noticiausuarioRepository = noticiausuarioRepository;
         }
 
         public ActionResult Index(int id)
@@ -121,6 +118,8 @@
                 if (semtecclube.Where(x => x.Id == usuariooferta.Clube.Id).Count() == 0)
                     semtecclube.Add(usuariooferta.Clube);
 
+
+
                 usuarioofertaRepository.Delete(usuariooferta);
             }
             foreach (var clube in semtecclube)
@@ -131,21 +130,10 @@
 
             ////////////////////////////////////////////Atualizar Finanças e Verifica técnicos
             foreach (var clube in clubeRepository.GetAll())
-            {              
+            {
                 if (clube.Usuario != null && clube.Usuario.Reputacao == 0)
                 {
                     var tecnicoatual = usuarioRepository.Get(clube.Usuario.Id);
-
-                    var noticia = new Noticia();
-                    noticia.ClubeComprador = clube;
-                    noticia.Dia = controle.Dia;
-                    noticia.Tipo = 5;
-                    noticiaRepository.SaveOrUpdate(noticia);
-
-                    var noticiausuario = new NoticiaUsuario();
-                    noticiausuario.Usuario = tecnicoatual;
-                    noticiausuario.Noticia = noticia;
-                    noticiausuarioRepository.SaveOrUpdate(noticiausuario);
 
                     var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
                     foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.Id != tecnicoatual.Id && x.ReputacaoGeral >= repgeral && x.DelayTroca == 0))
@@ -157,18 +145,7 @@
                         usuariooferta.Usuario = tecniconovo;
 
                         usuarioofertaRepository.SaveOrUpdate(usuariooferta);
-
-                        noticia = new Noticia();
-                        noticia.ClubeComprador = clube;
-                        noticia.Dia = controle.Dia;
-                        noticia.Tipo = 3;
-                        noticiaRepository.SaveOrUpdate(noticia);
-
-                        noticiausuario = new NoticiaUsuario();
-                        noticiausuario.Usuario = tecniconovo;
-                        noticiausuario.Noticia = noticia;
-                        noticiausuarioRepository.SaveOrUpdate(noticiausuario);
-                    }                    
+                    }
 
                     tecnicoatual.Clube = null;
                     tecnicoatual.DelayTroca = 0;
@@ -176,10 +153,10 @@
 
                     clube.Usuario = null;
                 }
-                else if (clube.Usuario == null && clube.ReputacaoAI == 0)
+                else if (clube.Usuario == null && clube.ReputacaoAI < 10)
                 {
                     var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
-                    foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.ReputacaoGeral >= repgeral))
+                    foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.ReputacaoGeral >= repgeral && x.DelayTroca == 0))
                     {
                         var usuariooferta = new UsuarioOferta();
 
@@ -188,17 +165,6 @@
                         usuariooferta.Usuario = tecniconovo;
 
                         usuarioofertaRepository.SaveOrUpdate(usuariooferta);
-
-                        var noticia = new Noticia();
-                        noticia.ClubeComprador = clube;
-                        noticia.Dia = controle.Dia;
-                        noticia.Tipo = 3;
-                        noticiaRepository.SaveOrUpdate(noticia);
-
-                        var noticiausuario = new NoticiaUsuario();
-                        noticiausuario.Usuario = tecniconovo;
-                        noticiausuario.Noticia = noticia;
-                        noticiausuarioRepository.SaveOrUpdate(noticiausuario);
                     }
                 }
 
@@ -213,74 +179,74 @@
             ////////////////////////////////////////////Atualizar Transferencias
             foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia < controle.Dia))
             {
+                var cancelar = false;
+                var vendido = false;
+
                 foreach (var oferta in leilao.Ofertas.Where(x => x.Clube.Dinheiro >= leilao.Valor).OrderByDescending(x => x.Valor))
                 {
                     var clubecomprador = clubeRepository.Get(oferta.Clube.Id);
                     var clubevendedor = clubeRepository.Get(leilao.Jogador.Clube.Id);
                     var jogador = leilao.Jogador;
 
-                    if (clubecomprador.Jogadores.Count() < 25)
+                    if (clubevendedor.Jogadores.Count() > 14 || vendido)
                     {
-                        clubecomprador.Dinheiro = clubecomprador.Dinheiro - leilao.Valor;
-                        clubeRepository.SaveOrUpdate(clubecomprador);
-
-                        jogador.Clube = clubecomprador;
-                        jogador.Contrato = true;
-                        jogador.Salario = oferta.Valor;
-                        jogadorRepository.SaveOrUpdate(jogador);
-
-                        clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;
-                        clubeRepository.SaveOrUpdate(clubevendedor);
-
-                        var noticia = new Noticia();
-                        noticia.ClubeComprador = clubecomprador;
-                        noticia.ClubeVendedor = clubevendedor;
-                        noticia.Valor = leilao.Valor;
-                        noticia.Salario = oferta.Valor;
-                        noticia.Dia = controle.Dia;
-                        noticia.Tipo = 1;
-                        noticiaRepository.SaveOrUpdate(noticia);
-
-                        //Noticia comprador
-                        if (clubecomprador.Usuario != null)
+                        if (clubecomprador.Jogadores.Count() < 25)
                         {
-                            var noticiausuario = new NoticiaUsuario();
-                            noticiausuario.Usuario = clubecomprador.Usuario;
-                            noticiausuario.Noticia = noticia;
-                            noticiausuarioRepository.SaveOrUpdate(noticiausuario);
-                        }
+                            clubecomprador.Dinheiro = clubecomprador.Dinheiro - leilao.Valor;
+                            clubeRepository.SaveOrUpdate(clubecomprador);
 
-                        //Noticia vendedor
-                        if (clubevendedor.Usuario != null)
-                        {
-                            var noticiausuario = new NoticiaUsuario();
-                            noticiausuario.Usuario = clubevendedor.Usuario;
-                            noticiausuario.Noticia = noticia;
-                            noticiausuarioRepository.SaveOrUpdate(noticiausuario);
-                        }
+                            jogador.Clube = clubecomprador;
+                            jogador.Contrato = true;
+                            jogador.Salario = oferta.Valor;
+                            jogadorRepository.SaveOrUpdate(jogador);
 
-                        leilao.OfertaVencedora = oferta;
-                        leilaoRepository.SaveOrUpdate(leilao);
-                        break;
+                            clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;
+                            clubeRepository.SaveOrUpdate(clubevendedor);
+
+                            vendido = true;
+                            leilao.OfertaVencedora = oferta;
+                            leilaoRepository.SaveOrUpdate(leilao);
+                        }
                     }
-                }                
-            }            
+                    else 
+                    {
+                        cancelar = false;
+                        leilaoofertaRepository.Delete(oferta);
+                    }
+                }
+
+                if (cancelar)
+                {
+                    leilaoRepository.Delete(leilao);
+                }
+            }
 
             ////////////////////////////////////////////ZerarPedidoJogadores
             foreach (var pedidojog in jogadorpedidoRepository.GetAll().Where(x => x.Dia < controle.Dia))
             {
-                Random rnd = new Random();
+                var clube = clubeRepository.Get(pedidojog.Jogador.Clube.Id);
 
-                if (rnd.Next(0, 100) < 70)
+                if (clube.Jogadores.Count() > 14)
                 {
-                    var leilao = new Leilao();
+                    Random rnd = new Random();
 
-                    leilao.Dia = controle.Dia;
-                    leilao.Espontaneo = true;
-                    leilao.Jogador = pedidojog.Jogador;
-                    leilao.Valor = pedidojog.Jogador.H * 50000;
+                    if (rnd.Next(0, 100) < 70)
+                    {
+                        var leilao = new Leilao();
+
+                        leilao.Dia = controle.Dia;
+                        leilao.Espontaneo = true;
+                        leilao.Jogador = pedidojog.Jogador;
+                        leilao.Valor = pedidojog.Jogador.H * 50000;
+                    }
+                    else
+                    {
+                        var jogador = jogadorRepository.Get(pedidojog.Jogador.Id);
+
+                        jogador.Contrato = true;
+                        jogador.Salario = pedidojog.Salario;
+                    }
                 }
-
                 jogadorpedidoRepository.Delete(pedidojog);
             }
 
@@ -303,24 +269,9 @@
                         var pedidojog = new JogadorPedido();
                         pedidojog.Dia = controle.Dia;
                         pedidojog.Jogador = lstjognovo[jog];
-                        pedidojog.Valor = lstjognovo[jog].Salario + (lstjognovo[jog].Salario * aumento);
+                        pedidojog.Salario = lstjognovo[jog].Salario + (lstjognovo[jog].Salario * aumento);
 
                         jogadorpedidoRepository.SaveOrUpdate(pedidojog);
-
-                        if (clube.Usuario != null)
-                        {
-                            var noticia = new Noticia();
-                            noticia.Jogador = pedidojog.Jogador;
-                            noticia.Salario = pedidojog.Valor;
-                            noticia.Tipo = 2;
-                            noticia.Dia = controle.Dia;
-                            noticiaRepository.SaveOrUpdate(noticia);
-
-                            var noticiausuario = new NoticiaUsuario();
-                            noticiausuario.Usuario = clube.Usuario;
-                            noticiausuario.Noticia = noticia;
-                            noticiausuarioRepository.SaveOrUpdate(noticiausuario);
-                        }
                     }
                 }
                 else
@@ -361,23 +312,9 @@
                         leilao.Jogador = lstjognovo[jog];
                         leilao.Valor = lstjognovo[jog].H * 50000;
                         leilaoRepository.SaveOrUpdate(leilao);
-
-                        if (clube.Usuario != null)
-                        {
-                            var noticia = new Noticia();
-                            noticia.Jogador = leilao.Jogador;
-                            noticia.Tipo = 6;
-                            noticia.Dia = controle.Dia;
-                            noticiaRepository.SaveOrUpdate(noticia);
-
-                            var noticiausuario = new NoticiaUsuario();
-                            noticiausuario.Usuario = clube.Usuario;
-                            noticiausuario.Noticia = noticia;
-                            noticiausuarioRepository.SaveOrUpdate(noticiausuario);
-                        }
                     }
                 }
-            }            
+            }
         }
 
         [Transaction]
@@ -466,7 +403,7 @@
 
                 if (divisao.Numero > 1)
                 {
-                    var promodivisao = divisaoRepository.GetAll().Where(x => x.Numero == (divisao.Numero - 1)).FirstOrDefault();                    
+                    var promodivisao = divisaoRepository.GetAll().Where(x => x.Numero == (divisao.Numero - 1)).FirstOrDefault();
 
                     clube1.Divisao = promodivisao;
                     clube2.Divisao = promodivisao;
@@ -474,7 +411,7 @@
 
                 if (divisao.Numero < ultdivisao)
                 {
-                    var rebaixadivisao = divisaoRepository.GetAll().Where(x => x.Numero == (divisao.Numero + 1)).FirstOrDefault();                    
+                    var rebaixadivisao = divisaoRepository.GetAll().Where(x => x.Numero == (divisao.Numero + 1)).FirstOrDefault();
 
                     clube11.Divisao = rebaixadivisao;
                     clube12.Divisao = rebaixadivisao;
