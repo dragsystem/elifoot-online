@@ -1,0 +1,30 @@
+﻿@model EmpreendaVc.Domain.Clube
+@using EmpreendaVc.Web.Mvc.Util
+@{
+    Layout = "~/Views/Shared/_LayoutAdm.cshtml";
+}
+<div id="content">
+
+    <!-- .breadcrumb ends -->
+    @if (TempData["AdmError"] != null && (bool)TempData["AdmError"])
+    {
+        <div class="message errormsg" style="display: block;">
+            <p>
+                Desculpe, ocorreu um erro no envio dos dados.</p>
+        </div>
+    }
+    <h2>@Model.Nome</h2>
+
+        <div class="textbox half left">
+            <h2>Jogadores</h2>
+            <p>
+                @foreach (var item in Model.Jogadores.OrderBy(x => x.Posicao))
+                {
+                    @: @item.Nome (@Util.RetornaPosicao(item.Posicao) - H: @item.H - HF: @item.HF) <br />
+                }
+            </p>
+        </div>
+
+        <div class="clear">
+        </div>
+</div>

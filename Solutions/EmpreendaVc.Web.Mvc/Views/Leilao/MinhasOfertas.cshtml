@@ -1,0 +1,46 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Leilao>
+@using EmpreendaVc.Web.Mvc.Util
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var order = (int)ViewBag.Order;
+}
+
+<table>
+    <tr>
+        <th>
+            Nome
+        </th>
+        <th>
+            Clube
+        </th>
+        <th>
+            Divisão
+        </th>
+        <th>
+            Posição
+        </th>
+        <th>
+            H
+        </th>
+        <th>
+            Valor
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Jogador.Nome</td>
+            <td>@item.Jogador.Clube.Nome</td>
+            <td>@item.Jogador.Clube.Divisao.Nome</td>
+            <td>@Util.RetornaPosicao(item.Jogador.Posicao)</td>
+            <td>@item.Jogador.H</td>
+            <td>$@item.Valor.ToString("N2")</td>
+            <td>
+                <a class="leilao-proposta" href="@Url.Action("Detalhe", "Leilao", new { id = item.Id })" title="Alterar Proposta"></a>
+                <a class="leilao-cancelar" href="@Url.Action("CancelarOferta", "Leilao", new { id = item.Id })" title="Cancelar Proposta"></a>
+            </td>
+        </tr>
+    }
+</table>

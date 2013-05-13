@@ -186,6 +186,7 @@
     <Compile Include="Controllers\ContaController.cs" />
     <Compile Include="Controllers\ControllerCustom.cs" />
     <Compile Include="Controllers\ClubeController.cs" />
+    <Compile Include="Controllers\LeilaoController.cs" />
     <Compile Include="Controllers\EngineController.cs" />
     <Compile Include="Controllers\ErroController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -431,6 +432,9 @@
     <Content Include="Views\Clube\Classificacao.cshtml" />
     <Content Include="Views\Conta\UsuarioOferta.cshtml" />
     <Content Include="Views\Clube\JogadorPedido.cshtml" />
+    <Content Include="Views\Leilao\Index.cshtml" />
+    <Content Include="Views\Leilao\Oferta.cshtml" />
+    <Content Include="Views\Leilao\LeilaoOferta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

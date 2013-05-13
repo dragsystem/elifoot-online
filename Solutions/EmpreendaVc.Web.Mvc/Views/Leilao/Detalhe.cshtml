@@ -1,0 +1,21 @@
+﻿@model EmpreendaVc.Domain.Leilao
+@using EmpreendaVc.Web.Mvc.Util
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<div id="leilao-detalhes">
+    Nome: @Model.Jogador.Nome
+    Clube: @Model.Jogador.Clube.Nome
+    Posição: @Util.RetornaPosicaoCompleta(Model.Jogador.Posicao)
+    Salário: $@Model.Jogador.Salario.ToString("N2")
+    Valor: P$@Model.Valor.ToString("N2")
+</div>
+<div id="leilao-valorproposta">
+    @{ Html.RenderAction("LeilaoOferta", "Leilao", new { leilao = Model.Id }); }
+</div>
+
+<a href="@Url.Action("Index", "Leilao")" >Voltar</a>

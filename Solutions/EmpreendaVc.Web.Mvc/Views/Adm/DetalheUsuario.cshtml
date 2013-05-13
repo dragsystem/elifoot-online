@@ -1,0 +1,55 @@
+﻿@model EmpreendaVc.Domain.Usuario
+@{
+    Layout = "~/Views/Shared/_LayoutAdm.cshtml";
+}
+<div id="content">
+    <!-- .breadcrumb ends -->
+    @if (TempData["AdmError"] != null && (bool)TempData["AdmError"])
+    {
+        <div class="message errormsg" style="display: block;">
+            <p>
+                Desculpe, ocorreu um erro no envio dos dados.</p>
+        </div>
+    }
+    <h2>@Model.Email</h2>
+    @using (Html.BeginForm())
+    {
+            
+        @Html.ValidationSummary(true,
+                "Ocorreram erros de validação. Por favor, confirme os campos e tente novamente.",
+                new { @class = "wpcf7-response-output wpcf7-display-none wpcf7-validation-errors wpcf7-mail-sent-ng" })
+        @Html.AntiForgeryToken()
+        <div class="textbox half left">
+            <h2>
+                Informações adicionais</h2>
+            <div class="textbox_content">
+                @{string dataNascimento = string.Empty;}
+                <p>
+                    Nome: <b>@Model.NomeCompleto</b>
+                    <br />
+                    E-mail: @Model.Email
+                    <br />
+                    Data de criação: @Model.DataCriado.ToShortDateString()
+                    <br />
+                    Data último login: @Model.DataLogin.ToShortDateString()
+                    <br />
+                    IP: @Model.IP
+                    <br />
+                </p>
+            </div>
+        </div>
+        <div class="textbox half right">
+            <h2>
+                Senha</h2>
+            <div class="textbox_content">
+                <h4>Nova Senha:</h4>
+                @Html.TextBox("Senha", "", new { size = 20 })
+                @Html.ValidationMessage("Senha")
+                <input type="submit" value="ALTERAR" class="submit" />
+            </div>
+        </div>
+
+        <div class="clear">
+        </div>
+    }
+</div>
