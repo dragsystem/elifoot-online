@@ -169,6 +169,7 @@
 
         [Authorize]
         [HttpPost]
+        [Transaction]
         public ActionResult LeilaoOferta(FormCollection form)
         {
             var usuario = authenticationService.GetUserAuthenticated();

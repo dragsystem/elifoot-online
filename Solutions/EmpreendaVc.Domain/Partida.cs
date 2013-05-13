@@ -37,6 +37,12 @@ namespace EmpreendaVc.Domain
 
         public virtual bool Realizada { get; set; }
 
+        public virtual IList<Gol> Gols { get; set; }
+
+        public virtual IList<Gol> Gols1 { get { return Gols.Where(x => x.Clube.Id == Clube1.Id).OrderBy(x => x.Minuto).ToList(); } }
+
+        public virtual IList<Gol> Gols2 { get { return Gols.Where(x => x.Clube.Id == Clube2.Id).OrderBy(x => x.Minuto).ToList(); } }
+
         public Partida()
         {
         }

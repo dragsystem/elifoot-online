@@ -90,6 +90,8 @@
             return View();
         }
 
+        #region Mudardia
+
         [Transaction]
         public void MudarDia()
         {
@@ -316,6 +318,10 @@
                 }
             }
         }
+
+        #endregion
+
+        #region MudarAno
 
         [Transaction]
         public void MudarAno()
@@ -553,5 +559,77 @@
             }
 
         }
+
+        #endregion
+
+        #region Partida
+
+        public ActionResult RodaPartida()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+
+            var lstPartidas = partidaRepository.GetAll().Where(x => x.Dia <= controle.Dia);
+
+            var pDefesa = new List<int>();
+            pDefesa.Add(1);
+            pDefesa.Add(2);
+            pDefesa.Add(3);
+            pDefesa.Add(4);
+            pDefesa.Add(5);
+
+            var pAtaque = new List<int>();
+            pAtaque.Add(6);
+            pAtaque.Add(7);
+            ////////////////////////////////FOR PARTIDAS
+            foreach (var partida in lstPartidas)
+            {
+                var clube1 = clubeRepository.Get(partida.Clube1.Id);
+                var clube2 = clubeRepository.Get(partida.Clube2.Id);
+
+
+                //////////////////////////////////////////////////////////////////
+                //ESCALAR TIMES
+
+                var Defesa1 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Sum(x => x.H) / clube1.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Count());
+                var Defesa2 = Convert.ToInt32(clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Count());
+                var Ataque1 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
+                var Ataque2 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
+
+                var Diferenca = (Defesa1 - Defesa2) + (Ataque1 - Ataque2);
+
+                var Prob1 = 60;
+                var Prob2 = 40;
+                var ProbEmpate = 0;
+
+                if ((Diferenca * (-1)) > 30)
+                    ProbEmpate = 6;
+                else if ((Diferenca * (-1)) > 20)
+                    ProbEmpate = 12;
+                else if ((Diferenca * (-1)) > 10)
+                    ProbEmpate = 30;
+                else if ((Diferenca * (-1)) >= 0)
+                    ProbEmpate = 40;
+
+                Prob1 = (Prob1 + (Diferenca)) - (ProbEmpate / 2);
+                Prob2 = (Prob2 + (Diferenca)) - (ProbEmpate / 2);
+
+                Random rnd = new Random();
+
+                var resultado = rnd.Next(1, 101);
+                var vencedor = new Clube();
+
+                if (resultado <= Prob1)
+                    vencedor = clube1;
+                else if (resultado <= (Prob1 + ProbEmpate))
+                    vencedor = null;
+                else
+                    vencedor = clube2;
+
+            }
+
+            return View();
+        }
+
+        #endregion
     }
 }

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Partida>
+@using EmpreendaVc.Web.Mvc.Util
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+    var competicao = ViewBag.Competicao.ToString();
+    var rodada = ViewBag.Rodada.ToString();
+}
+@competicao<br />
+@rodada
+<table>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <th>
+                @item.Clube1.Nome
+            </th>
+            <th>
+                @item.Gol1
+            </th>
+            <th>
+                X
+            </th>
+            <th>
+                @item.Gol2
+            </th>
+            <th>
+                @item.Clube2.Nome
+            </th>
+            <th>
+                @item.Publico.ToString("N")
+            </th>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @foreach (var gol in item.Gols1)
+                {
+                    @: @gol.Jogador.Nome @gol.Minuto'<br />
+                }
+            </td>
+            <td></td>
+            <td colspan="2">
+                @foreach (var gol in item.Gols2)
+                {
+                    @: @gol.Jogador.Nome @gol.Minuto'<br />
+                }
+            </td>
+            <td></td>
+        </tr>
+    }
+</table>

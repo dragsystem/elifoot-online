@@ -1,0 +1,98 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Partida>
+@using EmpreendaVc.Web.Mvc.Util
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+}
+<table>
+    <tr>
+        <th>
+            Dia
+        </th>
+        <th>
+            Adversário
+        </th>
+        <th>
+            Competição
+        </th>
+        <th>
+        </th>
+        <th>
+            Resultado
+        </th>
+        <th>
+            Público
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Dia</td>
+            <td>@if (item.Clube1.Id == clube.Id) { @item.Clube2.Nome } else { @item.Clube1.Nome }</td>
+            <td>
+                @if (item.Tipo == "DIVISAO")
+                { @clube.Divisao.Nome }
+                else
+                {
+                    if (item.Rodada == 16)
+                    {
+                        @: TAÇA - 1ª Eliminatória - @item.Mao Mão
+                    }
+                    else if (item.Rodada == 8)
+                    {
+                        @: TAÇA - Oitavas de Final - @item.Mao Mão
+                    }
+                    else if (item.Rodada == 4)
+                    {
+                        @: TAÇA - Quartas de Final - @item.Mao Mão
+                    }
+                    else if (item.Rodada == 2)
+                    {
+                        @: TAÇA - Semi Final - @item.Mao Mão
+                    }
+                    else if (item.Rodada == 1)
+                    {
+                        @: TAÇA - FINAL - @item.Mao Mão
+                    }
+                }
+            </td>
+            <td>@if (item.Clube1.Id == clube.Id)
+                {
+                    @: C 
+                } 
+                else 
+                { 
+                    @: F    
+                }
+            </td>
+            <td>
+                @if (item.Realizada)
+                {
+                    if (item.Clube1.Id == clube.Id)
+                    {
+                        @: @item.Gol1 x @item.Gol2 
+                    }
+                    else
+                    { 
+                        @: @item.Gol2 x @item.Gol1    
+                    }
+                }
+                else
+                { 
+                    @: -    
+                }
+            </td>
+            <td>
+                @if (item.Realizada)
+                {
+                    @: @item.Publico.ToString("N")
+                }
+                else
+                {
+                    @: -
+                }
+            </td>
+        </tr>    
+    }
+</table>
