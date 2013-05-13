@@ -17,7 +17,20 @@ namespace EmpreendaVc.Domain
 
         public virtual int Posicao { get; set; }
 
-        public virtual int H { get { return Jogador.H; } }
+        public virtual int H 
+        { 
+            get 
+            {
+                if (Jogador.H >= 90)
+                    return Jogador.H + 20;
+                else if (Jogador.H >= 80)
+                    return Jogador.H + 10;
+                else if (Jogador.H >= 70)
+                    return Jogador.H + 5;
+                else
+                    return Jogador.H;
+            } 
+        }
 
         public Escalacao()
         {

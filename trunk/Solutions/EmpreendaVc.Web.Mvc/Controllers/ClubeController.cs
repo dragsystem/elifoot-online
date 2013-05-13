@@ -79,6 +79,14 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
+            var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
+            if (lstUsuarioOferta.Count() > 0)
+                return RedirectToAction("UsuarioOferta", "Conta");
+
+            var lstJogadorPedido = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
+            if (lstUsuarioOferta.Count() > 0)
+                return RedirectToAction("JogadorPedido", "clube");
+
             return View(usuario.Clube);
         }
 
@@ -233,5 +241,96 @@
             jogadorpedidoRepository.Delete(pedido);
             return RedirectToAction("Plantel", "Clube");
         }
+
+        [Authorize]
+        public ActionResult Calendario()
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var lstPartidas = partidaRepository.GetAll().Where(x => x.Clube1.Id == usuario.Clube.Id || x.Clube2.Id == usuario.Clube.Id).OrderBy(x => x.Dia);
+
+            ViewBag.Clube = usuario.Clube;
+
+            return View(lstPartidas);
+        }
+
+        [Authorize]
+        public ActionResult Resultados(string? divisao, int? rodada)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var divisaoresult = usuario.Clube.Divisao.Numero.ToString();
+
+            if (divisao.HasValue)
+                divisaoresult = divisao.Value;
+
+            var lstPartidas = new List<Partida>();
+
+            if (divisaoresult != "t")
+            {
+                var numero = Convert.ToInt32(divisaoresult);
+                ViewBag.Competicao = divisaoresult + "ª DIVISÃO";
+
+                if (rodada.HasValue)
+                {
+                    ViewBag.Rodada = rodada.Value + "ª Rodada";
+                    lstPartidas = partidaRepository.GetAll().Where(x => x.Divisao.Numero == numero && x.Rodada == rodada.Value && x.Realizada).ToList();
+                }
+                else
+                {
+                    lstPartidas = partidaRepository.GetAll().Where(x => x.Divisao.Numero == numero && x.Realizada).OrderByDescending(x => x.Rodada).ToList();
+                    var ultrodada = lstPartidas.First().Rodada;
+                    ViewBag.Rodada = ultrodada + "ª Rodada";
+                    lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada).ToList();
+                }
+            }
+            else
+            {
+                ViewBag.Competicao = "TAÇA";
+
+                if (rodada.HasValue)
+                {
+                    var ultrodada = rodada.Value;
+                    if (ultrodada == 16)
+                        ViewBag.Rodada = "1ª Eliminatória";
+                    else if (ultrodada == 8)
+                        ViewBag.Rodada = "Oitavas de Final";
+                    else if (ultrodada == 4)
+                        ViewBag.Rodada = "Quartas de Final";
+                    else if (ultrodada == 2)
+                        ViewBag.Rodada = "Semi Final";
+                    else if (ultrodada == 1)
+                        ViewBag.Rodada = "FINAL";
+
+                    lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == ultrodada && x.Realizada).ToList();
+                }
+                else
+                {
+                    lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada).OrderBy(x => x.Rodada).ToList();
+                    var ultrodada = lstPartidas.First().Rodada;
+                    if (ultrodada == 16)
+                        ViewBag.Rodada = "1ª Eliminatória";
+                    else if (ultrodada == 8)
+                        ViewBag.Rodada = "Oitavas de Final";
+                    else if (ultrodada == 4)
+                        ViewBag.Rodada = "Quartas de Final";
+                    else if (ultrodada == 2)
+                        ViewBag.Rodada = "Semi Final";
+                    else if (ultrodada == 1)
+                        ViewBag.Rodada = "FINAL";
+                    lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada).ToList();
+                }
+            }
+
+            ViewBag.Clube = usuario.Clube;
+
+            return View(lstPartidas);
+        }        
     }
 }

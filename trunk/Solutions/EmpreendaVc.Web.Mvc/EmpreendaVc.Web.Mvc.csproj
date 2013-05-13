@@ -193,7 +193,6 @@
     <Compile Include="Controllers\MensagemController.cs" />
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\SendMailController.cs" />
-    <Compile Include="Controllers\ViewModels\ClassificacaoModel.cs" />
     <Compile Include="Controllers\ViewModels\ErrorDictionary.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -202,8 +201,6 @@
       <DependentUpon>ImageHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="Models\EmpreendaVcWebMvcContext.cs" />
-    <Compile Include="Models\HtmlToPdfBuilder.cs" />
-    <Compile Include="Models\PdfResult.cs" />
     <Compile Include="Util\DecimalModelBinder.cs" />
     <Compile Include="Util\DecimalNullableModelBinder.cs" />
     <Compile Include="Util\HtmlExtensions.cs" />
@@ -433,8 +430,12 @@
     <Content Include="Views\Conta\UsuarioOferta.cshtml" />
     <Content Include="Views\Clube\JogadorPedido.cshtml" />
     <Content Include="Views\Leilao\Index.cshtml" />
-    <Content Include="Views\Leilao\Oferta.cshtml" />
+    <Content Include="Views\Leilao\Detalhe.cshtml" />
     <Content Include="Views\Leilao\LeilaoOferta.cshtml" />
+    <Content Include="Views\Leilao\MinhasOfertas.cshtml" />
+    <Content Include="Views\Leilao\MeusJogadores.cshtml" />
+    <Content Include="Views\Clube\Calendario.cshtml" />
+    <Content Include="Views\Clube\Resultados.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
