@@ -22,6 +22,8 @@ namespace EmpreendaVc.Domain
 
         public virtual Divisao Divisao { get; set; }
 
+        public virtual string Formacao { get; set; }
+
         public virtual bool Taca { get; set; }
 
         public virtual int ReputacaoAI { get; set; }
