@@ -182,7 +182,7 @@
                 var cancelar = false;
                 var vendido = false;
 
-                foreach (var oferta in leilao.Ofertas.Where(x => x.Clube.Dinheiro >= leilao.Valor).OrderByDescending(x => x.Valor))
+                foreach (var oferta in leilao.Ofertas.Where(x => x.Clube.Dinheiro >= leilao.Valor).OrderByDescending(x => x.Salario))
                 {
                     var clubecomprador = clubeRepository.Get(oferta.Clube.Id);
                     var clubevendedor = clubeRepository.Get(leilao.Jogador.Clube.Id);
@@ -197,7 +197,7 @@
 
                             jogador.Clube = clubecomprador;
                             jogador.Contrato = true;
-                            jogador.Salario = oferta.Valor;
+                            jogador.Salario = oferta.Salario;
                             jogadorRepository.SaveOrUpdate(jogador);
 
                             clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;

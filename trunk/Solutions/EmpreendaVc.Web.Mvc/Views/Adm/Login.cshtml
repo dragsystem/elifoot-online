@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "E.vc - empreenda.vc"; //"Login";
+    Layout = "~/Views/Shared/_LayoutAdm.cshtml";
+}
+<div id="content">
+    <div class="textbox" style="margin-top:100px">
+        <h2>
+            Login</h2>
+        <div class="textbox_content" style="text-align: center">
+            @using (Html.BeginForm())
+            {
+                @Html.ValidationSummary(true)
+                @Html.Label("Login")<br />
+                @Html.TextBox("Login", null, new { @class = "text" })<br />
+                @Html.Label("Senha")<br />
+                @Html.Password("Senha", null, new { @class = "text" })<br />
+                <br />
+                <input type="submit" class="submit" value="salvar" /><br /><br />
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,85 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Usuario>
+@{
+    Layout = "~/Views/Shared/_LayoutAdm.cshtml";
+}
+<div id="content">
+    <h2>
+        Usuários</h2>
+    @if (TempData["AdmError"] != null && (bool)TempData["AdmError"])
+    {
+        <div class="message errormsg" style="display: block;">
+            <p>
+                Desculpe, ocorreu um erro no envio dos dados.</p>
+        </div>
+    }
+    <form action="" method="post">
+    <table cellpadding="0" cellspacing="0" width="100%" class="sortable">
+        <thead>
+            <tr>
+                <!-- <th width="10"><input type="checkbox" class="check_all" /></th> -->
+                <th class="header" style="cursor: pointer;">
+                    Nome
+                </th>  
+                <th class="header" style="cursor: pointer;">
+                    E-mail
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Clube
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Reputação Geral
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Reputação
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Ativo
+                </th>  
+            </tr>
+        </thead>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model.OrderBy(p => p.NomeCompleto))
+            { 
+                        
+            <tr>
+                <td>
+                    <strong><a href="@Url.Action("DetalheUsuario", "Adm", new { id = item.Id })">@item.NomeCompleto</a></strong>
+                </td>
+                <td>
+                    @item.Email
+                </td>
+                <td>
+                    @(item.Clube != null ? item.Clube.Nome : "-";
+                </td>
+                <td>
+                    @item.ReputacaoGeral
+                </td>
+                <td>
+                    @item.Reputacao
+                </td>
+                @if (item.IsAtivo)
+                {
+                    <td>
+                        <center>
+                            <a href="@Url.Action("EditIsActive", "Adm", new { idUsuario = item.Id })">
+                             <img src='@Url.Content("~/Content/adm/images/msg_success.png")' /></a></center>
+                            
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <center>
+                            <a href="@Url.Action("EditIsActive", "Adm", new { idUsuario = item.Id })">
+                                   <img src='@Url.Content("~/Content/adm/images/msg_error.png")' /></a></center>
+                    </td>
+                }
+            </tr>
+            }
+        }
+        <tbody>
+        </tbody>
+    </table>
+    </form>
+</div>

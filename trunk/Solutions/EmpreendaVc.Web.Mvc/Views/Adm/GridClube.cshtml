@@ -1,0 +1,71 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Clube>
+@{
+    Layout = "~/Views/Shared/_LayoutAdm.cshtml";
+}
+<div id="content">
+    <h2>
+        Grupos</h2>
+    @if (TempData["AdmError"] != null && (bool)TempData["AdmError"])
+    {
+        <div class="message errormsg" style="display: block;">
+            <p>
+                Desculpe, ocorreu um erro no envio dos dados.</p>
+        </div>
+    }
+    <form action="" method="post">
+    <table cellpadding="0" cellspacing="0" width="100%" class="sortable">
+        <thead>
+            <tr>
+                <!-- <th width="10"><input type="checkbox" class="check_all" /></th> -->
+                <th class="header" style="cursor: pointer;">
+                    Nome
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Usuário/Reputação AI
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Divisão
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Dinheiro
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Estadio
+                </th>
+                <th class="header" style="cursor: pointer;">
+                    Socios
+                </th>
+            </tr>
+        </thead>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model.OrderBy(p => p.Divisao).ThenBy(x => x.Nome))
+            { 
+                        
+            <tr>
+                <td>
+                    <strong><a href="@Url.Action("DetalheClube", "Adm", new { id = item.Id })">@item.Nome</a></strong>
+                </td>
+                <td>
+                    @(item.Usuario != null ? item.Usuario.NomeCompleto : item.ReputacaoAI.ToString();
+                </td>
+                <td>
+                    @item.Divisao.Nome
+                </td>
+                <td>
+                    @item.Dinheiro.ToString("N2")
+                </td>
+                <td>
+                    @item.Estadio.ToString("N")
+                </td>
+                <td>
+                    @item.Socios.ToString("N")
+                </td>
+            </tr>
+            }
+        }
+        <tbody>
+        </tbody>
+    </table>
+    </form>
+</div>

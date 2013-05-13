@@ -13,7 +13,7 @@
     Html.AntiForgeryToken();
     @Html.Hidden("Jogador", Model.Id)
 
-    @this.Select("Valor").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString() : "")
+    @this.Select("Valor").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString("N2") : "")
 
     <input type="submit" value="Confirmar" />
     

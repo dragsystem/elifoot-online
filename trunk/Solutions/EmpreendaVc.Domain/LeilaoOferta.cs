@@ -15,7 +15,7 @@ namespace EmpreendaVc.Domain
                 
         public virtual Clube Clube { get; set; }
 
-        public virtual decimal Valor { get; set; }
+        public virtual decimal Salario { get; set; }
 
         public LeilaoOferta()
         {
