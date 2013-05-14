@@ -64,13 +64,6 @@
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.4.1.10715.0\lib\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Facebook, Version=6.0.5.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\Facebook\Facebook.dll</HintPath>
-    </Reference>
-    <Reference Include="Facebook.Web.Mvc">
-      <HintPath>..\..\ReferencedAssemblies\Facebook\Facebook.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="FluentNHibernate">
       <HintPath>..\..\Packages\FluentNHibernate.1.2.0.712\lib\FluentNHibernate.dll</HintPath>
     </Reference>
@@ -399,7 +392,6 @@
     <Content Include="Views\Adm\Index.cshtml" />
     <Content Include="Views\Mensagem\Index.cshtml" />
     <Content Include="Views\Clube\Index.cshtml" />
-    <Content Include="Views\Adm\_FormLuta.cshtml" />
     <Content Include="Views\Conta\Ativar.cshtml" />
     <Content Include="Views\Conta\Login.cshtml" />
     <Content Include="Views\Conta\RecuperarSenha.cshtml" />

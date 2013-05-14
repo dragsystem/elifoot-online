@@ -93,7 +93,7 @@
             return View();
         }
 
-        #region Mudardia
+        #region MudarDia
 
         [Transaction]
         public void MudarDia()
