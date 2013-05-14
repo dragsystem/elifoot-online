@@ -258,21 +258,21 @@
         }
 
         [Authorize]
-        public ActionResult Resultados(string? divisao, int? rodada)
+        public ActionResult Resultados(int? divisao, int? rodada)
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var divisaoresult = usuario.Clube.Divisao.Numero.ToString();
+            var divisaoresult = usuario.Clube.Divisao.Numero;
 
             if (divisao.HasValue)
                 divisaoresult = divisao.Value;
 
             var lstPartidas = new List<Partida>();
 
-            if (divisaoresult != "t")
+            if (divisaoresult == 0)
             {
                 var numero = Convert.ToInt32(divisaoresult);
                 ViewBag.Competicao = divisaoresult + "ª DIVISÃO";

@@ -33,7 +33,7 @@ namespace EmpreendaVc.Domain
 
         public virtual int Publico { get; set; }
 
-        public virtual int Penalti { get; set; }
+        public virtual string Penalti { get; set; }
 
         public virtual bool Realizada { get; set; }
 

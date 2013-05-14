@@ -51,7 +51,7 @@
             INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
-            INHibernateRepository<Noticia> noticiaRepository, 
+            INHibernateRepository<Noticia> noticiaRepository,
             INHibernateRepository<Escalacao> escalacaoRepository)
         {
             this.usuarioRepository = usuarioRepository;
@@ -193,7 +193,7 @@
                     var clubevendedor = clubeRepository.Get(leilao.Jogador.Clube.Id);
                     var jogador = leilao.Jogador;
 
-                    if (clubevendedor.Jogadores.Count() > 14 || vendido)
+                    if (clubevendedor.Jogadores.Count() > 14 || !vendido)
                     {
                         if (clubecomprador.Jogadores.Count() < 25)
                         {
@@ -213,9 +213,11 @@
                             leilaoRepository.SaveOrUpdate(leilao);
                         }
                     }
-                    else 
+                    else
                     {
-                        cancelar = false;
+                        if (clubevendedor.Jogadores.Count < 15 && !vendido)
+                            cancelar = true;
+
                         leilaoofertaRepository.Delete(oferta);
                     }
                 }
@@ -233,16 +235,29 @@
 
                 if (clube.Jogadores.Count() > 14)
                 {
-                    Random rnd = new Random();
-
-                    if (rnd.Next(0, 100) < 70)
+                    var jogposicao = clube.Jogadores.Where(x => x.Posicao == pedidojog.Jogador.Posicao).Count();
+                    if ((jogposicao > 1 && pedidojog.Jogador.Posicao == 1) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 2) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 4) ||
+                        (jogposicao > 1 && pedidojog.Jogador.Posicao == 5) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 6) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 7) ||
+                        (jogposicao > 2 && pedidojog.Jogador.Posicao == 3))
                     {
-                        var leilao = new Leilao();
+                        Random rnd = new Random();
 
-                        leilao.Dia = controle.Dia;
-                        leilao.Espontaneo = true;
-                        leilao.Jogador = pedidojog.Jogador;
-                        leilao.Valor = pedidojog.Jogador.H * 50000;
+                        if (rnd.Next(0, 100) < 70)
+                        {
+                            var leilao = new Leilao();
+
+                            leilao.Dia = controle.Dia;
+                            leilao.Espontaneo = true;
+                            leilao.Jogador = pedidojog.Jogador;
+                            leilao.Valor = pedidojog.Jogador.H * 50000;
+                        }
+                        else
+                        {
+                            var jogador = jogadorRepository.Get(pedidojog.Jogador.Id);
+
+                            jogador.Contrato = true;
+                            jogador.Salario = pedidojog.Salario;
+                        }
                     }
                     else
                     {
@@ -293,11 +308,11 @@
 
                         var lstPos = new List<int>();
 
-                        if (g > 2)
+                        if (g > 1)
                             lstPos.Add(1);
                         if (ld > 1)
                             lstPos.Add(2);
-                        if (z > 3)
+                        if (z > 2)
                             lstPos.Add(3);
                         if (le > 1)
                             lstPos.Add(4);
@@ -305,7 +320,7 @@
                             lstPos.Add(5);
                         if (mo > 2)
                             lstPos.Add(6);
-                        if (mo > 3)
+                        if (a > 2)
                             lstPos.Add(7);
 
                         var lstjognovo = lstjog.Where(x => !x.Contrato && x.Posicao.IsIn(lstPos)).ToList();
@@ -347,6 +362,9 @@
             ////////////////////////////////////////////Gerar Taça
             var itaca = 1;
             var lstTaca = new List<Clube>();
+            var partida1 = new Partida();
+            var partida2 = new Partida();
+
             foreach (var divisaotabela in divisaotabelaRepository.GetAll().OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Posicao))
             {
                 var clube = divisaotabela.Clube;
@@ -360,11 +378,11 @@
                 if (itaca > 32)
                     break;
             }
-            for (int i = 1; i < 17; i++) // 16 partidas
+            for (int i = 0; i < 16; i++) // 16 partidas
             {
                 Random rnd = new Random();
 
-                var maxclubes = 34 - (2 * i);
+                var maxclubes = 32 - (2 * i);
                 var clube1 = lstTaca[rnd.Next(0, maxclubes)];
                 var clube2 = lstTaca[rnd.Next(0, maxclubes)];
 
@@ -373,7 +391,6 @@
                     clube2 = lstTaca[rnd.Next(0, maxclubes)];
                 }
 
-                var partida1 = new Partida();
                 partida1.Dia = 4;
                 partida1.Mao = 1;
                 partida1.Rodada = 16;
@@ -381,9 +398,8 @@
                 partida1.Clube1 = clube1;
                 partida1.Clube2 = clube2;
 
-                var partida2 = new Partida();
-                partida2.Dia = 4;
-                partida2.Mao = 1;
+                partida2.Dia = 7;
+                partida2.Mao = 2;
                 partida2.Rodada = 16;
                 partida2.Tipo = "TACA";
                 partida2.Clube1 = clube2;
@@ -392,6 +408,9 @@
                 lstTaca.Remove(clube1);
                 lstTaca.Remove(clube2);
             }
+
+            partidaRepository.SaveOrUpdate(partida1);
+            partidaRepository.SaveOrUpdate(partida2);
 
             ////////////////////////////////////////////Alterar Divisao Times
             var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
@@ -565,6 +584,86 @@
 
         #endregion
 
+        #region GerarTaca
+        [Transaction]
+        public void GerarTaca()
+        {
+            var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada && x.Mao == 2).OrderByDescending(x => x.Rodada);
+            var lstTaca = new List<Clube>();
+            var rodada = 0;
+            var dia1 = 0;
+            var dia2 = 0;
+            var partida1 = new Partida();
+            var partida2 = new Partida();
+
+            foreach (var part in partidas)
+            {
+                rodada = part.Rodada;
+                lstTaca.Add(part.Vencedor);
+            }
+
+            // (dia == 4 || dia == 7 || dia == 10 || dia == 13 || dia == 16 || dia == 19 || dia == 22 || dia == 25 || dia == 28)
+
+            if (rodada == 16)
+            {
+                rodada = 8;
+                dia1 = 10;
+                dia2 = 13;
+            }
+            else if (rodada == 8)
+            {
+                rodada = 4;
+                dia1 = 16;
+                dia2 = 19;
+            }
+            else if (rodada == 4)
+            {
+                rodada = 2;
+                dia1 = 22;
+                dia2 = 25;
+            }
+            else
+            {
+                rodada = 1;
+                dia1 = 28;
+                dia2 = 31;
+            }
+
+            for (int i = 0; i < rodada; i++) //rodada = numero de partidas
+            {
+                Random rnd = new Random();
+
+                var maxclubes = rodada - (2 * i);
+                var clube1 = lstTaca[rnd.Next(0, maxclubes)];
+                var clube2 = lstTaca[rnd.Next(0, maxclubes)];
+
+                while (clube1.Id == clube2.Id)
+                {
+                    clube2 = lstTaca[rnd.Next(0, maxclubes)];
+                }
+
+                partida1.Dia = dia1;
+                partida1.Mao = 1;
+                partida1.Rodada = rodada;
+                partida1.Tipo = "TACA";
+                partida1.Clube1 = clube1;
+                partida1.Clube2 = clube2;
+
+                partida2.Dia = dia2;
+                partida2.Mao = 2;
+                partida2.Rodada = rodada;
+                partida2.Tipo = "TACA";
+                partida2.Clube1 = clube2;
+                partida2.Clube2 = clube1;
+
+                lstTaca.Remove(clube1);
+                lstTaca.Remove(clube2);
+            }
+            partidaRepository.SaveOrUpdate(partida1);
+            partidaRepository.SaveOrUpdate(partida2);
+        }
+        #endregion
+
         #region Partida
 
         [Transaction]
@@ -599,7 +698,7 @@
                 var Defesa2 = Convert.ToInt32(clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Count());
                 var Ataque1 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
                 var Ataque2 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
-                
+
                 var Diferenca = (Defesa1 - Defesa2) + (Ataque1 - Ataque2);
 
                 var Prob1 = 60;
@@ -638,7 +737,7 @@
                     if (placar <= dif7)
                     {
                         gol2 = rnd.Next(0, 2);
-                        gol1 = gol2 + 7;                        
+                        gol1 = gol2 + 7;
                     }
                     else if (placar <= dif6)
                     {
@@ -747,6 +846,45 @@
                     }
                 }
 
+                if (partida.Tipo == "TACA" && partida.Mao == 2)
+                {
+                    var partida1mao = partidaRepository.GetAll().Where(x => x.Rodada == partida.Rodada && x.Mao == 1 && x.Clube1.Id == partida.Clube2.Id && x.Clube2.Id == partida.Clube1.Id).FirstOrDefault();
+
+                    var totalgol1 = partida.Gol1 + partida1mao.Gol2;
+                    var totalgol2 = partida.Gol2 + partida1mao.Gol1;
+
+                    if (totalgol1 > totalgol2)
+                        vencedor = partida.Clube1;
+                    else if (totalgol2 > totalgol1)
+                        vencedor = partida.Clube2;
+                    else
+                    {
+                        if (rnd.Next(1, 3) == 1)
+                        {
+                            vencedor = partida.Clube1;
+                            var penal = rnd.Next(0, 3).ToString();
+                            if (penal == "0")
+                                partida.Penalti = "5 x 4";
+                            else if (penal == "1")
+                                partida.Penalti = "4 x 3";
+                            else
+                                partida.Penalti = "3 x 2";
+                        }
+                        else
+                        {
+                            vencedor = partida.Clube2;
+                            var penal = rnd.Next(0, 3).ToString();
+                            if (penal == "0")
+                                partida.Penalti = "4 x 5";
+                            else if (penal == "1")
+                                partida.Penalti = "3 x 4";
+                            else
+                                partida.Penalti = "2 x 3";
+                        }
+                    }
+
+                }
+
                 if (gol1 > 0)
                 {
                     var totalgols = clube1.Escalacao.Sum(x => x.HGol) + 1;
@@ -809,16 +947,64 @@
                     publico = clube1.Estadio;
                 else if (publico <= 0)
                     publico = rnd.Next(500, 2000);
-                
+
                 partida.Gol1 = gol1;
                 partida.Gol2 = gol2;
-                partida.Vencedor = vencedor;
+                if (partida.Tipo == "TACA" && partida.Mao == 1)
+                    partida.Vencedor = null;
+                else
+                    partida.Vencedor = vencedor;
                 partida.Realizada = true;
                 partida.Publico = publico;
                 partidaRepository.SaveOrUpdate(partida);
             }
 
             return View();
+        }
+
+        #endregion
+
+        #region AtualizaTabela
+
+        [Transaction]
+        public void AtualizaTabela()
+        {
+            foreach (var divisao in divisaoRepository.GetAll())
+            {
+                var list = new List<DivisaoTabela>();
+
+                foreach (var divisaotabela in divisaotabelaRepository.GetAll().Where(x => x.Divisao.Id == divisao.Id))
+                {
+                    var partidasdoclube = partidaRepository.GetAll().Where(x => x.Tipo != "TACA" && x.Realizada && (x.Clube1.Id == divisaotabela.Clube.Id || x.Clube2.Id == divisaotabela.Clube.Id));
+
+                    var vitorias = partidasdoclube.Where(x => x.Vencedor.Id == divisaotabela.Clube.Id).Count();
+                    var empates = partidasdoclube.Where(x => x.Vencedor == null).Count();
+                    var derrotas = partidasdoclube.Where(x => x.Vencedor != null && x.Vencedor.Id != divisaotabela.Clube.Id).Count();
+                    var jogos = vitorias + empates + derrotas;
+                    var pontos = (vitorias * 3) + empates;
+                    var golspro = partidasdoclube.Where(x => x.Clube1.Id == divisaotabela.Clube.Id).Sum(x => x.Gol1) + partidasdoclube.Where(x => x.Clube2.Id == divisaotabela.Clube.Id).Sum(x => x.Gol2);
+                    var golscontra = partidasdoclube.Where(x => x.Clube1.Id == divisaotabela.Clube.Id).Sum(x => x.Gol2) + partidasdoclube.Where(x => x.Clube2.Id == divisaotabela.Clube.Id).Sum(x => x.Gol1);
+
+                    divisaotabela.D = derrotas;
+                    divisaotabela.E = empates;
+                    divisaotabela.GC = golscontra;
+                    divisaotabela.GP = golspro;
+                    divisaotabela.J = jogos;
+                    divisaotabela.Pontos = pontos;
+                    divisaotabela.V = vitorias;
+
+                    list.Add(divisaotabela);
+                }
+
+                var i = 1;
+
+                foreach (var dt in list.OrderByDescending(x => x.Pontos).ThenByDescending(x => x.V).ThenByDescending(x => x.Saldo).ThenByDescending(x => x.GP))
+                {
+                    dt.Posicao = i;
+                    divisaotabelaRepository.SaveOrUpdate(dt);
+                    i++;
+                }
+            }
         }
 
         #endregion
@@ -836,7 +1022,7 @@
                 }
 
                 //GOLEIRO
-                var escalacao = new Escalacao();                
+                var escalacao = new Escalacao();
                 escalacao.Clube = clube;
                 escalacao.Posicao = 1;
                 escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
@@ -856,7 +1042,7 @@
                 var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(3);
                 if (clube.Formacao.Substring(0, 1) == "4")
                     zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
-                
+
                 foreach (var zag in zagueiros)
                 {
                     escalacao = new Escalacao();
@@ -864,7 +1050,7 @@
                     escalacao.Posicao = 3;
                     escalacao.Jogador = zag;
                     escalacaoRepository.SaveOrUpdate(escalacao);
-                }                
+                }
 
                 //LATERAL-ESQUERDO
                 if (clube.Formacao.Substring(0, 1) != "3")
@@ -885,7 +1071,7 @@
                     escalacao.Posicao = 5;
                     escalacao.Jogador = vol;
                     escalacaoRepository.SaveOrUpdate(escalacao);
-                } 
+                }
 
                 //MEIA OFENSIVO
                 var meias = clube.Jogadores.Where(x => x.Posicao == 6).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(2, 1)));
@@ -907,7 +1093,7 @@
                     escalacao.Posicao = 7;
                     escalacao.Jogador = ata;
                     escalacaoRepository.SaveOrUpdate(escalacao);
-                } 
+                }
             }
         }
 
