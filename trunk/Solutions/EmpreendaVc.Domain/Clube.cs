@@ -71,6 +71,7 @@ namespace EmpreendaVc.Domain
             Escalacao = new List<Escalacao>();
             Partidas = new List<Partida>();
             Ofertas = new List<LeilaoOferta>();
+            Formacao = "4222";
         }
     }
 }

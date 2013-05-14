@@ -32,6 +32,21 @@ namespace EmpreendaVc.Domain
             } 
         }
 
+        public virtual int HGol
+        {
+            get
+            {
+                if (Jogador.Posicao == 7)
+                    return Jogador.H;
+                else if (Jogador.Posicao == 6)
+                    return (Jogador.H * 5)/10;
+                else if (Jogador.Posicao == 1)
+                    return 1;
+                else
+                    return Jogador.H/10;
+            }
+        }
+
         public Escalacao()
         {
         }

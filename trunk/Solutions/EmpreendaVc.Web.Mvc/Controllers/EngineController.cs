@@ -36,6 +36,7 @@
         private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Noticia> noticiaRepository;
+        private readonly INHibernateRepository<Escalacao> escalacaoRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -50,7 +51,8 @@
             INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
-            INHibernateRepository<Noticia> noticiaRepository)
+            INHibernateRepository<Noticia> noticiaRepository, 
+            INHibernateRepository<Escalacao> escalacaoRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -66,6 +68,7 @@
             this.jogadorpedidoRepository = jogadorpedidoRepository;
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.noticiaRepository = noticiaRepository;
+            this.escalacaoRepository = escalacaoRepository;
         }
 
         public ActionResult Index(int id)
@@ -564,6 +567,7 @@
 
         #region Partida
 
+        [Transaction]
         public ActionResult RodaPartida()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
@@ -585,7 +589,8 @@
             {
                 var clube1 = clubeRepository.Get(partida.Clube1.Id);
                 var clube2 = clubeRepository.Get(partida.Clube2.Id);
-
+                var gol1 = 0;
+                var gol2 = 0;
 
                 //////////////////////////////////////////////////////////////////
                 //ESCALAR TIMES
@@ -594,7 +599,7 @@
                 var Defesa2 = Convert.ToInt32(clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Count());
                 var Ataque1 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
                 var Ataque2 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
-
+                
                 var Diferenca = (Defesa1 - Defesa2) + (Ataque1 - Ataque2);
 
                 var Prob1 = 60;
@@ -610,24 +615,300 @@
                 else if ((Diferenca * (-1)) >= 0)
                     ProbEmpate = 40;
 
-                Prob1 = (Prob1 + (Diferenca)) - (ProbEmpate / 2);
-                Prob2 = (Prob2 + (Diferenca)) - (ProbEmpate / 2);
+                Prob1 = (Prob1 + (Diferenca));
+                Prob2 = (Prob2 - (Diferenca));
 
                 Random rnd = new Random();
 
-                var resultado = rnd.Next(1, 101);
+                var resultado = rnd.Next(0, (Prob1 + Prob2 + ProbEmpate));
                 var vencedor = new Clube();
 
-                if (resultado <= Prob1)
-                    vencedor = clube1;
-                else if (resultado <= (Prob1 + ProbEmpate))
-                    vencedor = null;
-                else
-                    vencedor = clube2;
+                var placar = rnd.Next(1, 101);
 
+                if (resultado <= Prob1)
+                {
+                    vencedor = clube1;
+                    var dif7 = Convert.ToInt32((Prob1 / 100) * 2);
+                    var dif6 = Convert.ToInt32((Prob1 / 100) * 2);
+                    var dif5 = Convert.ToInt32((Prob1 / 100) * 4);
+                    var dif4 = Convert.ToInt32((Prob1 / 100) * 10);
+                    var dif3 = Convert.ToInt32((Prob1 / 100) * 30);
+                    var dif2 = Convert.ToInt32((Prob1 / 100) * 50);
+
+                    if (placar <= dif7)
+                    {
+                        gol2 = rnd.Next(0, 2);
+                        gol1 = gol2 + 7;                        
+                    }
+                    else if (placar <= dif6)
+                    {
+                        gol2 = rnd.Next(0, 2);
+                        gol1 = gol2 + 6;
+                    }
+                    else if (placar <= dif5)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 5;
+                    }
+                    else if (placar <= dif4)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 4;
+                    }
+                    else if (placar <= dif3)
+                    {
+                        gol2 = rnd.Next(0, 2);
+                        gol1 = gol2 + 3;
+                    }
+                    else if (placar <= dif2)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 2;
+                    }
+                    else if (placar > dif2)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 1;
+                    }
+                }
+                else if (resultado <= (Prob1 + ProbEmpate))
+                {
+                    vencedor = null;
+                    if (placar < 35)
+                    {
+                        gol2 = 0;
+                        gol1 = 0;
+                    }
+                    else if (placar < 70)
+                    {
+                        gol2 = 1;
+                        gol1 = 1;
+                    }
+                    else if (placar < 90)
+                    {
+                        gol2 = 2;
+                        gol1 = 2;
+                    }
+                    else if (placar < 98)
+                    {
+                        gol2 = 3;
+                        gol1 = 3;
+                    }
+                    else if (placar >= 98)
+                    {
+                        gol2 = 4;
+                        gol1 = 4;
+                    }
+                }
+                else
+                {
+                    vencedor = clube2;
+                    var dif7 = Convert.ToInt32((Prob1 / 100) * 2);
+                    var dif6 = Convert.ToInt32((Prob1 / 100) * 2);
+                    var dif5 = Convert.ToInt32((Prob1 / 100) * 4);
+                    var dif4 = Convert.ToInt32((Prob1 / 100) * 10);
+                    var dif3 = Convert.ToInt32((Prob1 / 100) * 30);
+                    var dif2 = Convert.ToInt32((Prob1 / 100) * 50);
+
+                    if (placar <= dif7)
+                    {
+                        gol2 = rnd.Next(0, 2);
+                        gol1 = gol2 + 7;
+                    }
+                    else if (placar <= dif6)
+                    {
+                        gol2 = rnd.Next(0, 2);
+                        gol1 = gol2 + 6;
+                    }
+                    else if (placar <= dif5)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 5;
+                    }
+                    else if (placar <= dif4)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 4;
+                    }
+                    else if (placar <= dif3)
+                    {
+                        gol2 = rnd.Next(0, 2);
+                        gol1 = gol2 + 3;
+                    }
+                    else if (placar <= dif2)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 2;
+                    }
+                    else if (placar > dif2)
+                    {
+                        gol2 = rnd.Next(0, 3);
+                        gol1 = gol2 + 1;
+                    }
+                }
+
+                if (gol1 > 0)
+                {
+                    var totalgols = clube1.Escalacao.Sum(x => x.HGol) + 1;
+                    for (int i = 1; i <= gol1; i++)
+                    {
+                        var gol = new Gol();
+                        gol.Clube = clube1;
+                        gol.Minuto = rnd.Next(1, 94);
+                        gol.Partida = partida;
+                        var contagem = 0;
+                        var goleador = rnd.Next(1, totalgols);
+                        foreach (var jog in clube1.Escalacao.OrderBy(x => x.Posicao))
+                        {
+                            contagem = contagem + jog.HGol;
+                            if (goleador <= contagem)
+                            {
+                                gol.Jogador = jog.Jogador;
+                                break;
+                            }
+                        }
+                        golRepository.SaveOrUpdate(gol);
+                    }
+                }
+
+                var listgol2 = new List<Gol>();
+                if (gol2 > 0)
+                {
+                    var totalgols = clube2.Escalacao.Sum(x => x.HGol) + 1;
+                    for (int i = 1; i <= gol2; i++)
+                    {
+                        var gol = new Gol();
+                        gol.Clube = clube2;
+                        gol.Minuto = rnd.Next(1, 94);
+                        gol.Partida = partida;
+                        var contagem = 0;
+                        var goleador = rnd.Next(1, totalgols);
+                        foreach (var jog in clube2.Escalacao.OrderBy(x => x.Posicao))
+                        {
+                            contagem = contagem + jog.HGol;
+                            if (goleador <= contagem)
+                            {
+                                gol.Jogador = jog.Jogador;
+                                break;
+                            }
+                        }
+                        golRepository.SaveOrUpdate(gol);
+                    }
+                }
+
+                var publico = 0;
+                publico = clube1.Socios * 10;
+                publico = publico - ((publico / 12) * (divisaotabelaRepository.GetAll().Where(x => x.Clube.Id == clube1.Id).FirstOrDefault().Posicao - 1));
+                if (clube1.Ingresso > 35)
+                    publico = (publico / 100) * 30;
+                else if (clube1.Ingresso > 25)
+                    publico = (publico / 100) * 50;
+
+                publico = rnd.Next((publico - 3000), publico);
+                if (publico > clube1.Estadio)
+                    publico = clube1.Estadio;
+                else if (publico <= 0)
+                    publico = rnd.Next(500, 2000);
+                
+                partida.Gol1 = gol1;
+                partida.Gol2 = gol2;
+                partida.Vencedor = vencedor;
+                partida.Realizada = true;
+                partida.Publico = publico;
+                partidaRepository.SaveOrUpdate(partida);
             }
 
             return View();
+        }
+
+        #endregion
+
+        #region EscalaTimes
+
+        [Transaction]
+        public void EscalaTimes()
+        {
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                foreach (var esc in clube.Escalacao)
+                {
+                    escalacaoRepository.Delete(esc);
+                }
+
+                //GOLEIRO
+                var escalacao = new Escalacao();                
+                escalacao.Clube = clube;
+                escalacao.Posicao = 1;
+                escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
+                escalacaoRepository.SaveOrUpdate(escalacao);
+
+                //LATERAL-DIREITO
+                if (clube.Formacao.Substring(0, 1) != "3")
+                {
+                    escalacao = new Escalacao();
+                    escalacao.Clube = clube;
+                    escalacao.Posicao = 2;
+                    escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
+                    escalacaoRepository.SaveOrUpdate(escalacao);
+                }
+
+                //ZAGUEIROS
+                var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(3);
+                if (clube.Formacao.Substring(0, 1) == "4")
+                    zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
+                
+                foreach (var zag in zagueiros)
+                {
+                    escalacao = new Escalacao();
+                    escalacao.Clube = clube;
+                    escalacao.Posicao = 3;
+                    escalacao.Jogador = zag;
+                    escalacaoRepository.SaveOrUpdate(escalacao);
+                }                
+
+                //LATERAL-ESQUERDO
+                if (clube.Formacao.Substring(0, 1) != "3")
+                {
+                    escalacao = new Escalacao();
+                    escalacao.Clube = clube;
+                    escalacao.Posicao = 4;
+                    escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
+                    escalacaoRepository.SaveOrUpdate(escalacao);
+                }
+
+                //VOLANTE
+                var volantes = clube.Jogadores.Where(x => x.Posicao == 5).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(1, 1)));
+                foreach (var vol in volantes)
+                {
+                    escalacao = new Escalacao();
+                    escalacao.Clube = clube;
+                    escalacao.Posicao = 5;
+                    escalacao.Jogador = vol;
+                    escalacaoRepository.SaveOrUpdate(escalacao);
+                } 
+
+                //MEIA OFENSIVO
+                var meias = clube.Jogadores.Where(x => x.Posicao == 6).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(2, 1)));
+                foreach (var mei in meias)
+                {
+                    escalacao = new Escalacao();
+                    escalacao.Clube = clube;
+                    escalacao.Posicao = 6;
+                    escalacao.Jogador = mei;
+                    escalacaoRepository.SaveOrUpdate(escalacao);
+                }
+
+                //ATACANTES
+                var atacantes = clube.Jogadores.Where(x => x.Posicao == 7).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(3, 1)));
+                foreach (var ata in atacantes)
+                {
+                    escalacao = new Escalacao();
+                    escalacao.Clube = clube;
+                    escalacao.Posicao = 7;
+                    escalacao.Jogador = ata;
+                    escalacaoRepository.SaveOrUpdate(escalacao);
+                } 
+            }
         }
 
         #endregion
