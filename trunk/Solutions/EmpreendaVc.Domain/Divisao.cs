@@ -19,6 +19,8 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<Clube> Clubes { get; set; }
 
+        public virtual IList<DivisaoTabela> DivisaoTabela { get; set; }
+
         public Divisao()
         {
             Clubes = new List<Clube>();
