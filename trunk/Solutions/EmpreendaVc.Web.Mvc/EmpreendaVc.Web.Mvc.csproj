@@ -421,6 +421,7 @@
     <Content Include="Views\Leilao\MeusJogadores.cshtml" />
     <Content Include="Views\Clube\Calendario.cshtml" />
     <Content Include="Views\Clube\Resultados.cshtml" />
+    <Content Include="Views\Shared\_MenuTop.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
