@@ -1,0 +1,77 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Partida>
+@{
+    var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;
+    var rodada = (int)ViewBag.Rodada;
+    var mao = (int)ViewBag.Mao; 
+}
+<div id="classificacao-lista">
+    <ul>
+        <li><b>TAÇA</b></li>
+        @foreach (var divisao in lstdivisao)
+        {
+            <li><a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" ></a></li>
+        }        
+    </ul>
+</div>
+
+<div id="classificacao-taca">
+    @if (rodada == 16)
+    { 
+        @: 1ª Eliminatória 
+    }
+    else if (rodada == 8)
+    { 
+        @: Oitavas de Final
+    }
+    else if (rodada == 4)
+    { 
+        @: Quartas de Final
+    }
+    else if (rodada == 2)
+    { 
+        @: Semi Final
+    }
+    else if (rodada == 8)
+    { 
+        @: FINAL
+    }
+    
+    @if (Model.Where(x => x.Rodada == rodada).Count() > 0)
+    {
+    <table>
+        @foreach (var item in Model.Where(x => x.Rodada == rodada && x.Mao == mao))
+        {
+            <tr>
+            @if (item.Mao == 1)
+            {
+                <td>@item.Clube1.Nome</td>
+                <td></td>
+                <td></td>
+                <td>x</td>
+                <td></td>
+                <td></td>
+                <td>@item.Clube2.Nome</td>
+            }
+            else
+            {
+                var jogoida = Model.Where(x => x.Rodada == rodada && x.Mao == 1 && x.Clube1.Id == item.Clube2.Id && x.Clube2.Id == item.Clube1.Id).FirstOrDefault();
+                <td>@item.Clube2.Nome</td>
+                <td>(@jogoida.Gol1)</td>
+                <td></td>
+                <td>x</td>
+                <td></td>
+                <td>(@jogoida.Gol2)</td>
+                <td>@item.Clube1.Nome</td>
+            }
+            </tr>
+        }
+    </table>
+    }
+    
+    Fase não sorteada ainda.
+
+    @if (rodada < 16)
+    { <a href="@Url.Action("Taca", "Clube", new { rodada = (rodada * 2) })" >Fase anterior</a> } 
+    @if (rodada > 1)
+    { <a href="@Url.Action("Taca", "Clube", new { rodada = (rodada / 2) })" >Próxima anterior</a> } 
+</div>

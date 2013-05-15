@@ -186,9 +186,39 @@
 
         public ActionResult Classificacao(int iddivisao)
         {
-            var divisaotabela = divisaotabelaRepository.GetAll().Where(x => x.Divisao.Id == iddivisao).OrderBy(x => x.Posicao);
+            var divisao = divisaoRepository.Get(iddivisao);
 
-            return View(divisaotabela);
+            ViewBag.lstDivisao = divisaotabelaRepository.GetAll();
+
+            return View(divisao);
+        }
+
+        public ActionResult Taca(int? rodada)
+        {
+            var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA");
+
+            if (rodada.HasValue)
+            {
+                ViewBag.Rodada = rodada.Value;
+                ViewBag.Mao = partidas.Where(x => x.Rodada == rodada.Value && !x.Realizada && x.Mao == 1).Count() > 0 ? 1 : 2;
+            }
+            else
+            {
+                var dados = partidas.Where(x => !x.Realizada).OrderByDescending(x => x.Rodada).ThenBy(x => x.Mao).FirstOrDefault();
+
+                ViewBag.Rodada = 1;
+                ViewBag.Mao = 2;           
+
+                if (dados != null)
+                {
+                    ViewBag.Rodada = dados.Rodada;
+                    ViewBag.Mao = dados.Mao;
+                }
+            }
+
+            ViewBag.lstDivisao = divisaotabelaRepository.GetAll();
+
+            return View(partidas);
         }
 
         [Authorize]

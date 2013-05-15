@@ -313,14 +313,6 @@
     <Content Include="Content\adm\visualize.css" />
     <Content Include="Content\adm\wysiwyg.css" />
     <Content Include="Content\css\style.css" />
-    <Content Include="Content\img\adm.png" />
-    <Content Include="Content\img\apagar.png" />
-    <Content Include="Content\img\busca.png" />
-    <Content Include="Content\img\convidar.png" />
-    <Content Include="Content\img\entrar.png" />
-    <Content Include="Content\img\excluir.png" />
-    <Content Include="Content\img\logo.png" />
-    <Content Include="Content\img\meusgrupos.png" />
     <Content Include="Content\js\fullcalendar\fullcalendar.css" />
     <Content Include="Content\js\fullcalendar\fullcalendar.js" />
     <Content Include="Content\js\fullcalendar\fullcalendar.min.js" />
@@ -372,6 +364,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AppLogs\" />
+    <Folder Include="Content\img\" />
     <Folder Include="Content\js\audiojs\" />
   </ItemGroup>
   <ItemGroup>
@@ -422,6 +415,7 @@
     <Content Include="Views\Clube\Calendario.cshtml" />
     <Content Include="Views\Clube\Resultados.cshtml" />
     <Content Include="Views\Shared\_MenuTop.cshtml" />
+    <Content Include="Views\Clube\Taca.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

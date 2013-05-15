@@ -37,6 +37,7 @@
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Noticia> noticiaRepository;
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
+        private readonly INHibernateRepository<Historico> historicoRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -52,7 +53,8 @@
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
             INHibernateRepository<Noticia> noticiaRepository,
-            INHibernateRepository<Escalacao> escalacaoRepository)
+            INHibernateRepository<Escalacao> escalacaoRepository,
+            INHibernateRepository<Historico> historicoRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -69,6 +71,7 @@
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.noticiaRepository = noticiaRepository;
             this.escalacaoRepository = escalacaoRepository;
+            this.historicoRepository = historicoRepository;
         }
 
         public ActionResult Index(int id)
@@ -352,65 +355,24 @@
             controle.Taca = 32;
             controleRepository.SaveOrUpdate(controle);
 
+            ////////////////////////////////////////////Gerar historico taca
+            var partidafinaltaca = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == 1 && x.Realizada && x.Mao == 2).FirstOrDefault();
+            var historico = new Historico();
+            historico.Ano = controle.Ano - 1;
+            historico.Taca = true;
+            historico.Campeao = partidafinaltaca.Vencedor;
+            historico.Vice = partidafinaltaca.Vencedor == partidafinaltaca.Clube1 ? partidafinaltaca.Clube2 : partidafinaltaca.Clube1;
+            var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Tipo == "TACA")).FirstOrDefault();
+            historico.Artilheiro = artilheiro;
+            historico.Gols = artilheiro.Gols.Count();
+            historicoRepository.SaveOrUpdate(historico);
+
             ////////////////////////////////////////////Zerar Contratos
             foreach (var jog in jogadorRepository.GetAll())
             {
                 jog.Contrato = false;
                 jogadorRepository.SaveOrUpdate(jog);
             }
-
-            ////////////////////////////////////////////Gerar Taça
-            var itaca = 1;
-            var lstTaca = new List<Clube>();
-            var partida1 = new Partida();
-            var partida2 = new Partida();
-
-            foreach (var divisaotabela in divisaotabelaRepository.GetAll().OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Posicao))
-            {
-                var clube = divisaotabela.Clube;
-                clube.Taca = true;
-
-                clubeRepository.SaveOrUpdate(clube);
-
-                lstTaca.Add(clube);
-                itaca++;
-
-                if (itaca > 32)
-                    break;
-            }
-            for (int i = 0; i < 16; i++) // 16 partidas
-            {
-                Random rnd = new Random();
-
-                var maxclubes = 32 - (2 * i);
-                var clube1 = lstTaca[rnd.Next(0, maxclubes)];
-                var clube2 = lstTaca[rnd.Next(0, maxclubes)];
-
-                while (clube1.Id == clube2.Id)
-                {
-                    clube2 = lstTaca[rnd.Next(0, maxclubes)];
-                }
-
-                partida1.Dia = 4;
-                partida1.Mao = 1;
-                partida1.Rodada = 16;
-                partida1.Tipo = "TACA";
-                partida1.Clube1 = clube1;
-                partida1.Clube2 = clube2;
-
-                partida2.Dia = 7;
-                partida2.Mao = 2;
-                partida2.Rodada = 16;
-                partida2.Tipo = "TACA";
-                partida2.Clube1 = clube2;
-                partida2.Clube2 = clube1;
-
-                lstTaca.Remove(clube1);
-                lstTaca.Remove(clube2);
-            }
-
-            partidaRepository.SaveOrUpdate(partida1);
-            partidaRepository.SaveOrUpdate(partida2);
 
             ////////////////////////////////////////////Alterar Divisao Times
             var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
@@ -423,6 +385,17 @@
                 var clube2 = tabela[1].Clube; //Vice-Campeão
                 var clube11 = tabela[10].Clube; //Penúltimo
                 var clube12 = tabela[11].Clube; //Último
+
+                ////////////////////////////////////////////Gerar historico
+                historico = new Historico();
+                historico.Ano = controle.Ano - 1;
+                historico.Divisao = divisao;
+                historico.Campeao = clube1;
+                historico.Vice = clube2;
+                artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
+                historico.Artilheiro = artilheiro;
+                historico.Gols = artilheiro.Gols.Count();
+                historicoRepository.SaveOrUpdate(historico);
 
                 ////////////////////////////////////////////Pagar prêmios
                 var premio = 6000000 / divisao.Numero;
@@ -578,6 +551,59 @@
 
                     dia++;
                 }
+
+                ////////////////////////////////////////////Gerar Taça
+                var itaca = 1;
+                var lstTaca = new List<Clube>();
+                var partida1 = new Partida();
+                var partida2 = new Partida();
+
+                foreach (var divisaotabela in divisaotabelaRepository.GetAll().OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Posicao))
+                {
+                    var clube = divisaotabela.Clube;
+                    clube.Taca = true;
+
+                    clubeRepository.SaveOrUpdate(clube);
+
+                    lstTaca.Add(clube);
+                    itaca++;
+
+                    if (itaca > 32)
+                        break;
+                }
+                for (int i = 0; i < 16; i++) // 16 partidas
+                {
+                    Random rnd = new Random();
+
+                    var maxclubes = 32 - (2 * i);
+                    var clube1 = lstTaca[rnd.Next(0, maxclubes)];
+                    var clube2 = lstTaca[rnd.Next(0, maxclubes)];
+
+                    while (clube1.Id == clube2.Id)
+                    {
+                        clube2 = lstTaca[rnd.Next(0, maxclubes)];
+                    }
+
+                    partida1.Dia = 4;
+                    partida1.Mao = 1;
+                    partida1.Rodada = 16;
+                    partida1.Tipo = "TACA";
+                    partida1.Clube1 = clube1;
+                    partida1.Clube2 = clube2;
+
+                    partida2.Dia = 7;
+                    partida2.Mao = 2;
+                    partida2.Rodada = 16;
+                    partida2.Tipo = "TACA";
+                    partida2.Clube1 = clube2;
+                    partida2.Clube2 = clube1;
+
+                    lstTaca.Remove(clube1);
+                    lstTaca.Remove(clube2);
+                }
+
+                partidaRepository.SaveOrUpdate(partida1);
+                partidaRepository.SaveOrUpdate(partida2);
             }
 
         }
