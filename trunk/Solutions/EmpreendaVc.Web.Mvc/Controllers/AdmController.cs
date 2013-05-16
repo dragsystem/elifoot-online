@@ -16,21 +16,56 @@ namespace EmpreendaVc.Web.Mvc.Controllers
 {
     public class AdmController : ControllerCustom
     {
-        private readonly INHibernateRepository<Usuario> usuarioRepository;
-        private readonly INHibernateRepository<Clube> clubeRepository;
+        private readonly IUsuarioRepository usuarioRepository;
         private readonly IAuthenticationService authenticationService;
-        private readonly INHibernateRepository<Jogador> lutadorRepository;
+        private readonly INHibernateRepository<Clube> clubeRepository;
+        private readonly INHibernateRepository<Jogador> jogadorRepository;
+        private readonly INHibernateRepository<Controle> controleRepository;
+        private readonly INHibernateRepository<Leilao> leilaoRepository;
+        private readonly INHibernateRepository<LeilaoOferta> leilaoofertaRepository;
+        private readonly INHibernateRepository<Divisao> divisaoRepository;
+        private readonly INHibernateRepository<Partida> partidaRepository;
+        private readonly INHibernateRepository<Gol> golRepository;
+        private readonly INHibernateRepository<DivisaoTabela> divisaotabelaRepository;
+        private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
+        private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
+        private readonly INHibernateRepository<Noticia> noticiaRepository;
+        private readonly INHibernateRepository<Escalacao> escalacaoRepository;
+        private readonly INHibernateRepository<Historico> historicoRepository;
 
-        public AdmController(
+        public AdmController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
             INHibernateRepository<Clube> clubeRepository,
-            INHibernateRepository<Usuario> usuarioRepository,
-            INHibernateRepository<Jogador> lutadorRepository)
+            INHibernateRepository<Jogador> jogadorRepository,
+            INHibernateRepository<Controle> controleRepository,
+            INHibernateRepository<Leilao> leilaoRepository,
+            INHibernateRepository<LeilaoOferta> leilaoofertaRepository,
+            INHibernateRepository<Divisao> divisaoRepository,
+            INHibernateRepository<Partida> partidaRepository,
+            INHibernateRepository<Gol> golRepository,
+            INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
+            INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
+            INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
+            INHibernateRepository<Noticia> noticiaRepository,
+            INHibernateRepository<Escalacao> escalacaoRepository,
+            INHibernateRepository<Historico> historicoRepository)
         {
             this.usuarioRepository = usuarioRepository;
-            this.clubeRepository = clubeRepository;
             this.authenticationService = authenticationService;
-            this.lutadorRepository = lutadorRepository;
+            this.clubeRepository = clubeRepository;
+            this.jogadorRepository = jogadorRepository;
+            this.controleRepository = controleRepository;
+            this.leilaoRepository = leilaoRepository;
+            this.leilaoofertaRepository = leilaoofertaRepository;
+            this.divisaoRepository = divisaoRepository;
+            this.partidaRepository = partidaRepository;
+            this.golRepository = golRepository;
+            this.divisaotabelaRepository = divisaotabelaRepository;
+            this.jogadorpedidoRepository = jogadorpedidoRepository;
+            this.usuarioofertaRepository = usuarioofertaRepository;
+            this.noticiaRepository = noticiaRepository;
+            this.escalacaoRepository = escalacaoRepository;
+            this.historicoRepository = historicoRepository;
         }
 
         [HttpGet]
@@ -58,6 +93,8 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             }
         }
 
+        #region Usuario
+        
         public ActionResult GridUsuario()
         {
             if ((bool)Session["ADM"])
@@ -71,18 +108,7 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             }
         }
 
-        public ActionResult GridClube()
-        {
-            if ((bool)Session["ADM"])
-            {
-                var lst = clubeRepository.GetAll();
-                return View(lst);
-            }
-            else
-            {
-                return RedirectToAction("Login");
-            }
-        }
+        
 
         public ActionResult DetalheUsuario(int id)
         {
@@ -129,6 +155,23 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             }
         }
 
+        #endregion
+
+        #region Clube
+
+        public ActionResult GridClube()
+        {
+            if ((bool)Session["ADM"])
+            {
+                var lst = clubeRepository.GetAll();
+                return View(lst);
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
         public ActionResult DetalheClube(int id)
         {
             if ((bool)Session["ADM"])
@@ -141,12 +184,17 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             }
         }
 
-        public ActionResult GridLutador()
+        public ActionResult EditClube(int? id)
         {
             if ((bool)Session["ADM"])
             {
-                var lst = lutadorRepository.GetAll();
-                return View(lst);
+                DataBind();
+                var clube = new Clube();
+
+                if (id.HasValue)
+                    clube = clubeRepository.Get(id.Value);
+
+                return View(clube);
             }
             else
             {
@@ -156,21 +204,26 @@ namespace EmpreendaVc.Web.Mvc.Controllers
 
         [HttpPost]
         [Transaction]
-        public ActionResult GridLutador(FormCollection form)
+        public ActionResult EditClube(FormCollection form, int id)
         {
             if ((bool)Session["ADM"])
-            {
-                var lutador = new Jogador();
+            {                
+                var clube = new Clube();
 
-                TryUpdateModel(lutador, form);
+                if (id != 0)
+                    clube = clubeRepository.Get(id);
 
-                lutador.Nome = lutador.Nome.ToUpper();
+                TryUpdateModel(clube, form);
 
-                if (lutador.IsValid())
-                    lutadorRepository.SaveOrUpdate(lutador);
+                if (clube.IsValid())
+                {
+                    clube.Nome = clube.Nome.ToUpper();
+                    clubeRepository.SaveOrUpdate(clube);
+                    return RedirectToAction("GridClube");
+                }
 
-                var lst = lutadorRepository.GetAll();
-                return View(lst);
+                DataBind();
+                return View(clube);
             }
             else
             {
@@ -178,168 +231,11 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             }
         }
 
-        //[Transaction]
-        //public ActionResult Apagar(int id, bool? IsUsuario, bool? IsEvento, bool? IsLuta, bool? IsLutador)
-        //{
-        //    if (IsEvento.HasValue)
-        //    {
-        //        var evento = eventoRepository.Get(id);
+        #endregion
 
-        //        if (evento != null)
-        //        {
-        //            var lutas = lutaRepository.GetAll().Where(x => x.Evento.Id == id);
-
-        //            foreach (var luta in lutas)
-        //            {
-        //                var jogos = jogoRepository.GetAll().Where(x => x.Luta.Id == luta.Id);
-
-        //                foreach (var jogo in jogos)
-        //                {
-        //                    jogoRepository.Delete(jogo);
-        //                }
-
-        //                lutaRepository.Delete(luta);
-        //            }
-
-        //            eventoRepository.Delete(evento);
-        //        }
-
-        //        TempData["SucessoAlteracao"] = true;
-        //        return RedirectToAction("GridEvento");
-        //    }
-        //    if (IsLuta.HasValue)
-        //    {
-        //        var luta = lutaRepository.Get(id);
-        //        var idevento = luta.Evento.Id;
-
-        //        if (luta != null)
-        //        {
-        //            var jogos = jogoRepository.GetAll().Where(x => x.Luta.Id == luta.Id);
-
-        //            foreach (var jogo in jogos)
-        //            {
-        //                jogoRepository.Delete(jogo);
-        //            }
-
-        //            lutaRepository.Delete(luta);
-        //        }
-
-        //        TempData["SucessoAlteracao"] = true;
-        //        return RedirectToAction("DetalheEvento", new { id = idevento });
-        //    }
-        //    if (IsLutador.HasValue)
-        //    {
-        //        var lutador = lutadorRepository.Get(id);
-
-        //        if (lutador != null)
-        //        {
-        //            var lutas = lutaRepository.GetAll().Where(x => x.Lutador1.Id == id || x.Lutador2.Id == id);
-
-        //            foreach (var luta in lutas)
-        //            {
-        //                var jogos = jogoRepository.GetAll().Where(x => x.Luta.Id == luta.Id);
-
-        //                foreach (var jogo in jogos)
-        //                {
-        //                    jogoRepository.Delete(jogo);
-        //                }
-
-        //                lutaRepository.Delete(luta);
-        //            }
-
-        //            lutadorRepository.Delete(lutador);
-        //        }
-
-        //        TempData["SucessoAlteracao"] = true;
-        //        return RedirectToAction("GridLutador");
-        //    }
-
-        //    return RedirectToAction("GridUsuario");
-        //}
-
-        //public ActionResult FormLuta(int idevento, int? idluta)
-        //{
-        //    var evento = eventoRepository.Get(idevento);
-        //    var luta = new Luta();
-
-        //    if (idluta.HasValue)
-        //        luta = lutaRepository.Get(idluta.Value);
-
-        //    ViewBag.Evento = evento.Id;
-        //    ViewBag.Lutadores = lutadorRepository.GetAll().OrderBy(x => x.Nome).Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Nome });
-
-        //    return View("_FormLuta", luta);
-        //}
-        
-        //[HttpPost]
-        //[Transaction]
-        //public ActionResult FormLuta(FormCollection form, int idevento, int idluta)
-        //{
-        //    var evento = eventoRepository.Get(idevento);
-        //    var luta = new Luta();
-
-        //    if (idluta != 0)
-        //        luta = lutaRepository.Get(idluta);
-
-        //    TryUpdateModel(luta, form);
-
-        //    luta.Evento = evento;
-
-        //    lutaRepository.SaveOrUpdate(luta);
-
-        //    ViewBag.Lutadores = lutadorRepository.GetAll().OrderBy(x => x.Nome).Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Nome });
-
-        //    return RedirectToAction("DetalheEvento", new { id = idevento });
-        //}
-
-        //[Transaction]
-        //public ActionResult ApagarLuta(int id)
-        //{
-        //    var luta = lutaRepository.Get(id);
-
-        //    var idevento = luta.Evento.Id;
-
-        //    lutaRepository.Delete(luta);
-
-        //    return RedirectToAction("DetalheEvento", new { id = idevento });
-        //}
-        //[Transaction]
-        //public ActionResult EditIsActive(int idUsuario)
-        //{
-            //if ((bool)Session["ADM"])
-            //{
-            //    var Event = usuarioRepository.Get(idUsuario);
-
-            //    try
-            //    {
-            //        if (Event.IsAtivo)
-            //            Event.IsAtivo = false;
-            //        else
-            //            Event.IsAtivo = true;
-
-            //        var erros = usuarioRepository.SaveOrUpdate(Event);
-
-            //        if (erros.Count > 0)
-            //        {
-            //            foreach (var item in erros)
-            //            {
-            //                ModelState.AddModelError("", item);
-            //            }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ObjLog.Error(string.Format("AdmController(EditIsVisivel):{0}", ex.Message));
-            //        TempData["AdmError"] = true;
-            //    }
-
-            //    //usuarioRepository.TransactionRollback();
-            //    return RedirectToAction("GridUsuario");
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Login");
-        //    }
-        //}
+        public void DataBind()
+        {
+            ViewBag.Divisao = divisaoRepository.GetAll().OrderBy(x => x.Numero).Select(x => new SelectListItem() { Text = x.Nome, Value = x.Numero.ToString() });
+        }
     }
 }

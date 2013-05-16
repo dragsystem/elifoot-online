@@ -613,7 +613,7 @@
         #region GerarTaca
         [Transaction]
         public void GerarTaca()
-        {
+        {         
             var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada && x.Mao == 2).OrderByDescending(x => x.Rodada);
             var lstTaca = new List<Clube>();
             var rodada = 0;
@@ -628,7 +628,9 @@
                 lstTaca.Add(part.Vencedor);
             }
 
-            // (dia == 4 || dia == 7 || dia == 10 || dia == 13 || dia == 16 || dia == 19 || dia == 22 || dia == 25 || dia == 28)
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            controle.Taca = rodada;
+            controleRepository.SaveOrUpdate(controle);
 
             if (rodada == 16)
             {

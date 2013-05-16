@@ -197,24 +197,14 @@
         {
             var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA");
 
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var rodadareal = controle.Taca / 2;
+
             if (rodada.HasValue)
-            {
-                ViewBag.Rodada = rodada.Value;
-                ViewBag.Mao = partidas.Where(x => x.Rodada == rodada.Value && !x.Realizada && x.Mao == 1).Count() > 0 ? 1 : 2;
-            }
-            else
-            {
-                var dados = partidas.Where(x => !x.Realizada).OrderByDescending(x => x.Rodada).ThenBy(x => x.Mao).FirstOrDefault();
+                rodadareal = rodada.Value;
 
-                ViewBag.Rodada = 1;
-                ViewBag.Mao = 2;           
-
-                if (dados != null)
-                {
-                    ViewBag.Rodada = dados.Rodada;
-                    ViewBag.Mao = dados.Mao;
-                }
-            }
+            ViewBag.Rodada = rodadareal;
+            ViewBag.Mao = partidas.Where(x => x.Rodada == rodadareal && !x.Realizada && x.Mao == 1).Count() > 0 ? 1 : 2;
 
             ViewBag.lstDivisao = divisaotabelaRepository.GetAll();
 

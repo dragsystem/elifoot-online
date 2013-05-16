@@ -197,9 +197,9 @@
             var usuario = authenticationService.GetUserAuthenticated();
             
             if (usuario == null)
-                return View("_MenuTop");
+                return View();
             else
-                return View("_MenuTop", usuario);
+                return View(usuario);
         }
 
         public ActionResult Ativar(string id)
