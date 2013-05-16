@@ -390,9 +390,7 @@
     <Content Include="Views\Conta\RecuperarSenha.cshtml" />
     <Content Include="Views\Conta\_Form.cshtml" />
     <Content Include="Views\Adm\DetalheClube.cshtml" />
-    <Content Include="Views\Adm\GridEvento.cshtml" />
     <Content Include="Views\Adm\GridClube.cshtml" />
-    <Content Include="Views\Adm\GridLutador.cshtml" />
     <Content Include="Views\Adm\Login.cshtml">
       <SubType>Code</SubType>
     </Content>
@@ -414,8 +412,9 @@
     <Content Include="Views\Leilao\MeusJogadores.cshtml" />
     <Content Include="Views\Clube\Calendario.cshtml" />
     <Content Include="Views\Clube\Resultados.cshtml" />
-    <Content Include="Views\Shared\_MenuTop.cshtml" />
+    <Content Include="Views\Shared\MenuTop.cshtml" />
     <Content Include="Views\Clube\Taca.cshtml" />
+    <Content Include="Views\Adm\EditClube.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
