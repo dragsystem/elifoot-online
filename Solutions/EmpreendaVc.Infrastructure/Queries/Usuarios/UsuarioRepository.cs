@@ -85,14 +85,13 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
                 //salva usuário com pessoa vinculada
                 Session.SaveOrUpdate(userAccount);
 
-                //if (userAccount.Picks != null)
-                //{
-                //    foreach (var item in userAccount.Picks)
-                //    {
-                //        item.Usuario = userAccount;
-                //        Session.Save(item);
-                //    }
-                //}
+                if (userAccount.Clube != null)
+                {
+                    var clube = userAccount.Clube;
+
+                    clube.Usuario = userAccount;
+                    Session.Save(clube);
+                }
             //}
             //else
             //{
@@ -111,20 +110,13 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
 
             try
             {
-                //foreach (var item in userAccount.Picks)
-                //{
-                    
+                if (userAccount.Clube != null)
+                {
+                    var clube = userAccount.Clube;
 
-                //    if (item.Jogador != null && (item.Posicao != string.Empty && item.Posicao != null))
-                //    {
-                //        var repetido = Session.QueryOver<Pick>().Where(x => x.Usuario != item.Usuario && x.Jogador.Id == item.Jogador.Id).SingleOrDefault();
-                //        if (repetido == null)
-                //        {
-                //            item.Usuario = item.Usuario == null ? userAccount : item.Usuario;
-                //            Session.SaveOrUpdate(item);
-                //        }
-                //    }
-                //}
+                    clube.Usuario = userAccount;
+                    Session.Save(clube);
+                }
 
                 Session.SaveOrUpdate(userAccount);
 
