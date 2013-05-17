@@ -415,6 +415,7 @@
     <Content Include="Views\Shared\MenuTop.cshtml" />
     <Content Include="Views\Clube\Taca.cshtml" />
     <Content Include="Views\Adm\EditClube.cshtml" />
+    <Content Include="Views\Clube\ClassificacaoClube.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

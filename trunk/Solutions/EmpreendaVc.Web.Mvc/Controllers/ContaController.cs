@@ -315,6 +315,10 @@
             {
                 usuario.Clube = usuariooferta.Clube;
                 usuarioRepository.SaveOrUpdate(usuario);
+                
+                var clube = usuariooferta.Clube;
+                clube.Usuario = usuario;
+                clubeRepository.SaveOrUpdate(clube);
 
                 var ofertas = usuarioofertaRepository.GetAll().Where(x => x.Clube.Id == usuariooferta.Clube.Id);
 
