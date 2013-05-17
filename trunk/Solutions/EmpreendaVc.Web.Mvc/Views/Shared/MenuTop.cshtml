@@ -1,0 +1,15 @@
+﻿@model EmpreendaVc.Domain.Usuario
+
+<ul>
+    @if (Model == null)
+    {
+        <li> <a href="@Url.Action("Login", "Conta")">Entrar</a> |</li>
+        <li> <a href="@Url.Action("Cadastro", "Conta")">Cadastrar</a> |</li>
+    }
+    <li> <a href="@Url.Action("Regras", "Home")">Regras</a> |</li>
+    <li> <a href="@Url.Action("Contato", "Home")">Contato</a></li>
+    @if (Model != null)
+    {
+        <li><a href="@Url.Action("Sair", "Conta")">Sair</a></li>
+    }
+</ul>
