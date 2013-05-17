@@ -29,5 +29,7 @@
         <p>Estádio:<br />@Html.TextBoxFor(x => x.Estadio)</p>
         
         <p>Divisão:<br />@this.Select("Divisao").Options((IEnumerable<SelectListItem>)ViewBag.Divisao).FirstOption("Selecione").Selected(Model.Divisao != null ? Model.Divisao.Id.ToString() : "")</p>
+        
+        <input type="submit" value="SALVAR" class="submit" />
     }
 </div>

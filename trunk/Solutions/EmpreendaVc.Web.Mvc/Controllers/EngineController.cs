@@ -82,9 +82,11 @@
 
                 if (controle.Data.Day < DateTime.Now.Day)
                 {
-                    MudarDia();
+                    //MudarDia();
                     if (controle.Dia == 31)
-                        MudarAno();
+                    {
+                        //MudarAno();
+                    }
                 }
             }
             catch (Exception ex)
@@ -99,17 +101,17 @@
         #region MudarDia
 
         [Transaction]
-        public void MudarDia()
+        public void AtualizarDataDia()
         {
-            ////////////////////////////////////////////Atualizar Datas
             var controle = controleRepository.GetAll().FirstOrDefault();
             controle.Data = DateTime.Now;
             controle.Dia = controle.Dia + 1;
             controleRepository.SaveOrUpdate(controle);
+        }
 
-            var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
-
-            ////////////////////////////////////////////Zerar Delay de troca de clube
+        [Transaction]
+        public void ZerarDelayUsuario()
+        {
             foreach (var usuario in usuarioRepository.GetAll().Where(x => x.DelayTroca > 0))
             {
                 usuario.DelayTroca = usuario.DelayTroca - 1;
@@ -118,8 +120,12 @@
 
                 usuarioRepository.SaveOrUpdate(usuario);
             }
+        }
 
-            ////////////////////////////////////////////Zerar Ofertas Técnicos
+        [Transaction]
+        public void ZerarOfertaTecnico()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             var semtecclube = new List<Clube>();
             foreach (var usuariooferta in usuarioofertaRepository.GetAll().Where(x => x.Dia < controle.Dia))
             {
@@ -135,8 +141,13 @@
                 clube.ReputacaoAI = 30;
                 clubeRepository.SaveOrUpdate(clube);
             }
+        }
 
-            ////////////////////////////////////////////Atualizar Finanças e Verifica técnicos
+        [Transaction]
+        public void AlterarFinancasVerificaTecnicos()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
             foreach (var clube in clubeRepository.GetAll())
             {
                 if (clube.Usuario != null && clube.Usuario.Reputacao == 0)
@@ -183,8 +194,12 @@
                 clube.Dinheiro = clube.Dinheiro + (renda + socios - salarios);
                 clubeRepository.SaveOrUpdate(clube);
             }
+        }
 
-            ////////////////////////////////////////////Atualizar Transferencias
+        [Transaction]
+        public void AtualizarTransferencias()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia < controle.Dia))
             {
                 var cancelar = false;
@@ -230,8 +245,12 @@
                     leilaoRepository.Delete(leilao);
                 }
             }
+        }
 
-            ////////////////////////////////////////////ZerarPedidoJogadores
+        [Transaction]
+        public void ZerarPedidoJogadores()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var pedidojog in jogadorpedidoRepository.GetAll().Where(x => x.Dia < controle.Dia))
             {
                 var clube = clubeRepository.Get(pedidojog.Jogador.Clube.Id);
@@ -272,8 +291,12 @@
                 }
                 jogadorpedidoRepository.Delete(pedidojog);
             }
+        }
 
-            ////////////////////////////////////////////CriarPedidoJogadores e saídas espontaneas
+        [Transaction]
+        public void CriarPedidoSaidasJogadores()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var clube in clubeRepository.GetAll())
             {
                 Random rnd = new Random();
@@ -345,17 +368,20 @@
         #region MudarAno
 
         [Transaction]
-        public void MudarAno()
+        public void AtualizarDataAno()
         {
-            ////////////////////////////////////////////Atualizar Datas
             var controle = controleRepository.GetAll().FirstOrDefault();
             controle.Data = DateTime.Now;
             controle.Dia = 1;
             controle.Ano = controle.Ano + 1;
             controle.Taca = 32;
             controleRepository.SaveOrUpdate(controle);
+        }
 
-            ////////////////////////////////////////////Gerar historico taca
+        [Transaction]
+        public void GerarHistoricoTaca()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             var partidafinaltaca = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == 1 && x.Realizada && x.Mao == 2).FirstOrDefault();
             var historico = new Historico();
             historico.Ano = controle.Ano - 1;
@@ -366,15 +392,21 @@
             historico.Artilheiro = artilheiro;
             historico.Gols = artilheiro.Gols.Count();
             historicoRepository.SaveOrUpdate(historico);
+        }
 
-            ////////////////////////////////////////////Zerar Contratos
+        [Transaction]
+        public void ZerarContratos()
+        {
             foreach (var jog in jogadorRepository.GetAll())
             {
                 jog.Contrato = false;
                 jogadorRepository.SaveOrUpdate(jog);
             }
+        }
 
-            ////////////////////////////////////////////Alterar Divisao Times
+        [Transaction]
+        public void AlterarDivisaoTimes()
+        {
             var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
 
             foreach (var divisao in divisaoRepository.GetAll().OrderBy(x => x.Numero))
@@ -387,12 +419,13 @@
                 var clube12 = tabela[11].Clube; //Último
 
                 ////////////////////////////////////////////Gerar historico
-                historico = new Historico();
+                var controle = controleRepository.GetAll().FirstOrDefault();
+                var historico = new Historico();
                 historico.Ano = controle.Ano - 1;
                 historico.Divisao = divisao;
                 historico.Campeao = clube1;
                 historico.Vice = clube2;
-                artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
+                var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
                 historico.Artilheiro = artilheiro;
                 historico.Gols = artilheiro.Gols.Count();
                 historicoRepository.SaveOrUpdate(historico);
@@ -423,8 +456,11 @@
                 clubeRepository.SaveOrUpdate(clube11);
                 clubeRepository.SaveOrUpdate(clube12);
             }
+        }
 
-            ////////////////////////////////////////////Zerar Campeonatos
+        [Transaction]
+        public void ZerarCampeonato()
+        {
             foreach (var partida in partidaRepository.GetAll())
             {
                 partidaRepository.Delete(partida);
@@ -437,8 +473,12 @@
             {
                 golRepository.Delete(gol);
             }
+        }
 
-            ////////////////////////////////////////////Gerar Campeonato
+        [Transaction]
+        public void GerarCampeonato()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var divisao in divisaoRepository.GetAll().OrderBy(x => x.Numero))
             {
                 var lstclubes = divisao.Clubes.OrderBy(x => x.Nome).ToList();
@@ -605,12 +645,12 @@
                 partidaRepository.SaveOrUpdate(partida1);
                 partidaRepository.SaveOrUpdate(partida2);
             }
-
         }
 
         #endregion
 
         #region GerarTaca
+
         [Transaction]
         public void GerarTaca()
         {         

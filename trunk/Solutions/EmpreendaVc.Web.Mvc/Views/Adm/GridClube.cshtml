@@ -17,7 +17,9 @@
     <table cellpadding="0" cellspacing="0" width="100%" class="sortable">
         <thead>
             <tr>
-                <!-- <th width="10"><input type="checkbox" class="check_all" /></th> -->
+                <th class="header" style="cursor: pointer;">
+                    Ação
+                </th>
                 <th class="header" style="cursor: pointer;">
                     Nome
                 </th>
@@ -44,11 +46,12 @@
             { 
                         
             <tr>
+                <td><a href="@Url.Action("EditClube", "Adm", new { id = item.Id })">EDITAR</a></td>
                 <td>
                     <strong><a href="@Url.Action("DetalheClube", "Adm", new { id = item.Id })">@item.Nome</a></strong>
                 </td>
                 <td>
-                    @(item.Usuario != null ? item.Usuario.NomeCompleto : item.ReputacaoAI.ToString();
+                    @(item.Usuario != null ? item.Usuario.NomeCompleto : item.ReputacaoAI.ToString())
                 </td>
                 <td>
                     @item.Divisao.Nome
@@ -57,10 +60,10 @@
                     @item.Dinheiro.ToString("N2")
                 </td>
                 <td>
-                    @item.Estadio.ToString("N")
+                    @item.Estadio.ToString("N0")
                 </td>
                 <td>
-                    @item.Socios.ToString("N")
+                    @item.Socios.ToString("N0")
                 </td>
             </tr>
             }

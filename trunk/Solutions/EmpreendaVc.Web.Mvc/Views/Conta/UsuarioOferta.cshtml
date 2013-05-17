@@ -3,17 +3,23 @@
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<h2>Propostas</h2>
 @if (Model != null)
 {
     foreach (var item in Model)
     {
         var clube = item.Clube;
-    
-    @: Proposta de @clube.Nome (@clube.Divisao.Nome)<br />
-    @: Dinheiro: $@clube.Dinheiro.ToString("N2")
-    @: <a href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = true })">Aceitar</a>
-    @: <a href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = false })">Rejeitar</a>
-
+    <div class="caixa">
+        <h1>@clube.Nome (@clube.Divisao.Nome)</h1>
+        Dinheiro: $@clube.Dinheiro.ToString("N2")<br />
+        Estádio: @clube.Estadio.ToString("N0")<br />
+        Sócios: @clube.Socios.ToString("N0")<br />
+        <div style="text-align: right;">
+            <a href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = true })">Aceitar</a>
+            <a href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = false })">Rejeitar</a>
+        </div>
+    </div>
     }
 }
 else

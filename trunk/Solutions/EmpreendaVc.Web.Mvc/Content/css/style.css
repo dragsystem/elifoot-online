@@ -1,11 +1,20 @@
-﻿body { margin: 0px; padding: 0px; background: url('../img/bg.png') repeat-x #FBFBFB; font-family: 'Arial', 'Trebuchet MS', Sans-Serif; font-size: 15px; color: #333; }
+﻿body { margin: 0px; padding: 0px; background: url('../img/bg.png') repeat-x #FBFBFB; font-family: 'Arial', 'Trebuchet MS', Sans-Serif; font-size: 12px; color: #333; }
 
 #main { width: 980px; min-height: 400px; margin: 0 auto; }
     #header { width: 980px; height: 177px; border-bottom: 4px solid #239ACD; }
         #menu { float: right; margin-top: 60px; text-align: right; }
             #menu ul { margin-right: 20px; }
             #menu ul li { display: block; margin-left: 20px; float: left; list-style-type: none; font-family: 'Trebuchet MS', Sans-Serif; color: White; text-transform: uppercase; font-size: 13px; }            
-            
+
+    #conteudo { padding: 15px; }
+    
+h2 { color: #239ACD; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; }
+
+.caixa { border: 1px solid #E2F3FA; padding: 10px; border-top: 3px solid #239ACD; border-radius: 3px; margin-bottom: 10px; }
+    .caixa h1 { font-size: 15px; font-weight: bold; border-bottom: 1px solid #E2F3FA; padding: 10px; margin: -10px -10px 10px -10px;   }
+    
+    
+    
 .classificacao { border: 1px solid #E2F3FA; padding: 0px; border-top: 3px solid #239ACD; border-radius: 3px; }
 .classificacao th { padding: 8px; background: #EDF8FC; border-bottom: 4px solid #E2F3FA; font-size: 12px; font-weight: normal; }
 .classificacao td { padding: 8px; border-top: 1px solid #E2F3FA; font-size: 16px; }
