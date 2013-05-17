@@ -182,13 +182,20 @@
 
             TempData["MsgErro"] = "Erro na validação dos campos!";
             return View(leilao);
-        }        
+        }
+
+        public ActionResult ClassificacaoClube(int iddivisao)
+        {
+            var divisao = divisaoRepository.Get(iddivisao);
+
+            return View(divisao);
+        }
 
         public ActionResult Classificacao(int iddivisao)
         {
             var divisao = divisaoRepository.Get(iddivisao);
 
-            ViewBag.lstDivisao = divisaotabelaRepository.GetAll();
+            ViewBag.lstDivisao = divisaoRepository.GetAll();
 
             return View(divisao);
         }
@@ -206,7 +213,7 @@
             ViewBag.Rodada = rodadareal;
             ViewBag.Mao = partidas.Where(x => x.Rodada == rodadareal && !x.Realizada && x.Mao == 1).Count() > 0 ? 1 : 2;
 
-            ViewBag.lstDivisao = divisaotabelaRepository.GetAll();
+            ViewBag.lstDivisao = divisaoRepository.GetAll();
 
             return View(partidas);
         }

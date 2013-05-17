@@ -1,0 +1,82 @@
+﻿@model EmpreendaVc.Domain.Divisao
+@{
+    var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;    
+}
+<table class="classificacao" cellpadding="0" cellspacing="0">
+    <tr>
+            <th>Clube</th>
+            <th>P</th>
+            <th>J</th>
+            <th>V</th>
+            <th>E</th>
+            <th>D</th>
+            <th>GP</th>
+            <th>GC</th>
+            <th>SG</th>
+            <th>%</th>
+        </tr>
+        @foreach (var item in Model.DivisaoTabela.OrderByDescending(x => x.Pontos))
+        {
+            <tr>
+                <td style="text-align: left;">@(item.Posicao). @item.Clube.Nome</td>
+                <td>@item.Pontos</td>
+                <td>@item.J</td>
+                <td>@item.V</td>
+                <td>@item.E</td>
+                <td>@item.D</td>
+                <td>@item.GP</td>
+                <td>@item.GC</td>
+                <td>@item.Saldo</td>
+                <td>@item.Aproveitamento.ToString("N2")</td>
+            </tr>
+        }
+        <tr>
+                <td style="text-align: left;">1. item.Clube.Nome</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>1. item.Clube.Nome</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>1. item.Clube.Nome</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>1. item.Clube.Nome</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+    </table>
+</table>
