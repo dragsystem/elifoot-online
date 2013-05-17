@@ -314,6 +314,8 @@
     <Content Include="Content\adm\wysiwyg.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\img\bg.png" />
+    <Content Include="Content\img\cancelar.png" />
+    <Content Include="Content\img\confirmar.png" />
     <Content Include="Content\img\semcontrato.png" />
     <Content Include="Content\img\sobcontrato.png" />
     <Content Include="Content\img\vender.png" />

@@ -6,20 +6,19 @@
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<h2>
+    Vender</h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
-
-@if (Model != null)
+@using (Html.BeginForm())
 {
-    using (Html.BeginForm())
+    if (Model != null)
     {
         Html.AntiForgeryToken();
         @Html.HiddenFor(x => x.Jogador.Id)
-
-        @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model != null ? Model.Valor.ToString() : "")
-
-    <input type="submit" value="Confirmar" />
-    
+        @: Escolha o valor pelo qual deseja vender @Model.Jogador.Nome: 
+        @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model != null ? Model.Valor.ToString() : "")      
     }
+    <br /><br />
+    <input type="submit" class="submit" value="Confirmar" />    
+    <a class="voltar-link" href="@Url.Action("Plantel", "Clube")">VOLTAR</a>
 }
-<a href="@Url.Action("Plantel", "Clube")">Cancelar</a>

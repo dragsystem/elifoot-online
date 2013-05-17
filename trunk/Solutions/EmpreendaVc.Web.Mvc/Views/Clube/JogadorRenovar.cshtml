@@ -8,14 +8,19 @@
 }
 @{ Html.RenderAction("Index", "Mensagem"); }
 
+<h2>
+    Renovar</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
 @using (Html.BeginForm())
 {
-    Html.AntiForgeryToken();
-    @Html.Hidden("Jogador", Model.Id)
-
-    @this.Select("Valor").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString("N2") : "")
-
-    <input type="submit" value="Confirmar" />
-    
+    if (Model != null)
+    {
+        Html.AntiForgeryToken();
+        @Html.Hidden("Jogador", Model.Id)
+        @: Escolha o salário que será oferecido por @Model.Nome: 
+        @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? "$" + Model.Salario.ToString("N2") : "")   
+    }
+    <br /><br />
+    <input type="submit" class="submit" value="Confirmar" />    
+    <a class="voltar-link" href="@Url.Action("Plantel", "Clube")">VOLTAR</a>
 }
-<a href="@Url.Action("Plantel", "Clube")">Cancelar</a>
