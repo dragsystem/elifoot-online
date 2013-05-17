@@ -11,20 +11,27 @@
     #conteudo { padding: 15px; }
     
 h2 { color: #239ACD; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; }
+h2 .legenda { float: right; font-size: 9px; color: #333; text-transform: uppercase; letter-spacing: 0; margin-top: 2px; text-align:right; }
+h2 .legenda b { font-size: 11px; }
 
 .caixa { border: 1px solid #E2F3FA; padding: 10px; border-top: 2px solid #239ACD; border-radius: 3px; margin-bottom: 10px; }
     .caixa h1 { font-size: 15px; font-weight: bold; border-bottom: 1px solid #E2F3FA; padding: 10px; margin: -10px -10px 10px -10px;   }
     
     
     
-.classificacao { border: 1px solid #E2F3FA; padding: 0px; border-top: 2px solid #239ACD; border-radius: 3px; width:100%; }
-.classificacao th { padding: 8px; background: #EDF8FC; border-bottom: 4px solid #E2F3FA; font-size: 12px; font-weight: normal; }
+.classificacao { border: 1px solid #E2F3FA; padding: 0px; border-top: 2px solid #239ACD; border-radius: 3px; width:100%; margin-bottom: 10px; }
+.classificacao th { padding: 8px; background: #EDF8FC; border-bottom: 4px solid #E2F3FA; font-size: 11px; font-weight: normal; color: #239ACD; }
 .classificacao td { padding: 8px; border-top: 1px solid #E2F3FA; font-size: 12px; text-align: center; }
 .classificacao td:nth-child(even) { border-top: 1px solid #E2F3FA; padding: 8px; background-color: #EDF8FC; }
 
-#plantel-caixa { float: left; width: 700px; min-height: 400px; }
+#plantel-caixa { float: left; width: 600px; }
     #plantel-caixa table { width: 100%; }
-#plantel-classificacao { float: left; width: 700px; }
-#plantel-dados { float: right; width: 210px; }
-#plantel-financas { float: right; width: 210px; }
-#plantel-proximo { float: right; width: 210px; }
+#plantel-classificacao { float: left; width: 600px; }
+#plantel-dados { float: right; width: 310px; }
+#plantel-financas { float: right; width: 310px; }
+#plantel-proximo { float: right; width: 310px; }
+
+
+.plantel-sobcontrato { display: block; width: 25px; height: 20px; background: url('../img/sobcontrato.png') center center no-repeat; float: left; }
+.plantel-semcontrato { display: block; width: 25px; height: 20px; background: url('../img/semcontrato.png') center center no-repeat; float: left; }
+.plantel-vender { display: block; width: 25px; height: 20px; background: url('../img/vender.png') center center no-repeat; float: left;  }

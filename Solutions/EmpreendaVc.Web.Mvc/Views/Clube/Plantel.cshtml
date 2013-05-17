@@ -10,15 +10,29 @@
 
 <div id="plantel-caixa">
     <table class="classificacao" cellpadding="0" cellspacing="0">
-        @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenBy(x => x.H))
+        <tr>
+            <th width="35%">JOGADOR</th>
+            <th width="10%">POSIÇÃO</th>
+            <th width="10%">H</th>
+            <th width="15%">SALÁRIO</th>
+            <th width="10%">GOLS</th>
+            <th width="10%">AÇÕES</th>
+        </tr>
+        @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.H))
         {
             <tr>
-                <td>@jog.Nome</td>
-                <td>@Util.RetornaPosicaoCompleta(jog.Posicao)</td>
+                <td style="text-align: left;">@jog.Nome.ToUpper()</td>
+                <td>@Util.RetornaPosicao(jog.Posicao)</td>
                 <td>@jog.H</td>
-                <td>$@jog.Salario.ToString("N2")</td>
-                <td>@if (jog.Contrato) { <span class='plantel-contrato' /> } else { <a class="plantel-renovar" href="@Url.Action("JogadorRenovar", new { id = jog.Id })" /> }</td>
-                <td><a class="plantel-vender" href="@Url.Action("JogadorVender", new { id = jog.Id })" /></td>
+                <td style="text-align: right;">$@jog.Salario.ToString("N2")</td>
+                <td>@jog.Gols.Count()</td>
+                <td>
+                    @if (jog.Contrato) 
+                        { <span class="plantel-sobcontrato" title="Sob-contrato" /> } 
+                    else 
+                        { <a class="plantel-semcontrato" title="Renovar contrato" href="@Url.Action("JogadorRenovar", new { id = jog.Id })" /> }
+                        <a class="plantel-vender" title="Vender" href="@Url.Action("JogadorVender", new { id = jog.Id })" />
+                </td>
             </tr>
         }
     </table>
