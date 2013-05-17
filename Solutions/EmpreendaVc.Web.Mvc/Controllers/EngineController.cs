@@ -74,20 +74,21 @@
             this.historicoRepository = historicoRepository;
         }
 
-        public ActionResult Index(int id)
+        public ActionResult Index()
         {
             try
             {
                 var controle = controleRepository.GetAll().FirstOrDefault();
 
-                if (controle.Data.Day < DateTime.Now.Day)
-                {
-                    //MudarDia();
-                    if (controle.Dia == 31)
-                    {
-                        //MudarAno();
-                    }
-                }
+                GerarCampeonato();
+                //if (controle.Data.Day < DateTime.Now.Day)
+                //{
+                //    //MudarDia();
+                //    if (controle.Dia == 31)
+                //    {
+                //        //MudarAno();
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -504,11 +505,11 @@
                 }
 
                 ////////////////////////////////////////////Gerar Partidas
-                int t1 = 1;
-                int t2 = 2;
-                int t3 = 12; // ultimo time
-                int t4 = 2;
-                int t5 = 12;
+                int t1 = 0;
+                int t2 = 1;
+                int t3 = 11; // ultimo time
+                int t4 = 1;
+                int t5 = 11;
                 int dia = 1;
                 for (int i = 1; i < 23; i++) // 22 = rodadas
                 {
@@ -526,14 +527,14 @@
                         partida.Tipo = "DIVISAO";
                         partida.Dia = dia;
                         partida.Divisao = divisao;
-                        partida.Mao = i < 12 ? 1 : 2;
+                        partida.Mao = i < 11 ? 0 : 1;
                         partidaRepository.SaveOrUpdate(partida);
 
                         for (int i2 = 1; i2 < 6; i2++) // 6 = metade do total de times
                         {
                             t2++;
-                            if (t2 > 12) // 12 = max de times
-                                t2 = 2;
+                            if (t2 > 11) // 12 = max de times
+                                t2 = 1;
 
                             partida = new Partida();
                             partida.Clube1 = lstclubes[t3];
@@ -542,12 +543,12 @@
                             partida.Tipo = "DIVISAO";
                             partida.Dia = dia;
                             partida.Divisao = divisao;
-                            partida.Mao = i < 12 ? 1 : 2;
+                            partida.Mao = i < 11 ? 0 : 1;
                             partidaRepository.SaveOrUpdate(partida);
 
                             t3--;
-                            if (t3 < 2) // 2 = min de times
-                                t3 = 12;
+                            if (t3 < 1) // 2 = min de times
+                                t3 = 11;
                         }
                     }
                     else
@@ -559,14 +560,14 @@
                         partida.Tipo = "DIVISAO";
                         partida.Dia = dia;
                         partida.Divisao = divisao;
-                        partida.Mao = i < 12 ? 1 : 2;
+                        partida.Mao = i < 11 ? 0 : 1;
                         partidaRepository.SaveOrUpdate(partida);
 
                         for (int i2 = 1; i2 < 6; i2++) // 6 = metade do total de times
                         {
                             t2++;
-                            if (t2 > 12) // 12 = max de times
-                                t2 = 2;
+                            if (t2 > 11) // 12 = max de times
+                                t2 = 1;
 
                             partida = new Partida();
                             partida.Clube1 = lstclubes[t2];
@@ -575,76 +576,79 @@
                             partida.Tipo = "DIVISAO";
                             partida.Dia = dia;
                             partida.Divisao = divisao;
-                            partida.Mao = i < 12 ? 1 : 2;
+                            partida.Mao = i < 11 ? 0 : 1;
                             partidaRepository.SaveOrUpdate(partida);
                             t3--;
-                            if (t3 < 2) // 12 = max de times
-                                t3 = 12;
+                            if (t3 < 1) // 12 = max de times
+                                t3 = 11;
                         }
                     }
                     t4--;
-                    if (t4 < 2) // 2 = min de times
-                        t4 = 12;
+                    if (t4 < 1) // 2 = min de times
+                        t4 = 11;
                     t5--;
-                    if (t5 < 2) // 2 = min de times
-                        t5 = 12;
+                    if (t5 < 1) // 2 = min de times
+                        t5 = 11;
 
                     dia++;
                 }
-
-                ////////////////////////////////////////////Gerar Taça
-                var itaca = 1;
-                var lstTaca = new List<Clube>();
-                var partida1 = new Partida();
-                var partida2 = new Partida();
-
-                foreach (var divisaotabela in divisaotabelaRepository.GetAll().OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Posicao))
-                {
-                    var clube = divisaotabela.Clube;
-                    clube.Taca = true;
-
-                    clubeRepository.SaveOrUpdate(clube);
-
-                    lstTaca.Add(clube);
-                    itaca++;
-
-                    if (itaca > 32)
-                        break;
-                }
-                for (int i = 0; i < 16; i++) // 16 partidas
-                {
-                    Random rnd = new Random();
-
-                    var maxclubes = 32 - (2 * i);
-                    var clube1 = lstTaca[rnd.Next(0, maxclubes)];
-                    var clube2 = lstTaca[rnd.Next(0, maxclubes)];
-
-                    while (clube1.Id == clube2.Id)
-                    {
-                        clube2 = lstTaca[rnd.Next(0, maxclubes)];
-                    }
-
-                    partida1.Dia = 4;
-                    partida1.Mao = 1;
-                    partida1.Rodada = 16;
-                    partida1.Tipo = "TACA";
-                    partida1.Clube1 = clube1;
-                    partida1.Clube2 = clube2;
-
-                    partida2.Dia = 7;
-                    partida2.Mao = 2;
-                    partida2.Rodada = 16;
-                    partida2.Tipo = "TACA";
-                    partida2.Clube1 = clube2;
-                    partida2.Clube2 = clube1;
-
-                    lstTaca.Remove(clube1);
-                    lstTaca.Remove(clube2);
-                }
-
-                partidaRepository.SaveOrUpdate(partida1);
-                partidaRepository.SaveOrUpdate(partida2);
             }
+        }
+
+        [Transaction]
+        public void GerarTacaAno()
+        {
+            var itaca = 1;
+            var lstTaca = new List<Clube>();
+            var partida1 = new Partida();
+            var partida2 = new Partida();
+
+            foreach (var divisaotabela in divisaotabelaRepository.GetAll().OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Posicao))
+            {
+                var clube = divisaotabela.Clube;
+                clube.Taca = true;
+
+                clubeRepository.SaveOrUpdate(clube);
+
+                lstTaca.Add(clube);
+                itaca++;
+
+                if (itaca > 32)
+                    break;
+            }
+            for (int i = 0; i < 16; i++) // 16 partidas
+            {
+                Random rnd = new Random();
+
+                var maxclubes = 32 - (2 * i);
+                var clube1 = lstTaca[rnd.Next(0, maxclubes)];
+                var clube2 = lstTaca[rnd.Next(0, maxclubes)];
+
+                while (clube1.Id == clube2.Id)
+                {
+                    clube2 = lstTaca[rnd.Next(0, maxclubes)];
+                }
+
+                partida1.Dia = 4;
+                partida1.Mao = 1;
+                partida1.Rodada = 16;
+                partida1.Tipo = "TACA";
+                partida1.Clube1 = clube1;
+                partida1.Clube2 = clube2;
+
+                partida2.Dia = 7;
+                partida2.Mao = 2;
+                partida2.Rodada = 16;
+                partida2.Tipo = "TACA";
+                partida2.Clube1 = clube2;
+                partida2.Clube2 = clube1;
+
+                lstTaca.Remove(clube1);
+                lstTaca.Remove(clube2);
+            }
+
+            partidaRepository.SaveOrUpdate(partida1);
+            partidaRepository.SaveOrUpdate(partida2);
         }
 
         #endregion

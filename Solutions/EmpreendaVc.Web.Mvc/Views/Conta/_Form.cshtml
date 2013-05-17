@@ -2,20 +2,20 @@
            
 <p>
     Nome Completo: <br />
-    @Html.TextBoxFor(model => model.NomeCompleto, new { size = 60 }) 
+    @Html.TextBoxFor(model => model.NomeCompleto, new { size = 40 }) 
 </p>
 <p>
     E-mail: <br />
-    @Html.TextBoxFor(model => model.Email, new { size = 60 })
+    @Html.TextBoxFor(model => model.Email, new { size = 40 })
 </p>
 <p>
     Senha: <br />
-    @Html.PasswordFor(model => model.Senha, new { size = 20 })
+    @Html.PasswordFor(model => model.Senha, new { size = 40 })
 </p>
 <p>
     Confirme a Senha: <br />
-    @Html.Password("ConfirmaSenha", null, new { size = 20 })
+    @Html.Password("ConfirmaSenha", null, new { size = 40 })
 </p>
 <p>
-    <input type="submit" value="Cadastrar" />
+    <input type="submit" class="submit" value="Cadastrar" />
 </p>

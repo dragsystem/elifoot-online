@@ -2,12 +2,7 @@
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<h2>
+    Bem vindo</h2>
 
-<div id="subheader">
-    <h2>
-        Bem vindo</h2>
-</div>
-
-<div id="left">
-    Texto
-</div>
+@{ Html.RenderAction("Login", "Conta"); }

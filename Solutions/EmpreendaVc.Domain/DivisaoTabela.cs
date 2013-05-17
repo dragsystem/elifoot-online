@@ -33,7 +33,7 @@ namespace EmpreendaVc.Domain
 
         public virtual int Posicao { get; set; }
 
-        public virtual decimal Aproveitamento { get { return (Pontos / (J * 3)) * 100; } }
+        public virtual decimal Aproveitamento { get { return Pontos > 0 ? (Pontos / (J * 3)) * 100 : 0; } }
 
         public DivisaoTabela()
         {

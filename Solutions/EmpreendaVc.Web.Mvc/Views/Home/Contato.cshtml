@@ -29,24 +29,24 @@
         {
             <p>
                 Nome:<br />
-                @Html.TextBoxFor(model => model.Nome, new { size = 80 })
+                @Html.TextBoxFor(model => model.Nome, new { size = 60 })
             </p>
             <p>
                 E-mail:<br />
-                @Html.TextBoxFor(model => model.Email, new { size = 80 })
+                @Html.TextBoxFor(model => model.Email, new { size = 60 })
             </p>
         }
         
         <p>
             Assunto:<br />
-            @Html.TextBoxFor(model => model.Assunto, new { size = 80 })
+            @Html.TextBoxFor(model => model.Assunto, new { size = 60 })
         </p>
         
         <p>
             Mensagem:<br />
-            @Html.TextAreaFor(model => model.Mensagem, new { style = "width: 425px; height: 80px;" })
+            @Html.TextAreaFor(model => model.Mensagem, new { style = "width: 412px; height: 120px;" })
         </p>
         
-        <input type="submit" value="Enviar" />      
+        <input type="submit" class="submit" value="Enviar" />      
     }
 </div>

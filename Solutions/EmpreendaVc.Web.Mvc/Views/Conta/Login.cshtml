@@ -1,33 +1,28 @@
 ﻿@model EmpreendaVc.Domain.Usuario
-@{
+@*@{
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
+}*@
 
-<div id="subheader">
-    <h2>Área de Login</h2>
-</div>
+<div id="home-login" class="caixa">
+    <h1>Área de Login</h1>
+    @using (Html.BeginForm("Login"))
+    {
+        @Html.AntiForgeryToken()
+        <div id="login">
+            @Html.ValidationSummary(true)
+            <p style="text-align: center;">
+                E-mail: @Html.TextBoxFor(model => model.Email, new { size = 40 })
+            </p>
+            <p style="text-align: center;">
+                Senha: @Html.PasswordFor(model => model.Senha, new { size = 40 })
+            </p>
+            <p style="text-align: center;">     
+                <input type="submit" class="submit" value="Entrar" /><br /><br />
+                @Html.ActionLink("Esqueci minha senha", "RecuperarSenha") <br />
+                @Html.ActionLink("Não sou cadastrado", "Cadastro")   
+            </p>
 
-<div id="left">
-@using (Html.BeginForm("Login"))
-{
-    @Html.AntiForgeryToken()
-    <div id="login">
-        @Html.ValidationSummary(true)
-        <p>
-            E-mail: <br /> @Html.TextBoxFor(model => model.Email, new { size = 60 })
-        </p>
-        <p>
-            Senha: <br /> @Html.PasswordFor(model => model.Senha, new { size = 20 })
-        </p>
-        <p>
-            @Html.ActionLink("Esqueci minha senha", "RecuperarSenha") <br />
-            @Html.ActionLink("Não sou cadastrado", "Cadastro")
-        </p>
-        <p>
-            <input type="submit" value="Entrar" />
-        </p>
-
-    </div>
-}
+        </div>
+    }
 </div>

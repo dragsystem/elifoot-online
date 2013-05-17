@@ -1,6 +1,6 @@
 ﻿@model EmpreendaVc.Domain.Divisao
 @{
-    var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;    
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
 }
 
 <h2>@Model.Nome
@@ -32,7 +32,16 @@
         </tr>
         @foreach (var item in Model.DivisaoTabela.OrderByDescending(x => x.Pontos))
         {
-            <tr>
+            var style = "";
+            if (clube.Id == item.Clube.Id)
+            {
+                style = "style='font-weight:bold;'";
+            }
+            else
+            {
+                style = "";
+            }
+            <tr @style>
                 <td style="text-align: left;">@(item.Posicao). @item.Clube.Nome</td>
                 <td>@item.Pontos</td>
                 <td>@item.J</td>

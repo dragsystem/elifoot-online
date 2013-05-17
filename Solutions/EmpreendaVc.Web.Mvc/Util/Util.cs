@@ -58,17 +58,17 @@ namespace EmpreendaVc.Web.Mvc.Util
             {
                 lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
 
-                if (valor < 300000)
+                if (valor <= 300000)
                     valor = valor + 50000;
-                else if (valor < 3000000)
+                else if (valor <= 250000)
                     valor = valor + 250000;
-                else if (valor < 10000000)
+                else if (valor <= 10000000)
                     valor = valor + 500000;
-                else if (valor < 30000000)
+                else if (valor <= 30000000)
                     valor = valor + 1000000;
-                else if (valor < 50000000)
+                else if (valor <= 50000000)
                     valor = valor + 2500000;
-                else if (valor >= 50000000)
+                else if (valor > 50000000)
                     valor = valor + 5000000;
             }
 
@@ -84,16 +84,18 @@ namespace EmpreendaVc.Web.Mvc.Util
             {
                 lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
 
-                if (valor < 10000)
+                if (valor <= 10000)
                     valor = valor + 1000;
-                else if (valor < 50000)
+                else if (valor <= 50000)
                     valor = valor + 2500;
-                else if (valor < 100000)
+                else if (valor <= 100000)
                     valor = valor + 5000;
-                else if (valor < 300000)
+                else if (valor <= 300000)
                     valor = valor + 10000;
                 else if (valor <= 1000000)
                     valor = valor + 25000;
+                else if (valor > 1000000)
+                    valor = valor + 50000;
             }
 
             return lst;
