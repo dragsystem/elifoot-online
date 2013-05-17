@@ -1,0 +1,33 @@
+﻿@model EmpreendaVc.Domain.Clube
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    Layout = "~/Views/Shared/_LayoutAdm.cshtml";
+}
+<div id="content">
+    <!-- .breadcrumb ends -->
+    @if (TempData["AdmError"] != null && (bool)TempData["AdmError"])
+    {
+        <div class="message errormsg" style="display: block;">
+            <p>
+                Desculpe, ocorreu um erro no envio dos dados.</p>
+        </div>
+    }
+    <h2>EDITAR</h2>
+    @using (Html.BeginForm(new { id = Model.Id }))
+    {
+        @Html.HiddenFor(x => x.Id)
+        @Html.ValidationSummary(true,
+                "Ocorreram erros de validação. Por favor, confirme os campos e tente novamente.",
+                new { @class = "wpcf7-response-output wpcf7-display-none wpcf7-validation-errors wpcf7-mail-sent-ng" })
+        @Html.AntiForgeryToken()
+        
+        <p>Nome:<br />@Html.TextBoxFor(x => x.Nome)</p>
+        
+        <p>Dinheiro:<br />@Html.TextBoxFor(x => x.Dinheiro)</p>
+
+        <p>Estádio:<br />@Html.TextBoxFor(x => x.Estadio)</p>
+        
+        <p>Divisão:<br />@this.Select("Divisao").Options((IEnumerable<SelectListItem>)ViewBag.Divisao).FirstOption("Selecione").Selected(Model.Divisao != null ? Model.Divisao.Id.ToString() : "")</p>
+    }
+</div>
