@@ -2,6 +2,21 @@
 @{
     var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;    
 }
+
+<h2>@Model.Nome
+    <div class="legenda">
+        <b>P</b> Pontos
+        <b>J</b> Jogos
+        <b>V</b> Vitórias
+        <b>E</b> Empates
+        <b>D</b> Derrotas
+        <b>GP</b> Gols Pro<br />
+        <b>GC</b> Gols Contra
+        <b>SG</b> Saldo Gols
+        <b>%</b> Aproveitamento
+    </div>
+</h2>
+
 <table class="classificacao" cellpadding="0" cellspacing="0">
     <tr>
             <th>Clube</th>
@@ -30,53 +45,6 @@
                 <td>@item.Aproveitamento.ToString("N2")</td>
             </tr>
         }
-        <tr>
-                <td style="text-align: left;">1. item.Clube.Nome</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td>1. item.Clube.Nome</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td>1. item.Clube.Nome</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-            </tr>
-            <tr>
-                <td>1. item.Clube.Nome</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-            </tr>
+        
     </table>
 </table>

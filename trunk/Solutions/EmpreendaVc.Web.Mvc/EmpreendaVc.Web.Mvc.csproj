@@ -313,6 +313,10 @@
     <Content Include="Content\adm\visualize.css" />
     <Content Include="Content\adm\wysiwyg.css" />
     <Content Include="Content\css\style.css" />
+    <Content Include="Content\img\bg.png" />
+    <Content Include="Content\img\semcontrato.png" />
+    <Content Include="Content\img\sobcontrato.png" />
+    <Content Include="Content\img\vender.png" />
     <Content Include="Content\js\fullcalendar\fullcalendar.css" />
     <Content Include="Content\js\fullcalendar\fullcalendar.js" />
     <Content Include="Content\js\fullcalendar\fullcalendar.min.js" />
@@ -364,7 +368,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AppLogs\" />
-    <Folder Include="Content\img\" />
     <Folder Include="Content\js\audiojs\" />
   </ItemGroup>
   <ItemGroup>

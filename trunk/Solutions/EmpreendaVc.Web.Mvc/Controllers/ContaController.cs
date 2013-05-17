@@ -171,7 +171,7 @@
                     {
                         authenticationService.SignIn(usuario, usuario.IsRememberLogin);
 
-                        return RedirectToAction("MeusGrupos", "Grupo");
+                        return RedirectToAction("Plantel", "Clube");
                     }
                     else
                     {
@@ -313,19 +313,7 @@
 
             if (resposta)
             {
-                usuario.Clube = usuariooferta.Clube;
-                usuarioRepository.SaveOrUpdate(usuario);
-                
-                var clube = usuariooferta.Clube;
-                clube.Usuario = usuario;
-                clubeRepository.SaveOrUpdate(clube);
-
-                var ofertas = usuarioofertaRepository.GetAll().Where(x => x.Clube.Id == usuariooferta.Clube.Id);
-
-                foreach (var item in ofertas)
-                {
-                    usuarioofertaRepository.Delete(item);
-                }
+                usuarioRepository.AceitaUsuarioOferta(usuario.Id, usuariooferta.Clube.Id);
 
                 return RedirectToAction("Plantel", "Clube");
             }

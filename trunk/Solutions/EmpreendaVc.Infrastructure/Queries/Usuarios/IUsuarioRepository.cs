@@ -19,5 +19,7 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
         List<string> SaveOrUpdate(Usuario userAccount);
 
         bool ValidateUsuario(string Email, string password);
+
+        void AceitaUsuarioOferta(int id, int clube);
     }
 }

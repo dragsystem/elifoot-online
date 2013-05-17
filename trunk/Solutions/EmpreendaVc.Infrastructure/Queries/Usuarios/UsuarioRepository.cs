@@ -144,5 +144,25 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
 
             return isValid;
         }
+
+        public void AceitaUsuarioOferta(int id, int clube)
+        {
+            Session.Transaction.Begin();
+
+            var userAccount = Session.Get<Usuario>(id);
+            userAccount.Clube = Session.Get<Clube>(clube);
+
+            
+
+            var ofertas = Session.QueryOver<UsuarioOferta>()
+                        .Where(x => x.Clube.Id == clube).List();
+            
+            foreach (var item in ofertas)
+            {
+                Session.Delete(item);
+            }
+            
+            SaveOrUpdate(userAccount);
+        }
     }
 }
