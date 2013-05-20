@@ -298,6 +298,9 @@
         [Authorize]
         public ActionResult Calendario()
         {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            ViewBag.Dia = controle.Dia;
+
             var usuario = authenticationService.GetUserAuthenticated();
 
             if (usuario.Clube == null)
@@ -305,7 +308,7 @@
 
             var lstPartidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id).OrderBy(x => x.Dia);
 
-            ViewBag.Clube = usuario.Clube;
+            ViewBag.Clube = usuario.Clube;            
 
             return View(lstPartidas);
         }

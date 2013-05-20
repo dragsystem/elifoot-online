@@ -45,6 +45,10 @@
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
+            var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
+            if (lstUsuarioOferta.Count() > 0)
+                return RedirectToAction("UsuarioOferta", "Conta");
+
             return View(usuario);
         }
 

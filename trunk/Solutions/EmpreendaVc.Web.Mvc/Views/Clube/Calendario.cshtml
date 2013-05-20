@@ -4,6 +4,7 @@
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+    var dia = (int)ViewBag.Dia;
 }
 
 <h2>Calendário</h2>
@@ -31,7 +32,7 @@
     {
         <tr>
             <td>@if (item.Clube1.Id == clube.Id) { @item.Clube2.Nome } else { @item.Clube1.Nome }</td>
-            <td>@item.Dia</td>
+            <td>@(DateTime.Now.AddDays(item.Dia - dia).ToShortDateString())</td>
             <td>
                 @if (item.Tipo == "DIVISAO")
                 { @clube.Divisao.Nome }

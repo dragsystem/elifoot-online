@@ -150,12 +150,10 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
             Session.Transaction.Begin();
 
             var userAccount = Session.Get<Usuario>(id);
-            userAccount.Clube = Session.Get<Clube>(clube);
-
-            
+            userAccount.Clube = Session.Get<Clube>(clube);            
 
             var ofertas = Session.QueryOver<UsuarioOferta>()
-                        .Where(x => x.Clube.Id == clube).List();
+                        .Where(x => x.Clube.Id == clube || x.Usuario.Id == id).List();
             
             foreach (var item in ofertas)
             {
