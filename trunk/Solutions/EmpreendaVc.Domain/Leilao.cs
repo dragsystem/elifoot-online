@@ -12,7 +12,9 @@ namespace EmpreendaVc.Domain
     public class Leilao : Entity
     {
         public virtual Jogador Jogador { get; set; }
-                
+
+        public virtual Clube Clube { get; set; }
+
         public virtual decimal Valor { get; set; }
 
         public virtual bool Espontaneo { get; set; }
@@ -25,6 +27,7 @@ namespace EmpreendaVc.Domain
 
         public Leilao()
         {
+            Clube = Jogador.Clube;
             Ofertas = new List<LeilaoOferta>();
         }
     }

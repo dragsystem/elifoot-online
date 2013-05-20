@@ -1,0 +1,46 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Leilao>
+@using EmpreendaVc.Web.Mvc.Util
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+}
+
+<h2>Transferências</h2>
+<table class="classificacao" cellpadding="0" cellspacing="0">
+    <tr>
+        <th>
+            Jogador
+        </th>
+        <th>
+            Data
+        </th>
+        <th>
+            Clube Vendedor
+        </th>
+        <th>
+            Clube Comprador
+        </th>
+        <th>
+            Valor
+        </th>
+        <th>
+            Salário
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        var style = "";
+        if (item.Clube.Id == clube.Id || item.OfertaVencedora.Clube.Id == clube.Id)
+        { style = "style=font-weight:bold;"; }
+        else { style = ""; }
+        <tr @style>
+            <td>@item.Jogador.Nome</td>
+            <td>@item.Dia</td>
+            <td>@item.Clube.Nome</td>
+            <td>@item.OfertaVencedora.Clube.Nome</td>
+            <td>$@item.Valor.ToString("N2")</td>
+            <td>$@item.OfertaVencedora.Salario.ToString("N2")</td>
+        </tr>    
+    }
+</table>

@@ -74,13 +74,17 @@
             this.historicoRepository = historicoRepository;
         }
 
+        //OK - GerarCampeonato(); 
+        
+        [Transaction]
         public ActionResult Index()
         {
             try
             {
-                var controle = controleRepository.GetAll().FirstOrDefault();
+                //var controle = controleRepository.GetAll().FirstOrDefault();
 
-                GerarCampeonato();
+                //GerarCampeonato();
+                //AtualizaTabela();
                 //if (controle.Data.Day < DateTime.Now.Day)
                 //{
                 //    //MudarDia();
@@ -102,16 +106,18 @@
         #region MudarDia
 
         [Transaction]
-        public void AtualizarDataDia()
+        public ActionResult AtualizarDataDia()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             controle.Data = DateTime.Now;
             controle.Dia = controle.Dia + 1;
             controleRepository.SaveOrUpdate(controle);
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void ZerarDelayUsuario()
+        public ActionResult ZerarDelayUsuario()
         {
             foreach (var usuario in usuarioRepository.GetAll().Where(x => x.DelayTroca > 0))
             {
@@ -121,10 +127,12 @@
 
                 usuarioRepository.SaveOrUpdate(usuario);
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void ZerarOfertaTecnico()
+        public ActionResult ZerarOfertaTecnico()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             var semtecclube = new List<Clube>();
@@ -133,8 +141,6 @@
                 if (semtecclube.Where(x => x.Id == usuariooferta.Clube.Id).Count() == 0)
                     semtecclube.Add(usuariooferta.Clube);
 
-
-
                 usuarioofertaRepository.Delete(usuariooferta);
             }
             foreach (var clube in semtecclube)
@@ -142,10 +148,12 @@
                 clube.ReputacaoAI = 30;
                 clubeRepository.SaveOrUpdate(clube);
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void AlterarFinancasVerificaTecnicos()
+        public ActionResult AlterarFinancasVerificaTecnicos()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
@@ -161,7 +169,7 @@
                         var usuariooferta = new UsuarioOferta();
 
                         usuariooferta.Clube = clube;
-                        usuariooferta.Dia = controle.Dia;
+                        usuariooferta.Dia = controle.Dia + 1;
                         usuariooferta.Usuario = tecniconovo;
 
                         usuarioofertaRepository.SaveOrUpdate(usuariooferta);
@@ -181,7 +189,7 @@
                         var usuariooferta = new UsuarioOferta();
 
                         usuariooferta.Clube = clube;
-                        usuariooferta.Dia = controle.Dia;
+                        usuariooferta.Dia = controle.Dia + 1;
                         usuariooferta.Usuario = tecniconovo;
 
                         usuarioofertaRepository.SaveOrUpdate(usuariooferta);
@@ -195,10 +203,12 @@
                 clube.Dinheiro = clube.Dinheiro + (renda + socios - salarios);
                 clubeRepository.SaveOrUpdate(clube);
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void AtualizarTransferencias()
+        public ActionResult AtualizarTransferencias()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia < controle.Dia))
@@ -246,10 +256,12 @@
                     leilaoRepository.Delete(leilao);
                 }
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void ZerarPedidoJogadores()
+        public ActionResult ZerarPedidoJogadores()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var pedidojog in jogadorpedidoRepository.GetAll().Where(x => x.Dia < controle.Dia))
@@ -269,7 +281,7 @@
                         {
                             var leilao = new Leilao();
 
-                            leilao.Dia = controle.Dia;
+                            leilao.Dia = controle.Dia + 1;
                             leilao.Espontaneo = true;
                             leilao.Jogador = pedidojog.Jogador;
                             leilao.Valor = pedidojog.Jogador.H * 50000;
@@ -292,10 +304,12 @@
                 }
                 jogadorpedidoRepository.Delete(pedidojog);
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void CriarPedidoSaidasJogadores()
+        public ActionResult CriarPedidoSaidasJogadores()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var clube in clubeRepository.GetAll())
@@ -314,7 +328,7 @@
                         decimal aumento = (rnd.Next(1, 4)) / 10;
 
                         var pedidojog = new JogadorPedido();
-                        pedidojog.Dia = controle.Dia;
+                        pedidojog.Dia = controle.Dia + 1;
                         pedidojog.Jogador = lstjognovo[jog];
                         pedidojog.Salario = lstjognovo[jog].Salario + (lstjognovo[jog].Salario * aumento);
 
@@ -354,7 +368,7 @@
                         var jog = rnd.Next(0, lstjognovo.Count());
 
                         var leilao = new Leilao();
-                        leilao.Dia = controle.Dia;
+                        leilao.Dia = controle.Dia + 1;
                         leilao.Espontaneo = true;
                         leilao.Jogador = lstjognovo[jog];
                         leilao.Valor = lstjognovo[jog].H * 50000;
@@ -362,6 +376,7 @@
                     }
                 }
             }
+            return RedirectToAction("Index", "Engine");
         }
 
         #endregion
@@ -369,7 +384,7 @@
         #region MudarAno
 
         [Transaction]
-        public void AtualizarDataAno()
+        public ActionResult AtualizarDataAno()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             controle.Data = DateTime.Now;
@@ -377,15 +392,17 @@
             controle.Ano = controle.Ano + 1;
             controle.Taca = 32;
             controleRepository.SaveOrUpdate(controle);
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void GerarHistoricoTaca()
+        public ActionResult GerarHistoricoTaca()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             var partidafinaltaca = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == 1 && x.Realizada && x.Mao == 2).FirstOrDefault();
             var historico = new Historico();
-            historico.Ano = controle.Ano - 1;
+            historico.Ano = controle.Ano;
             historico.Taca = true;
             historico.Campeao = partidafinaltaca.Vencedor;
             historico.Vice = partidafinaltaca.Vencedor == partidafinaltaca.Clube1 ? partidafinaltaca.Clube2 : partidafinaltaca.Clube1;
@@ -393,20 +410,24 @@
             historico.Artilheiro = artilheiro;
             historico.Gols = artilheiro.Gols.Count();
             historicoRepository.SaveOrUpdate(historico);
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void ZerarContratos()
+        public ActionResult ZerarContratos()
         {
             foreach (var jog in jogadorRepository.GetAll())
             {
                 jog.Contrato = false;
                 jogadorRepository.SaveOrUpdate(jog);
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void AlterarDivisaoTimes()
+        public ActionResult AlterarDivisaoTimes()
         {
             var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
 
@@ -422,19 +443,19 @@
                 ////////////////////////////////////////////Gerar historico
                 var controle = controleRepository.GetAll().FirstOrDefault();
                 var historico = new Historico();
-                historico.Ano = controle.Ano - 1;
+                historico.Ano = controle.Ano;
                 historico.Divisao = divisao;
                 historico.Campeao = clube1;
                 historico.Vice = clube2;
-                var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
-                historico.Artilheiro = artilheiro;
-                historico.Gols = artilheiro.Gols.Count();
+                //var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
+                //historico.Artilheiro = artilheiro;
+                //historico.Gols = artilheiro.Gols.Count();
                 historicoRepository.SaveOrUpdate(historico);
 
                 ////////////////////////////////////////////Pagar prêmios
-                var premio = 6000000 / divisao.Numero;
-                clube1.Dinheiro = clube1.Dinheiro + premio;
-                clube2.Dinheiro = clube1.Dinheiro + (premio * Convert.ToDecimal(0.30));
+                //var premio = 6000000 / divisao.Numero;
+                //clube1.Dinheiro = clube1.Dinheiro + premio;
+                //clube2.Dinheiro = clube1.Dinheiro + (premio * Convert.ToDecimal(0.30));
 
                 if (divisao.Numero > 1)
                 {
@@ -457,10 +478,12 @@
                 clubeRepository.SaveOrUpdate(clube11);
                 clubeRepository.SaveOrUpdate(clube12);
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void ZerarCampeonato()
+        public ActionResult ZerarCampeonato()
         {
             foreach (var partida in partidaRepository.GetAll())
             {
@@ -474,10 +497,17 @@
             {
                 golRepository.Delete(gol);
             }
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                clube.Taca = false;
+                clubeRepository.SaveOrUpdate(clube);
+            }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void GerarCampeonato()
+        public ActionResult GerarCampeonato()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var divisao in divisaoRepository.GetAll().OrderBy(x => x.Numero))
@@ -527,7 +557,7 @@
                         partida.Tipo = "DIVISAO";
                         partida.Dia = dia;
                         partida.Divisao = divisao;
-                        partida.Mao = i < 11 ? 0 : 1;
+                        partida.Mao = i < 12 ? 1 : 2;
                         partidaRepository.SaveOrUpdate(partida);
 
                         for (int i2 = 1; i2 < 6; i2++) // 6 = metade do total de times
@@ -543,7 +573,7 @@
                             partida.Tipo = "DIVISAO";
                             partida.Dia = dia;
                             partida.Divisao = divisao;
-                            partida.Mao = i < 11 ? 0 : 1;
+                            partida.Mao = i < 12 ? 1 : 2;
                             partidaRepository.SaveOrUpdate(partida);
 
                             t3--;
@@ -560,7 +590,7 @@
                         partida.Tipo = "DIVISAO";
                         partida.Dia = dia;
                         partida.Divisao = divisao;
-                        partida.Mao = i < 11 ? 0 : 1;
+                        partida.Mao = i < 12 ? 1 : 2;
                         partidaRepository.SaveOrUpdate(partida);
 
                         for (int i2 = 1; i2 < 6; i2++) // 6 = metade do total de times
@@ -576,7 +606,7 @@
                             partida.Tipo = "DIVISAO";
                             partida.Dia = dia;
                             partida.Divisao = divisao;
-                            partida.Mao = i < 11 ? 0 : 1;
+                            partida.Mao = i < 12 ? 1 : 2;
                             partidaRepository.SaveOrUpdate(partida);
                             t3--;
                             if (t3 < 1) // 12 = max de times
@@ -593,29 +623,36 @@
                     dia++;
                 }
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
-        public void GerarTacaAno()
+        public ActionResult ClassificadosTaca()
         {
             var itaca = 1;
-            var lstTaca = new List<Clube>();
-            var partida1 = new Partida();
-            var partida2 = new Partida();
 
             foreach (var divisaotabela in divisaotabelaRepository.GetAll().OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Posicao))
             {
-                var clube = divisaotabela.Clube;
+                var clube = clubeRepository.Get(divisaotabela.Clube.Id);
                 clube.Taca = true;
 
                 clubeRepository.SaveOrUpdate(clube);
 
-                lstTaca.Add(clube);
                 itaca++;
-
                 if (itaca > 32)
                     break;
             }
+
+            return RedirectToAction("Index", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult GerarTacaAno()
+        {
+            var lstTaca = clubeRepository.GetAll().Where(x => x.Taca).ToList();         
+
+
             for (int i = 0; i < 16; i++) // 16 partidas
             {
                 Random rnd = new Random();
@@ -629,6 +666,7 @@
                     clube2 = lstTaca[rnd.Next(0, maxclubes)];
                 }
 
+                var partida1 = new Partida();
                 partida1.Dia = 4;
                 partida1.Mao = 1;
                 partida1.Rodada = 16;
@@ -636,6 +674,7 @@
                 partida1.Clube1 = clube1;
                 partida1.Clube2 = clube2;
 
+                var partida2 = new Partida();
                 partida2.Dia = 7;
                 partida2.Mao = 2;
                 partida2.Rodada = 16;
@@ -643,12 +682,14 @@
                 partida2.Clube1 = clube2;
                 partida2.Clube2 = clube1;
 
+                partidaRepository.SaveOrUpdate(partida1);
+                partidaRepository.SaveOrUpdate(partida2);
+
                 lstTaca.Remove(clube1);
                 lstTaca.Remove(clube2);
             }
 
-            partidaRepository.SaveOrUpdate(partida1);
-            partidaRepository.SaveOrUpdate(partida2);
+            return RedirectToAction("Index", "Engine");
         }
 
         #endregion

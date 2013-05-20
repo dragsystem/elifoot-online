@@ -421,6 +421,7 @@
     <Content Include="Views\Clube\Taca.cshtml" />
     <Content Include="Views\Adm\EditClube.cshtml" />
     <Content Include="Views\Clube\ClassificacaoClube.cshtml" />
+    <Content Include="Views\Clube\Transferencias.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

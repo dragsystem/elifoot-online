@@ -8,14 +8,17 @@
     foreach (var item in Model)
     {
         var jogador = item.Jogador;
-    
-    @: @jogador.Nome está solicitando uma renovação de contrato com aumento salarial de $@jogador.Salario.ToString("N2") para $@item.Salario.ToString("N2") 
-    @: <a href="@Url.Action("JogadorPedidoResposta", new { id = item.Id, resposta = true })">Aceitar</a>
-    @: <a href="@Url.Action("JogadorPedidoResposta", new { id = item.Id, resposta = false })">Rejeitar</a>
-
+    <div class="caixa">
+        <h1>@jogador.Nome</h1>
+        Está solicitando uma renovação de contrato com aumento salarial de $@jogador.Salario.ToString("N2") para $@item.Salario.ToString("N2") <br />
+        <div style="text-align: right;">
+            <a class="confirmar-link" title="Aceitar" href="@Url.Action("JogadorPedidoResposta", new { id = item.Id, resposta = true })"></a>
+            <a class="cancelar-link" title="Rejeitar" href="@Url.Action("JogadorPedidoResposta", new { id = item.Id, resposta = false })"></a>
+        </div>
+    </div>
     }
 }
 else
 {
-    @: Você não possui propostas.
+    @: Você não possui pedidos.
 }
