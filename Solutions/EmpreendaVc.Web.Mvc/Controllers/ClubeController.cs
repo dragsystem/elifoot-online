@@ -123,10 +123,10 @@
         public ActionResult JogadorRenovar(FormCollection form)
         {
             var usuario = authenticationService.GetUserAuthenticated();
-            var jogador = jogadorRepository.Get(Convert.ToInt32(form["Valor"]));
+            var jogador = jogadorRepository.Get(Convert.ToInt32(form["Jogador"]));
             var clube = jogador.Clube;
 
-            var valor = Convert.ToDecimal(form["Valor"]);
+            var valor = Convert.ToDecimal(form["Salario"]);
 
             if (jogador != null)
             {
@@ -178,19 +178,23 @@
         [HttpPost]
         public ActionResult JogadorVender(FormCollection form)
         {
-            var usuario = authenticationService.GetUserAuthenticated();
-            var leilao = new Leilao();
+            var usuario = authenticationService.GetUserAuthenticated();            
             var controle = controleRepository.GetAll().FirstOrDefault();
+            var jogador = jogadorRepository.Get(Convert.ToInt32(form["Jogador"]));
+
+            var leilao = new Leilao();
 
             TryUpdateModel(leilao, form);
 
             if (leilao.IsValid())
             {
                 leilao.Dia = controle.Dia++;
+                leilao.Jogador = jogador;
                 leilao.Espontaneo = false;
+                leilao.Clube = leilao.Jogador.Clube;
                 leilaoRepository.SaveOrUpdate(leilao);
 
-                TempData["MsgOk"] = leilao.Jogador.Nome + " será vendido no próximo leilão!";
+                TempData["MsgOk"] = jogador.Nome + " será vendido no próximo leilão!";
                 return RedirectToAction("Plantel", "Clube");
             }
 

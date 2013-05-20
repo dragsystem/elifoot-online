@@ -27,7 +27,6 @@ namespace EmpreendaVc.Domain
 
         public Leilao()
         {
-            Clube = Jogador.Clube;
             Ofertas = new List<LeilaoOferta>();
         }
     }

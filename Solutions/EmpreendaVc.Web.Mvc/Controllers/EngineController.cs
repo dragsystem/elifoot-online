@@ -284,6 +284,7 @@
                             leilao.Dia = controle.Dia + 1;
                             leilao.Espontaneo = true;
                             leilao.Jogador = pedidojog.Jogador;
+                            leilao.Clube = pedidojog.Jogador.Clube;
                             leilao.Valor = pedidojog.Jogador.H * 50000;
                         }
                         else
@@ -371,6 +372,7 @@
                         leilao.Dia = controle.Dia + 1;
                         leilao.Espontaneo = true;
                         leilao.Jogador = lstjognovo[jog];
+                        leilao.Clube = lstjognovo[jog].Clube;
                         leilao.Valor = lstjognovo[jog].H * 50000;
                         leilaoRepository.SaveOrUpdate(leilao);
                     }
@@ -1080,7 +1082,7 @@
         #region AtualizaTabela
 
         [Transaction]
-        public void AtualizaTabela()
+        public ActionResult AtualizaTabela()
         {
             foreach (var divisao in divisaoRepository.GetAll())
             {
@@ -1118,6 +1120,8 @@
                     i++;
                 }
             }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         #endregion

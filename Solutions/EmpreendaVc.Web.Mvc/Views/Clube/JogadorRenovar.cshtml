@@ -6,10 +6,11 @@
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@{ Html.RenderAction("Index", "Mensagem"); }
+
 
 <h2>
     Renovar</h2>
+
 @{ Html.RenderAction("Index", "Mensagem"); }
 @using (Html.BeginForm())
 {
@@ -17,7 +18,7 @@
     {
         Html.AntiForgeryToken();
         @Html.Hidden("Jogador", Model.Id)
-        @: Escolha o salário que será oferecido por @Model.Nome: 
+        @: @Model.Nome ganha atualmente $@Model.Salario.ToString("N2"). <br /><br />Escolha o novo salário que será oferecido: 
         @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? "$" + Model.Salario.ToString("N2") : "")   
     }
     <br /><br />

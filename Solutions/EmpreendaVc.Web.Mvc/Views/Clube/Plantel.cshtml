@@ -28,10 +28,10 @@
                 <td style="text-align: right;">$@jog.Salario.ToString("N2")</td>
                 <td>@jog.Gols.Count()</td>
                 <td>
-                    @if (jog.Contrato) 
-                        { <span class="plantel-sobcontrato" title="Sob-contrato" /> } 
-                    else 
-                        { <a class="plantel-semcontrato" title="Renovar contrato" href="@Url.Action("JogadorRenovar", new { id = jog.Id })" /> }
+                    @if (jog.Contrato)
+                    { <a class="plantel-sobcontrato" title="Sob-contrato" /> }
+                    else
+                    { <a class="plantel-semcontrato" title="Renovar contrato" href="@Url.Action("JogadorRenovar", new { id = jog.Id })" /> }
                         <a class="plantel-vender" title="Vender" href="@Url.Action("JogadorVender", new { id = jog.Id })" />
                 </td>
             </tr>
@@ -42,6 +42,10 @@
 <div id="plantel-dados" class="caixa">
     <h1>@Model.Nome</h1>
     <p>
+        @if (Model.Usuario != null)
+        {
+            @:Usuário: @Model.Usuario.NomeCompleto
+        }
         Estádio: @Model.Estadio.ToString("N0")<br />
         Sócios: @Model.Socios.ToString("N0")
     </p>
