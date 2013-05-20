@@ -1,4 +1,11 @@
-﻿@if (ViewBag.MsgAlerta != null)
+﻿<script type="text/javascript">
+    $(function () {
+        $('.msg-alerta, .msg-ok, .msg-erro').slideDown();
+    });
+
+</script>
+
+@if (ViewBag.MsgAlerta != null)
 {
     <div class="msg-alerta">
         @ViewBag.MsgAlerta

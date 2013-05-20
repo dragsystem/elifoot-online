@@ -14,7 +14,7 @@
     if (Model != null)
     {
         Html.AntiForgeryToken();
-        @Html.HiddenFor(x => x.Jogador.Id)
+        @Html.Hidden("Jogador", Model.Jogador.Id)
         @: Escolha o valor pelo qual deseja vender @Model.Jogador.Nome: 
         @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model != null ? Model.Valor.ToString() : "")      
     }
