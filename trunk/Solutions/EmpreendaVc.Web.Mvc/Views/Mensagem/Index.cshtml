@@ -1,25 +1,19 @@
-﻿<script type="text/javascript">
-    $(function () {
-        $('.msg-alerta, .msg-ok, .msg-erro').slideDown();
-    });
-
-</script>
-
+﻿
 @if (ViewBag.MsgAlerta != null)
 {
-    <div class="msg-alerta">
+    <div id="msg-alerta">
         @ViewBag.MsgAlerta
     </div>
 }
 @if (ViewBag.MsgOk != null)
 {
-    <div class="msg-ok">
+    <div id="msg-ok">
         @ViewBag.MsgOk
     </div>
 }
 @if (ViewBag.MsgErro != null)
 {
-    <div class="msg-erro">
+    <div id="msg-erro">
         @ViewBag.MsgErro
     </div>
 }
