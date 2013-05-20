@@ -2,58 +2,85 @@
 @{
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
 }
-
 <h2>@Model.Nome
     <div class="legenda">
-        <b>P</b> Pontos
-        <b>J</b> Jogos
-        <b>V</b> Vitórias
-        <b>E</b> Empates
-        <b>D</b> Derrotas
+        <b>P</b> Pontos <b>J</b> Jogos <b>V</b> Vitórias <b>E</b> Empates <b>D</b> Derrotas
         <b>GP</b> Gols Pro<br />
-        <b>GC</b> Gols Contra
-        <b>SG</b> Saldo Gols
-        <b>%</b> Aproveitamento
+        <b>GC</b> Gols Contra <b>SG</b> Saldo Gols <b>%</b> Aproveitamento
     </div>
 </h2>
-
 <table class="classificacao" cellpadding="0" cellspacing="0">
     <tr>
-            <th>Clube</th>
-            <th>P</th>
-            <th>J</th>
-            <th>V</th>
-            <th>E</th>
-            <th>D</th>
-            <th>GP</th>
-            <th>GC</th>
-            <th>SG</th>
-            <th>%</th>
+        <th>
+            Clube
+        </th>
+        <th>
+            P
+        </th>
+        <th>
+            J
+        </th>
+        <th>
+            V
+        </th>
+        <th>
+            E
+        </th>
+        <th>
+            D
+        </th>
+        <th>
+            GP
+        </th>
+        <th>
+            GC
+        </th>
+        <th>
+            SG
+        </th>
+        <th>
+            %
+        </th>
+    </tr>
+    @{ var i = 1; }
+    @foreach (var item in Model.DivisaoTabela.OrderByDescending(x => x.Pontos))
+    {
+        var margin = "margin-left: 15px;";
+        if (i > 9) { margin = ""; }
+
+        var style = "";
+        if (clube.Id == item.Clube.Id) { style = "style=font-weight:bold;"; }
+        else { style = ""; }
+
+        var classe = "";
+        if (i > 10) { classe = "class=rebaixa"; }
+        else if (i < 3) { classe = "class=promove"; }
+        else { classe = ""; }
+            
+        <tr @classe @style>
+            <td style="text-align: left;">
+                <span style="font-weight: bold; font-size: 16px; margin: 10px; @margin">@(item.Posicao)</span>
+                @item.Clube.Nome
+            </td>
+            <td>@item.Pontos
+            </td>
+            <td>@item.J
+            </td>
+            <td>@item.V
+            </td>
+            <td>@item.E
+            </td>
+            <td>@item.D
+            </td>
+            <td>@item.GP
+            </td>
+            <td>@item.GC
+            </td>
+            <td>@item.Saldo
+            </td>
+            <td>@item.Aproveitamento.ToString("N2")
+            </td>
         </tr>
-        @foreach (var item in Model.DivisaoTabela.OrderByDescending(x => x.Pontos))
-        {
-            var style = "";
-            if (clube.Id == item.Clube.Id)
-            {
-                style = "style='font-weight:bold;'";
-            }
-            else
-            {
-                style = "";
-            }
-            <tr @style>
-                <td style="text-align: left;">@(item.Posicao). @item.Clube.Nome</td>
-                <td>@item.Pontos</td>
-                <td>@item.J</td>
-                <td>@item.V</td>
-                <td>@item.E</td>
-                <td>@item.D</td>
-                <td>@item.GP</td>
-                <td>@item.GC</td>
-                <td>@item.Saldo</td>
-                <td>@item.Aproveitamento.ToString("N2")</td>
-            </tr>
-        }
-        
-    </table>
+        i++;
+    }
 </table>

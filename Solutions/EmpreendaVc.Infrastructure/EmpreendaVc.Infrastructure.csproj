@@ -113,6 +113,8 @@
     <Compile Include="NHibernateMaps\AutoPersistenceModelGenerator.cs" />
     <Compile Include="Queries\Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Queries\Authentication\IAuthenticationService.cs" />
+    <Compile Include="Queries\Clubes\IClubeRepository.cs" />
+    <Compile Include="Queries\Clubes\ClubeRepository.cs" />
     <Compile Include="Queries\Usuarios\IUsuarioRepository.cs" />
     <Compile Include="Queries\Usuarios\UsuarioCommand.cs" />
     <Compile Include="Queries\Usuarios\UsuarioRepository.cs" />

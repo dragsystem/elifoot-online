@@ -14,6 +14,7 @@
     using System;
     using EmpreendaVc.Infrastructure.Queries.Authentication;
     using EmpreendaVc.Infrastructure.Queries.Usuarios;
+    using EmpreendaVc.Infrastructure.Queries.Clubes;
     using System.Web.Security;
     using EmpreendaVc.Web.Mvc.Controllers.ViewModels;
 
@@ -21,6 +22,7 @@
     {
 
         private readonly IUsuarioRepository usuarioRepository;
+        private readonly IClubeRepository clubeQueryRepository;
         private readonly IAuthenticationService authenticationService;
         private readonly INHibernateRepository<Clube> clubeRepository;
         private readonly INHibernateRepository<Jogador> jogadorRepository;
@@ -36,6 +38,7 @@
         private readonly INHibernateRepository<Noticia> noticiaRepository;
 
         public ClubeController(IUsuarioRepository usuarioRepository,
+            IClubeRepository clubeQueryRepository,
             IAuthenticationService authenticationService,
             INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Jogador> jogadorRepository,
@@ -51,6 +54,7 @@
             INHibernateRepository<Noticia> noticiaRepository)
         {
             this.usuarioRepository = usuarioRepository;
+            this.clubeQueryRepository = clubeQueryRepository;
             this.authenticationService = authenticationService;
             this.clubeRepository = clubeRepository;
             this.jogadorRepository = jogadorRepository;
@@ -68,7 +72,15 @@
 
         public ActionResult Index(int id)
         {
-            return View();
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube.Id == id)
+                return RedirectToAction("Plantel", "Clube");
+
+            var clube = clubeRepository.Get(id);
+            usuario.Clube.Partidas = clubeQueryRepository.PartidasClube(clube.Id);
+
+            return View(clube);
         }
 
         [Authorize]
@@ -85,8 +97,10 @@
 
             var lstJogadorPedido = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
             if (lstUsuarioOferta.Count() > 0)
-                return RedirectToAction("JogadorPedido", "clube");
+                return RedirectToAction("JogadorPedido", "Clube");
 
+            usuario.Clube.Partidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id);
+            
             return View(usuario.Clube);
         }
 
@@ -186,6 +200,10 @@
 
         public ActionResult ClassificacaoClube(int iddivisao)
         {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            ViewBag.Clube = usuario.Clube;
+
             var divisao = divisaoRepository.Get(iddivisao);
 
             return View(divisao);
@@ -193,6 +211,10 @@
 
         public ActionResult Classificacao(int iddivisao)
         {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            ViewBag.Clube = usuario.Clube != null ? usuario.Clube : new Clube();
+
             var divisao = divisaoRepository.Get(iddivisao);
 
             ViewBag.lstDivisao = divisaoRepository.GetAll();
@@ -277,11 +299,26 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var lstPartidas = partidaRepository.GetAll().Where(x => x.Clube1.Id == usuario.Clube.Id || x.Clube2.Id == usuario.Clube.Id).OrderBy(x => x.Dia);
+            var lstPartidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id).OrderBy(x => x.Dia);
 
             ViewBag.Clube = usuario.Clube;
 
             return View(lstPartidas);
+        }
+
+        [Authorize]
+        public ActionResult Transferencias()
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var lstLeilao = leilaoRepository.GetAll().Where(x => x.OfertaVencedora != null).OrderBy(x => x.Dia);
+
+            ViewBag.Clube = usuario.Clube;
+
+            return View(lstLeilao);
         }
 
         [Authorize]

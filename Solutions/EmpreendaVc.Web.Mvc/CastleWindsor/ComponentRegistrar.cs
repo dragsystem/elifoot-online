@@ -11,6 +11,7 @@ namespace EmpreendaVc.Web.Mvc.CastleWindsor
     using System.Web;
     using EmpreendaVc.Infrastructure.Queries.Authentication;
     using EmpreendaVc.Infrastructure.Queries.Usuarios;
+    using EmpreendaVc.Infrastructure.Queries.Clubes;
     
 
     public class ComponentRegistrar
@@ -112,10 +113,10 @@ namespace EmpreendaVc.Web.Mvc.CastleWindsor
                   .ImplementedBy(typeof(EmpreendaVc.Infrastructure.Queries.Usuarios.UsuarioRepository))
                   .Named("usuarioRepository"));
 
-            //container.Register(
-            //             Component.For(typeof(IProjectRepository))
-            //                 .ImplementedBy(typeof(ProjectRepository))
-            //                 .Named("projectRepository"));
+            container.Register(
+              Component.For(typeof(EmpreendaVc.Infrastructure.Queries.Clubes.IClubeRepository))
+                  .ImplementedBy(typeof(EmpreendaVc.Infrastructure.Queries.Clubes.ClubeRepository))
+                  .Named("clubeRepository"));
 
         }
 

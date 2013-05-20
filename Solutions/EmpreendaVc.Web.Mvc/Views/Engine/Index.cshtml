@@ -8,14 +8,32 @@
 </head>
 <body>
     <div>
-        @if (string.IsNullOrEmpty(Model))
-        {
-            @:Feito.
-        }
-        else
+        @if (!string.IsNullOrEmpty(Model))
         {
             @Model
         }
+    </div>
+    <div>
+        <h1>Mudar Dia</h1>
+        <a href="@Url.Action("ZerarDelayUsuario", "Engine")">ZerarDelayUsuario</a><br />
+        <a href="@Url.Action("ZerarOfertaTecnico", "Engine")">ZerarOfertaTecnico</a><br />
+        <a href="@Url.Action("AlterarFinancasVerificaTecnicos", "Engine")">AlterarFinancasVerificaTecnicos</a><br />
+        <a href="@Url.Action("AtualizarTransferencias", "Engine")">AtualizarTransferencias</a><br />
+        <a href="@Url.Action("ZerarPedidoJogadores", "Engine")">ZerarPedidoJogadores</a><br />
+        <a href="@Url.Action("CriarPedidoSaidasJogadores", "Engine")">CriarPedidoSaidasJogadores</a><br />
+        <a href="@Url.Action("AtualizarDataDia", "Engine")">OK - AtualizarDataDia</a><br />
+    </div>
+    <div>
+        <h1>Mudar Ano</h1>
+        <a href="@Url.Action("ClassificadosTaca", "Engine")">OK - ClassificadosTaca</a><br />
+        <a href="@Url.Action("GerarHistoricoTaca", "Engine")">GerarHistoricoTaca</a><br />
+        <a href="@Url.Action("AlterarDivisaoTimes", "Engine")">OK - AlterarDivisaoTimes</a><br />
+        <a href="@Url.Action("ZerarOfertaTecnico", "Engine")">ZerarOfertaTecnico</a><br />
+        <a href="@Url.Action("ZerarContratos", "Engine")">OK - ZerarContratos</a><br />
+        <a href="@Url.Action("ZerarCampeonato", "Engine")">OK - ZerarCampeonato</a><br />
+        <a href="@Url.Action("GerarCampeonato", "Engine")">OK - GerarCampeonato</a><br />        
+        <a href="@Url.Action("GerarTacaAno", "Engine")">OK - GerarTacaAno</a><br />
+        <a href="@Url.Action("AtualizarDataAno", "Engine")">OK - AtualizarDataAno</a><br />
     </div>
 </body>
 </html>

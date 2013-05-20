@@ -5,13 +5,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
 }
-<table>
+
+<h2>Calendário</h2>
+<table class="classificacao" cellpadding="0" cellspacing="0">
     <tr>
         <th>
-            Dia
+            Adversário
         </th>
         <th>
-            Adversário
+            Data
         </th>
         <th>
             Competição
@@ -28,8 +30,8 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>@item.Dia</td>
             <td>@if (item.Clube1.Id == clube.Id) { @item.Clube2.Nome } else { @item.Clube1.Nome }</td>
+            <td>@item.Dia</td>
             <td>
                 @if (item.Tipo == "DIVISAO")
                 { @clube.Divisao.Nome }
@@ -37,23 +39,23 @@
                 {
                     if (item.Rodada == 16)
                     {
-                        @: TAÇA - 1ª Eliminatória - @item.Mao Mão
+                        @: TAÇA - 1ª Eliminatória - @(item.Mao)ª Mão
                     }
                     else if (item.Rodada == 8)
                     {
-                        @: TAÇA - Oitavas de Final - @item.Mao Mão
+                        @: TAÇA - Oitavas de Final - @(item.Mao)ª Mão
                     }
                     else if (item.Rodada == 4)
                     {
-                        @: TAÇA - Quartas de Final - @item.Mao Mão
+                        @: TAÇA - Quartas de Final - @(item.Mao)ª Mão
                     }
                     else if (item.Rodada == 2)
                     {
-                        @: TAÇA - Semi Final - @item.Mao Mão
+                        @: TAÇA - Semi Final - @(item.Mao)ª Mão
                     }
                     else if (item.Rodada == 1)
                     {
-                        @: TAÇA - FINAL - @item.Mao Mão
+                        @: TAÇA - FINAL - @(item.Mao)ª Mão
                     }
                 }
             </td>
