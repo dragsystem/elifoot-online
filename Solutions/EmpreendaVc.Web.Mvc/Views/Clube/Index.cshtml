@@ -33,6 +33,10 @@
 <div id="plantel-dados" class="caixa">
     <h1>@Model.Nome</h1>
     <p>
+        @if (Model.Usuario != null)
+        {
+            @:Usuário: @Model.Usuario.NomeCompleto<br />
+        }
         Estádio: @Model.Estadio.ToString("N0")<br />
         Sócios: @Model.Socios.ToString("N0")
     </p>

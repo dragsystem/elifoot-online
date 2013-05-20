@@ -24,7 +24,7 @@ h2 .legenda b { font-size: 11px; }
     
     
 .classificacao { border: 1px solid #D3EDF8; padding: 0px; border-top: 2px solid #239ACD; border-radius: 3px; width:100%; margin-bottom: 10px; }
-.classificacao th { padding: 8px; background: #EDF8FC; border-bottom: 4px solid #D3EDF8; font-size: 11px; font-weight: normal; color: #239ACD; }
+.classificacao th { padding: 8px; background: #EDF8FC; border-bottom: 4px solid #D3EDF8; font-size: 11px; font-weight: normal; color: #239ACD; text-transform: uppercase; }
 .classificacao td { padding: 8px; border-top: 1px solid #D3EDF8; font-size: 12px; text-align: center; }
 .classificacao td:nth-child(even) { border-top: 1px solid #D3EDF8; padding: 8px; background-color: #EDF8FC; }
 
@@ -44,14 +44,17 @@ h2 .legenda b { font-size: 11px; }
 .plantel-semcontrato { display: block; width: 25px; height: 20px; background: url('../img/semcontrato.png') center center no-repeat; float: left; }
 .plantel-vender { display: block; width: 25px; height: 20px; background: url('../img/vender.png') center center no-repeat; float: left;  }
 
+.leilao-proposta { display: block; width: 25px; height: 20px; background: url('../img/vender.png') center center no-repeat; float: left;  }
+.leilao-cancelarleilao { display: block; width: 25px; height: 20px; background: url('../img/cancelar.png') center center no-repeat; float: left;  }
+
 .confirmar-link { display: block; width: 50px; height: 32px; background: url('../img/confirmar.png') center center no-repeat; float: right }
 .cancelar-link { display: block; width: 50px; height: 32px; background: url('../img/confirmar.png') center center no-repeat; float: right }
 .voltar-link { font-family: 'Trebuchet MS'; text-decoration: underline; text-transform: uppercase; font-size: 14px; margin-left: 25px;}
 
-.msg-ok { padding: 10px 10px 10px 40px; background: url('../img/msg-ok.png') 10px 10px no-repeat #99C700; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 10px; border-radius: 3px; }
-.msg-erro { padding: 10px 10px 10px 40px; background: url('../img/msg-erro.png') 10px 10px no-repeat #C80000; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 10px; border-radius: 3px; }
-.msg-alerta { padding: 10px 10px 10px 40px; background: url('../img/msg-alerta.png') 10px 10px no-repeat #CAAC00; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 10px; border-radius: 3px; }
+#msg-ok { padding: 10px 10px 10px 40px; background: url('../img/msg-ok.png') 10px 8px no-repeat #99C700; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
+#msg-erro { padding: 10px 10px 10px 40px; background: url('../img/msg-erro.png') 10px 8px no-repeat #C80000; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
+#msg-alerta { padding: 10px 10px 10px 40px; background: url('../img/msg-alerta.png') 10px 8px no-repeat #CAAC00; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
 
 input[type=text], input[type=password], textarea, select { background: #EDF8FC; border: 1px solid #D3EDF8; color: #239ACD; border-top: 2px solid #239ACD; padding: 10px; border-radius: 3px; }
 .submit { cursor: pointer; min-width: 200px; background: #333; border: 0px; color: #fff; border-top: 2px solid #239ACD; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
-
+.submit:hover { background: #444; }

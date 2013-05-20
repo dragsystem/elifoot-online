@@ -20,8 +20,9 @@
         @Html.Hidden("Jogador", Model.Id)
         @: @Model.Nome ganha atualmente $@Model.Salario.ToString("N2"). <br /><br />Escolha o novo salário que será oferecido: 
         @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? "$" + Model.Salario.ToString("N2") : "")   
-    }
-    <br /><br />
-    <input type="submit" class="submit" value="Confirmar" />    
+    
+        <br /><br />
+        <input type="submit" class="submit" value="Confirmar" />
+    }    
     <a class="voltar-link" href="@Url.Action("Plantel", "Clube")">VOLTAR</a>
 }

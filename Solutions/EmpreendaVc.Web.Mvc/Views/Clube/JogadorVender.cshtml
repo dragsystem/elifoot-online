@@ -17,8 +17,9 @@
         @Html.Hidden("Jogador", Model.Jogador.Id)
         @: Escolha o valor pelo qual deseja vender @Model.Jogador.Nome: 
         @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model != null ? Model.Valor.ToString() : "")      
+    
+        <br /><br />
+        <input type="submit" class="submit" value="Confirmar" />    
     }
-    <br /><br />
-    <input type="submit" class="submit" value="Confirmar" />    
     <a class="voltar-link" href="@Url.Action("Plantel", "Clube")">VOLTAR</a>
 }

@@ -3,30 +3,33 @@
 @{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var order = (int)ViewBag.Order;
 }
 
-<table>
+<h2>Leilão - Meus Jogadores</h2>
+
+<table class="classificacao" cellpadding="0" cellspacing="0">
     <tr>
-        <th>
+        <th width="30%">
             Nome
         </th>
-        <th>
+        <th width="30%">
             Clube
         </th>
-        <th>
+        <th width="15%">
             Divisão
         </th>
-        <th>
+        <th width="5%">
             Posição
         </th>
-        <th>
+        <th width="5%">
             H
         </th>
-        <th>
+        <th width="10%">
             Valor
         </th>
-        <th></th>
+        <th width="5%">
+            Ação
+        </th>
     </tr>
     @foreach (var item in Model)
     {

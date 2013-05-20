@@ -2,10 +2,7 @@
 @using EmpreendaVc.Web.Mvc.Util
 @using MvcContrib
 @using MvcContrib.FluentHtml
-@{
-    ViewBag.Title = "Home";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+
 @if (Model.Id != 0)
 {
     @: Você já possui uma oferta no valor de $@Model.Salario.ToString("N2"). Se quiser cancelar clique <a href="@Url.Action("CancelarOferta", "Leilao", new { id = Model.Id })">AQUI</a>.
