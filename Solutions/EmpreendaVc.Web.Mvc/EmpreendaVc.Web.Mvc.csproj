@@ -172,6 +172,7 @@
     <Compile Include="Controllers\ContaController.cs" />
     <Compile Include="Controllers\ControllerCustom.cs" />
     <Compile Include="Controllers\ClubeController.cs" />
+    <Compile Include="Controllers\AIController.cs" />
     <Compile Include="Controllers\LeilaoController.cs" />
     <Compile Include="Controllers\EngineController.cs" />
     <Compile Include="Controllers\ErroController.cs" />

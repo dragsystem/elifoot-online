@@ -188,7 +188,7 @@
                 leilaoofertaRepository.SaveOrUpdate(leilaooferta);
 
                 TempData["MsgOk"] = "Proposta feita com sucesso!";
-                return View(leilaooferta);
+                return RedirectToAction("Index", "Leilao");
             }
             else
             {
@@ -245,7 +245,7 @@
                 leilaoofertaRepository.Delete(item);
             }
 
-            return RedirectToAction("Detalhe", "Leilao", new { id = id });
+            return RedirectToAction("MinhasOfertas", "Leilao");
         }
     }
 }

@@ -38,6 +38,7 @@
         private readonly INHibernateRepository<Noticia> noticiaRepository;
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
         private readonly INHibernateRepository<Historico> historicoRepository;
+        private readonly INHibernateRepository<Nome> nomeRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -54,7 +55,8 @@
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
             INHibernateRepository<Noticia> noticiaRepository,
             INHibernateRepository<Escalacao> escalacaoRepository,
-            INHibernateRepository<Historico> historicoRepository)
+            INHibernateRepository<Historico> historicoRepository,
+            INHibernateRepository<Nome> nomeRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -72,6 +74,7 @@
             this.noticiaRepository = noticiaRepository;
             this.escalacaoRepository = escalacaoRepository;
             this.historicoRepository = historicoRepository;
+            this.nomeRepository = nomeRepository;
         }
 
         //OK - GerarCampeonato(); 
@@ -378,6 +381,27 @@
                     }
                 }
             }
+            return RedirectToAction("Index", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult VariarJogadorH()
+        {
+            var rnd = new Random();
+            foreach (var jogador in jogadorRepository.GetAll())
+            {
+                var variavel = rnd.Next(-2, 3);
+
+                jogador.H = jogador.H + (variavel);
+
+                if (jogador.H > (jogador.HF + 10))
+                    jogador.H = jogador.HF + 10;
+                else if (jogador.H < (jogador.HF - 10))
+                    jogador.H = jogador.HF - 10;
+
+                jogadorRepository.SaveOrUpdate(jogador);
+            }
+
             return RedirectToAction("Index", "Engine");
         }
 
@@ -1212,6 +1236,57 @@
                     escalacaoRepository.SaveOrUpdate(escalacao);
                 }
             }
+        }
+
+        #endregion
+
+        #region GerarJogador
+
+        [Transaction]
+        public ActionResult GerarJogador(int id)
+        {
+            var clube = clubeRepository.Get(id);
+            var divisao = clube.Divisao.Numero;
+            var nomes = nomeRepository.GetAll();
+            var rnd = new Random();
+
+            var g = 2;
+            var ld = 2;
+            var le = 2;
+            var z = 3;
+            var v = 3;
+            var mo = 3;
+            var a = 3;
+
+            for (int i = 0; i < 18; i++)
+            {
+                var jogador = new Jogador();
+                jogador.Clube = clube;
+
+                if (g > 0) {   jogador.Posicao = 1; g--; }
+                else if (ld > 0) { jogador.Posicao = 2; ld--; }
+                else if (z > 0) { jogador.Posicao = 3; z--; }
+                else if (le > 0) { jogador.Posicao = 4; le--; }
+                else if (v > 0) { jogador.Posicao = 5; v--; }
+                else if (mo > 0) { jogador.Posicao = 6; mo--; }
+                else if (a > 0) { jogador.Posicao = 7; a--; }
+
+                var objnome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
+                if (!objnome.Comum) { objnome = nomes.ElementAt(rnd.Next(0, nomes.Count())); }
+
+                jogador.Nome = objnome.NomeJogador;
+
+                var h = Convert.ToInt32((60 / divisao) / 5) * 5;
+                h = h + (5 * rnd.Next(1, 5)) - 10;
+                jogador.HF = h > 0 ? h : 1;
+                
+                jogador.H = jogador.HF;
+                jogador.Salario = ((jogador.HF / 2) / divisao) * 1000;
+                
+                jogadorRepository.SaveOrUpdate(jogador);
+            }
+
+            return RedirectToAction("Index", "Engine");
         }
 
         #endregion
