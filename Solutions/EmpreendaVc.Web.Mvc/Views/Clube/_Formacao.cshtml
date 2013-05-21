@@ -1,0 +1,116 @@
+﻿@model EmpreendaVc.Domain.Clube
+           
+<h1>FORMAÇÃO</h1>
+    <p>
+        @{ var styleform = ""; }
+        @if (Model.Formacao == "3133")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "3133" })">3-1-3-3</a><br />
+
+        @if (Model.Formacao == "3223")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "3223" })">3-2-2-3</a><br />
+
+        @if (Model.Formacao == "3232")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "3232" })">3-2-3-2</a><br />
+
+        @if (Model.Formacao == "3313")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "3313" })">3-3-1-3</a><br />
+
+        @if (Model.Formacao == "3322")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "3322" })">3-3-2-2</a><br />
+
+        @if (Model.Formacao == "3331")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "3331" })">3-3-3-1</a><br />
+
+        @if (Model.Formacao == "4123")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "4123" })">4-1-2-3</a><br />
+
+        @if (Model.Formacao == "4132")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "4132" })">4-1-3-2</a><br />
+
+        @if (Model.Formacao == "4213")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "4213" })">4-2-1-3</a><br />
+
+        @if (Model.Formacao == "4222")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "4222" })">4-2-2-2</a><br />
+
+        @if (Model.Formacao == "4231")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "4231" })">4-2-3-1</a><br />
+    </p>
+    <p>
+        @if (Model.Formacao == "4312")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "4312" })">4-3-1-2</a><br />
+
+        @if (Model.Formacao == "4321")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "4321" })">4-3-2-1</a><br />
+
+        @if (Model.Formacao == "5113")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "5113" })">5-1-1-3</a><br />
+
+        @if (Model.Formacao == "5122")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "5122" })">5-1-2-2</a><br />
+
+        @if (Model.Formacao == "5131")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "5131" })">5-1-3-1</a><br />
+
+        @if (Model.Formacao == "5212")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "5212" })">5-2-1-2</a><br />
+
+        @if (Model.Formacao == "5221")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "5221" })">5-2-2-1</a><br />
+
+        @if (Model.Formacao == "5311")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "5311" })">5-3-1-1</a><br />
+
+        @if (Model.Formacao == "6112")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "6112" })">6-1-1-2</a><br />
+
+        @if (Model.Formacao == "6121")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "6121" })">6-1-2-1</a><br />
+
+        @if (Model.Formacao == "6211")
+        { styleform = "style=font-weight:bold;"; }
+        else { styleform = ""; }
+        <a @styleform href="@Url.Action("Formacao", "Clube", new { formacao = "6211" })">6-2-1-1</a><br />   
+    </p>

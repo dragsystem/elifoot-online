@@ -16,6 +16,8 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
         IList<Usuario> GetAll();
         IList<Usuario> Busca(string nome);
 
+        IList<Usuario> UsuarioDelay();
+
         List<string> SaveOrUpdate(Usuario userAccount);
 
         bool ValidateUsuario(string Email, string password);

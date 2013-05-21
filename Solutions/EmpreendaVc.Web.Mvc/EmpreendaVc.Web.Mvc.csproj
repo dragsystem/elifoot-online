@@ -400,7 +400,6 @@
     <Content Include="Views\Adm\Login.cshtml">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="Views\Clube\_Form.cshtml" />
     <Content Include="Views\Home\Contato.cshtml" />
     <Content Include="Views\SendMail\Contato.html.cshtml" />
     <Content Include="Views\Clube\Plantel.cshtml" />
@@ -423,6 +422,8 @@
     <Content Include="Views\Adm\EditClube.cshtml" />
     <Content Include="Views\Clube\ClassificacaoClube.cshtml" />
     <Content Include="Views\Clube\Transferencias.cshtml" />
+    <Content Include="Views\Clube\_Formacao.cshtml" />
+    <Content Include="Views\Clube\Formacao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -53,6 +53,12 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
                 .Where(x => x.NomeCompleto.IsInsensitiveLike("%" + nome + "%") || x.Email.IsInsensitiveLike("%" + nome + "%")).List().ToList();
         }
 
+        public IList<Usuario> UsuarioDelay()
+        {
+            return Session.QueryOver<Usuario>()
+                .Where(x => x.IsAtivo && x.DelayTroca > 0).List();
+        }
+
         public List<string> SaveOrUpdate(Usuario userAccount)
         {
             var erros = new List<string>();

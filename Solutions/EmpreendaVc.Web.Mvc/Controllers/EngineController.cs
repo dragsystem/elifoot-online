@@ -122,7 +122,7 @@
         [Transaction]
         public ActionResult ZerarDelayUsuario()
         {
-            foreach (var usuario in usuarioRepository.GetAll().Where(x => x.DelayTroca > 0))
+            foreach (var usuario in usuarioRepository.UsuarioDelay())
             {
                 usuario.DelayTroca = usuario.DelayTroca - 1;
                 if (usuario.DelayTroca < 0)
@@ -180,6 +180,7 @@
 
                     tecnicoatual.Clube = null;
                     tecnicoatual.DelayTroca = 0;
+                    tecnicoatual.ReputacaoGeral = tecnicoatual.ReputacaoGeral - 10 < 0 ? 0 : tecnicoatual.ReputacaoGeral - 10;
                     usuarioRepository.SaveOrUpdate(tecnicoatual);
 
                     clube.Usuario = null;
@@ -428,6 +429,17 @@
             var controle = controleRepository.GetAll().FirstOrDefault();
             var partidafinaltaca = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == 1 && x.Realizada && x.Mao == 2).FirstOrDefault();
             var historico = new Historico();
+
+            if (partidafinaltaca.Vencedor.Usuario != null)
+            {
+                var usuario = partidafinaltaca.Vencedor.Usuario;
+                historico.Usuario = usuario;
+
+                usuario.Reputacao = (usuario.Reputacao + 40) > 50 ? 50 : (usuario.Reputacao + 40);
+                usuario.ReputacaoGeral = usuario.ReputacaoGeral + 40;
+                usuarioRepository.SaveOrUpdate(usuario);
+            }
+
             historico.Ano = controle.Ano;
             historico.Taca = true;
             historico.Campeao = partidafinaltaca.Vencedor;
@@ -466,22 +478,57 @@
                 var clube11 = tabela[10].Clube; //Penúltimo
                 var clube12 = tabela[11].Clube; //Último
 
+                ////////////////////////////////////////////Gerar reputação
+                if (clube1.Usuario != null)
+                {
+                    var usuario = clube1.Usuario;
+
+                    usuario.Reputacao = (usuario.Reputacao + (40 / divisao.Numero)) > 50 ? 50 : usuario.Reputacao + (40 / divisao.Numero);
+                    usuario.ReputacaoGeral = usuario.ReputacaoGeral + (40 / divisao.Numero);
+                    usuarioRepository.SaveOrUpdate(usuario);
+                }
+                if (clube2.Usuario != null)
+                {
+                    var usuario = clube2.Usuario;
+
+                    usuario.Reputacao = (usuario.Reputacao + (20 / divisao.Numero)) > 50 ? 50 : usuario.Reputacao + (20 / divisao.Numero);
+                    usuario.ReputacaoGeral = usuario.ReputacaoGeral + (20 / divisao.Numero);
+                    usuarioRepository.SaveOrUpdate(usuario);
+                }
+                if (clube11.Usuario != null)
+                {
+                    var usuario = clube11.Usuario;
+
+                    usuario.Reputacao = usuario.Reputacao - 30 < 0 ? 0 : usuario.Reputacao - 30;
+                    usuario.ReputacaoGeral = usuario.ReputacaoGeral - 15;
+                    usuarioRepository.SaveOrUpdate(usuario);
+                }
+                if (clube12.Usuario != null)
+                {
+                    var usuario = clube12.Usuario;
+
+                    usuario.Reputacao = usuario.Reputacao - 30 < 0 ? 0 : usuario.Reputacao - 30;
+                    usuario.ReputacaoGeral = usuario.ReputacaoGeral - 15;
+                    usuarioRepository.SaveOrUpdate(usuario);
+                } 
+
                 ////////////////////////////////////////////Gerar historico
                 var controle = controleRepository.GetAll().FirstOrDefault();
                 var historico = new Historico();
+                historico.Usuario = clube1.Usuario != null ? clube1.Usuario : null;
                 historico.Ano = controle.Ano;
                 historico.Divisao = divisao;
                 historico.Campeao = clube1;
                 historico.Vice = clube2;
-                //var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
-                //historico.Artilheiro = artilheiro;
-                //historico.Gols = artilheiro.Gols.Count();
+                var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
+                historico.Artilheiro = artilheiro;
+                historico.Gols = artilheiro.Gols.Count();
                 historicoRepository.SaveOrUpdate(historico);
 
                 ////////////////////////////////////////////Pagar prêmios
-                //var premio = 6000000 / divisao.Numero;
-                //clube1.Dinheiro = clube1.Dinheiro + premio;
-                //clube2.Dinheiro = clube1.Dinheiro + (premio * Convert.ToDecimal(0.30));
+                var premio = 6000000 / divisao.Numero;
+                clube1.Dinheiro = clube1.Dinheiro + premio;
+                clube2.Dinheiro = clube1.Dinheiro + (premio * Convert.ToDecimal(0.30));
 
                 if (divisao.Numero > 1)
                 {
@@ -866,6 +913,21 @@
                 if (resultado <= Prob1)
                 {
                     vencedor = clube1;
+                    if (clube1.Usuario != null)
+                    {
+                        var usuario = clube1.Usuario;
+
+                        usuario.Reputacao = usuario.Reputacao + 4 > 50 ? 50 : usuario.Reputacao + 4;
+                        usuarioRepository.SaveOrUpdate(usuario);
+                    }
+                    if (clube2.Usuario != null)
+                    {
+                        var usuario = clube2.Usuario;
+
+                        usuario.Reputacao = usuario.Reputacao - 6 < 0 ? 0 : usuario.Reputacao - 6;
+                        usuarioRepository.SaveOrUpdate(usuario);
+                    }
+
                     var dif7 = Convert.ToInt32((Prob1 / 100) * 2);
                     var dif6 = Convert.ToInt32((Prob1 / 100) * 2);
                     var dif5 = Convert.ToInt32((Prob1 / 100) * 4);
@@ -912,6 +974,14 @@
                 else if (resultado <= (Prob1 + ProbEmpate))
                 {
                     vencedor = null;
+                    if (clube1.Usuario != null)
+                    {
+                        var usuario = clube1.Usuario;
+
+                        usuario.Reputacao = usuario.Reputacao - 3 < 0 ? 0 : usuario.Reputacao - 3;
+                        usuarioRepository.SaveOrUpdate(usuario);
+                    }
+
                     if (placar < 35)
                     {
                         gol2 = 0;
@@ -941,6 +1011,21 @@
                 else
                 {
                     vencedor = clube2;
+                    if (clube1.Usuario != null)
+                    {
+                        var usuario = clube1.Usuario;
+
+                        usuario.Reputacao = usuario.Reputacao - 8 < 0 ? 0 : usuario.Reputacao - 8;
+                        usuarioRepository.SaveOrUpdate(usuario);
+                    }
+                    if (clube2.Usuario != null)
+                    {
+                        var usuario = clube2.Usuario;
+
+                        usuario.Reputacao = usuario.Reputacao + 6 > 50 ? 50 : usuario.Reputacao + 6;
+                        usuarioRepository.SaveOrUpdate(usuario);
+                    }
+
                     var dif7 = Convert.ToInt32((Prob1 / 100) * 2);
                     var dif6 = Convert.ToInt32((Prob1 / 100) * 2);
                     var dif5 = Convert.ToInt32((Prob1 / 100) * 4);

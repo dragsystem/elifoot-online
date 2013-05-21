@@ -24,7 +24,7 @@
     <div id="main">
         <div id="header">
             <div id="logo">
-                <a id="linklogo" href="@Url.Action("Index", "Home")"></a>
+                <a id="linklogo" href="@Url.Action("Index", "Home")"><span style="font-size: 80px;">LOGO</span></a>
             </div>
             <div id="menu">
                 @{ Html.RenderAction("MenuTop", "Conta"); }
@@ -37,6 +37,11 @@
         <div class="clear">
         </div>
         <div id="footer">
+            <span><a href="@Url.Action("Index", "Home")">Home</a></span>
+            <span><a href="@Url.Action("Cadastro", "Conta")">Cadastrar</a></span>
+            <span><a href="@Url.Action("Regras", "Home")">Regras</a></span>
+            <span><a href="@Url.Action("Contato", "Home")">Contato</a></span>
+            <p style="text-align: right;">TODOS OS DIREITOS RESERVADOS</p>
         </div>
     </div>
 </body>
