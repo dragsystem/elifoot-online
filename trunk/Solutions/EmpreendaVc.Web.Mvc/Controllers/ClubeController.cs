@@ -321,6 +321,9 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            ViewBag.Dia = controle.Dia;
+
             var lstLeilao = leilaoRepository.GetAll().Where(x => x.OfertaVencedora != null).OrderBy(x => x.Dia);
 
             ViewBag.Clube = usuario.Clube;
