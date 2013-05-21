@@ -36,6 +36,7 @@
         private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Noticia> noticiaRepository;
+        private readonly INHibernateRepository<Escalacao> escalacaoRepository;
 
         public ClubeController(IUsuarioRepository usuarioRepository,
             IClubeRepository clubeQueryRepository,
@@ -51,7 +52,8 @@
             INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
-            INHibernateRepository<Noticia> noticiaRepository)
+            INHibernateRepository<Noticia> noticiaRepository,
+            INHibernateRepository<Escalacao> escalacaoRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.clubeQueryRepository = clubeQueryRepository;
@@ -68,6 +70,7 @@
             this.jogadorpedidoRepository = jogadorpedidoRepository;
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.noticiaRepository = noticiaRepository;
+            this.escalacaoRepository = escalacaoRepository;
         }
 
         public ActionResult Index(int id)
@@ -314,6 +317,41 @@
         }
 
         [Authorize]
+        [Transaction]
+        public ActionResult Formacao(string formacao)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var clube = usuario.Clube;
+
+            var escalacao = clube.Escalacao;
+
+            if (clube.Formacao != formacao)
+            {
+                var lstescalacao = escalacaoRepository.GetAll().Where(x => x.Clube.Id == clube.Id);
+
+                clube.Formacao = formacao;
+                clubeRepository.SaveOrUpdate(clube);
+
+                foreach (var item in lstescalacao)
+                {
+                    item.Clube = null;
+                    item.Jogador = null;
+                    escalacaoRepository.Delete(item);
+                }
+                           
+                escalacao = EscalarTime(clube);
+            }
+
+            ViewBag.Formacao = formacao;
+
+            return View(escalacao);
+        }
+
+        [Authorize]
         public ActionResult Transferencias()
         {
             var usuario = authenticationService.GetUserAuthenticated();
@@ -405,6 +443,95 @@
             ViewBag.Clube = usuario.Clube;
 
             return View(lstPartidas);
-        }        
+        }
+
+        [Transaction]
+        public List<Escalacao> EscalarTime(Clube clube)
+        {
+            var lstescalacao = new List<Escalacao>();
+
+            //GOLEIRO
+            var escalacao = new Escalacao();
+            escalacao.Clube = clube;
+            escalacao.Posicao = 1;
+            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
+            escalacaoRepository.SaveOrUpdate(escalacao);
+            lstescalacao.Add(escalacao);
+
+            //LATERAL-DIREITO
+            if (clube.Formacao.Substring(0, 1) != "3")
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 2;
+                escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
+                escalacaoRepository.SaveOrUpdate(escalacao);
+                lstescalacao.Add(escalacao);
+            }
+
+            //ZAGUEIROS
+            var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(3);
+            if (clube.Formacao.Substring(0, 1) == "4")
+                zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
+
+            foreach (var zag in zagueiros)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 3;
+                escalacao.Jogador = zag;
+                escalacaoRepository.SaveOrUpdate(escalacao);
+                lstescalacao.Add(escalacao);
+            }
+
+            //LATERAL-ESQUERDO
+            if (clube.Formacao.Substring(0, 1) != "3")
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 4;
+                escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
+                escalacaoRepository.SaveOrUpdate(escalacao);
+                lstescalacao.Add(escalacao);
+            }
+
+            //VOLANTE
+            var volantes = clube.Jogadores.Where(x => x.Posicao == 5).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(1, 1)));
+            foreach (var vol in volantes)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 5;
+                escalacao.Jogador = vol;
+                escalacaoRepository.SaveOrUpdate(escalacao);
+                lstescalacao.Add(escalacao);
+            }
+
+            //MEIA OFENSIVO
+            var meias = clube.Jogadores.Where(x => x.Posicao == 6).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(2, 1)));
+            foreach (var mei in meias)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 6;
+                escalacao.Jogador = mei;
+                escalacaoRepository.SaveOrUpdate(escalacao);
+                lstescalacao.Add(escalacao);
+            }
+
+            //ATACANTES
+            var atacantes = clube.Jogadores.Where(x => x.Posicao == 7).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(3, 1)));
+            foreach (var ata in atacantes)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 7;
+                escalacao.Jogador = ata;
+                escalacaoRepository.SaveOrUpdate(escalacao);
+                lstescalacao.Add(escalacao);
+            }
+
+            return lstescalacao;
+        }
     }
 }

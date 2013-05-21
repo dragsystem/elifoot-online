@@ -51,6 +51,10 @@
     </p>
 </div>
 
+<div id="plantel-formacao" class="caixa">
+    @{ Html.RenderPartial("_Formacao", Model); }
+</div>
+
 <div id="plantel-financas" class="caixa">
     <h1>FINANÇAS</h1>
     @{ var salarios = Model.Jogadores.Sum(x => x.Salario);

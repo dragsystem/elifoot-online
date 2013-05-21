@@ -24,7 +24,9 @@ namespace EmpreendaVc.Domain
         public virtual Clube Campeao { get; set; }
 
         public virtual Clube Vice { get; set; }
-        
+
+        public virtual Usuario Usuario  { get; set; }
+
         public Historico()
         {
         }
