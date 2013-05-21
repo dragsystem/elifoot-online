@@ -70,36 +70,36 @@
             {
                 usuario.NomeCompleto = usuario.NomeCompleto.ToUpper();
                 if (usuarioRepository.GetNome(usuario.NomeCompleto) != null)
-                    ModelState.AddModelError("", "Nome já em uso");
+                    TempData["MsgErro"] = "Nome já em uso";
             }
             else
-                ModelState.AddModelError("", "Nome é um campo obrigatório");
+                TempData["MsgErro"] = "Nome é um campo obrigatório";
 
             if (usuario.Email != null)
             {
                 if (usuarioRepository.GetEmail(usuario.Email) != null)
-                    ModelState.AddModelError("", "E-mail já em uso");
+                    TempData["MsgErro"] = "E-mail já em uso";
 
                 if (usuario.Email.Contains("@@"))
-                    ModelState.AddModelError("", "Favor preencher um E-mail válido");
+                    TempData["MsgErro"] = "Favor preencher um E-mail válido";
             }
             else
-                ModelState.AddModelError("", "E-mail é um campo obrigatório");
+                TempData["MsgErro"] = "E-mail é um campo obrigatório";
 
             if (usuario.Senha != null)
             {
                 if (usuario.Senha.Length < 6)
-                    ModelState.AddModelError("", "A senha precisa ter 6 ou mais caracteres");
+                    TempData["MsgErro"] = "A senha precisa ter 6 ou mais caracteres";
             }
             else
             {
-                ModelState.AddModelError("", "Favor preencher a senha");
+                TempData["MsgErro"] = "Favor preencher a senha";
             }
 
             var ConfirmaSenha = collection["ConfirmaSenha"].ToString();
 
             if (ConfirmaSenha == string.Empty)
-                ModelState.AddModelError("", "Favor preencher a confirmação da senha");
+                TempData["MsgErro"] = "Favor preencher a confirmação da senha";
 
             try
             {
@@ -129,13 +129,13 @@
                         {
                             foreach (var item in result)
                             {
-                                ModelState.AddModelError("", item);
+                                TempData["MsgErro"] = item;
                             }
                         }
                     }
                     else
                     {
-                        ModelState.AddModelError("", "A senha e confirma senha precisam ser idênticas");
+                        TempData["MsgErro"] = "A senha e confirma senha precisam ser idênticas";
                     }
                 }
             }
@@ -154,7 +154,12 @@
 
         public ActionResult Login()
         {
-            return View();
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario != null)
+                return View(usuario);
+            else
+                return View();
         }
 
         [HttpPost]
@@ -179,13 +184,13 @@
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Esse usuario está inativo no momento.");
+                        TempData["MsgErro"] = "Esse usuario está inativo no momento.";
 
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "e-mail ou senha incorreta.");
+                    TempData["MsgErro"] = "e-mail ou senha incorreta.";
                 }
             }
             catch (Exception ex)
@@ -193,7 +198,7 @@
                 ObjLog.Error("ContaController(Login): " + ex.ToString());
             }
 
-            return View(model);
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult MenuTop()

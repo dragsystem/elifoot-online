@@ -5,24 +5,37 @@
 }*@
 
 <div id="home-login" class="caixa">
-    <h1>Área de Login</h1>
-    @using (Html.BeginForm("Login"))
+    @if (Model == null)
     {
-        @Html.AntiForgeryToken()
-        <div id="login">
-            @Html.ValidationSummary(true)
-            <p style="text-align: center;">
-                E-mail: @Html.TextBoxFor(model => model.Email, new { size = 40 })
-            </p>
-            <p style="text-align: center;">
-                Senha: @Html.PasswordFor(model => model.Senha, new { size = 40 })
-            </p>
-            <p style="text-align: center;">     
-                <input type="submit" class="submit" value="Entrar" /><br /><br />
-                @Html.ActionLink("Esqueci minha senha", "RecuperarSenha") <br />
-                @Html.ActionLink("Não sou cadastrado", "Cadastro")   
-            </p>
-
-        </div>
+        <h1>Área de Login</h1>
+        Html.RenderAction("Index", "Mensagem");
+        using (Html.BeginForm("Login"))
+        {
+            @Html.AntiForgeryToken()
+            <div id="login">
+                @Html.ValidationSummary(true)
+                <p style="text-align: center;">
+                    E-mail: @Html.TextBoxFor(model => model.Email, new { size = 40 })
+                </p>
+                <p style="text-align: center;">
+                    Senha: @Html.PasswordFor(model => model.Senha, new { size = 40 })
+                </p>
+                <p style="text-align: center;">     
+                    <input type="submit" class="submit" value="Entrar" /><br /><br />
+                    @Html.ActionLink("Esqueci minha senha", "RecuperarSenha") <br />
+                    @Html.ActionLink("Não sou cadastrado", "Cadastro")   
+                </p>
+            </div>
+        }
     }
+    else
+	{
+        <h1>@Model.NomeCompleto</h1>
+        <div style="height: 30px; padding: 20px;">
+            <a class="submit" style="width: 200px; display: block; margin: 0 auto; text-align: center;" href="@Url.Action("Plantel", "Clube")" >Plantel</a>
+        </div>
+        <div style="height: 30px; padding: 20px;">
+            <a class="submit" style="width: 200px; display: block; margin: 0 auto; text-align: center;" href="@Url.Action("Sair", "Conta")" >Sair</a>
+        </div>
+	}
 </div>

@@ -4,6 +4,7 @@
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+    var dia = (int)ViewBag.Dia;
 }
 
 <h2>Transferências</h2>
@@ -36,7 +37,7 @@
         else { style = ""; }
         <tr @style>
             <td>@item.Jogador.Nome</td>
-            <td>@item.Dia</td>
+            <td>@(DateTime.Now.AddDays(item.Dia - dia).ToShortDateString())</td>
             <td>@item.Clube.Nome</td>
             <td>@item.OfertaVencedora.Clube.Nome</td>
             <td>$@item.Valor.ToString("N2")</td>
