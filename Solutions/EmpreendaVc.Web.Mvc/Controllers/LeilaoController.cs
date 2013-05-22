@@ -74,6 +74,8 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
+            ViewBag.Clube = usuario.Clube;
+
             var lstLeilao = leilaoRepository.GetAll().Where(x => x.Jogador.Clube.Id != usuario.Clube.Id).OrderBy(x => x.Jogador.Clube.Nome).ThenBy(x => x.Jogador.Clube.Divisao.Nome);
 
             ViewBag.Order = 0;

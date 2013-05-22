@@ -10,10 +10,11 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
             #menu ul { margin-right: 20px; }
             #menu ul li { display: block; margin-left: 20px; float: left; list-style-type: none; color: White; text-transform: uppercase; font-size: 12px; }            
 
-    #conteudo { padding: 15px; }
+    #conteudo { padding: 15px; min-height: 350px; }
     #footer { width: 940px; height: 118px; background: #EEF3F9; margin-top: 20px; border-top: 4px solid #4982B9; font-size: 10px; padding: 20px; font-weight: bold; }
         #footer span { display: block; margin-left: 10px; margin-bottom: 12px; list-style-type: none; color: White; text-transform: uppercase; font-size: 12px; }
-        
+
+#home-texto { font-size: 16px; float: left; width: 480px; text-align: justify; }    
 #home-login { width: 430px; float: right; }
 
 h2 { color: #333; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; } /*#4982B9*/
@@ -21,29 +22,43 @@ h2 .legenda { float: right; font-size: 9px; color: #333; text-transform: upperca
 h2 .legenda b { font-size: 11px; }
 
 .caixa { border: 1px solid #CBDBEB; padding: 10px; border-top: 2px solid #4982B9; border-radius: 3px; margin-bottom: 10px; }
-    .caixa h1 { font-size: 15px; background: #EEF3F9; font-weight: bold; border-bottom: 1px solid #CBDBEB; padding: 10px; margin: -10px -10px 10px -10px;   }
-    
-    
+    .caixa h1 { font-size: 15px; background: #EEF3F9; font-weight: bold; border-bottom: 1px solid #CBDBEB; padding: 10px; margin: -10px -10px 10px -10px; } 
     
 .classificacao { border: 1px solid #CBDBEB; padding: 0px; border-top: 2px solid #4982B9; border-radius: 3px; width:100%; margin-bottom: 10px; }
 .classificacao th { padding: 8px; background: #EEF3F9; border-bottom: 4px solid #CBDBEB; font-size: 11px; font-weight: normal; color: #4982B9; text-transform: uppercase; }
 .classificacao td { padding: 8px; border-top: 1px solid #CBDBEB; font-size: 12px; text-align: center; }
+.classificacao td a { font-weight: normal; color: #333; }
 .classificacao td:nth-child(even) { border-top: 1px solid #CBDBEB; padding: 8px; background-color: #EEF3F9; }
 
-/*.classificacao .rebaixa td { padding: 8px; border-top: 1px solid #CBDBEB; font-size: 12px; text-align: center; background-color: #FCEDED; }
-.classificacao .rebaixa td:nth-child(even) { border-top: 1px solid #CBDBEB; padding: 8px; background-color: #F9D2D2; }*/
-.classificacao .promove td { color: #62AF41; }
-.classificacao .rebaixa td { color: #F00000; }
+.classificacao .promove { color: #62AF41; }
+.classificacao .rebaixa { color: #F00000; }
 
-#plantel-caixa { float: left; width: 600px; }
-    #plantel-caixa table { width: 100%; }
-#plantel-classificacao { float: left; width: 600px; }
-#plantel-dados { float: right; width: 310px; }
-#plantel-formacao { float: right; width: 310px; }
-    #plantel-formacao p { width: 150px; float: left; text-align: center; }
-    #plantel-formacao a { font-size: 16px; font-weight:normal; }
-#plantel-financas { float: right; width: 310px; }
-#plantel-proximo { float: right; width: 310px; }
+.botao { display:block; cursor: pointer; width: 260px; height: 18px; text-align: center; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
+
+#plantel-left { width: 650px; float: left; }
+    #plantel-caixa { width: 650px; }
+        #plantel-caixa table { width: 100%; }
+    #plantel-classificacao { width: 650px; }
+#plantel-right { width: 280px; float: right; }
+    #plantel-dados { float: right; width: 260px; }
+    #plantel-formacao { float: right; width: 260px; }
+        #plantel-formacao p { width: 125px; float: left; text-align: center; }
+        #plantel-formacao a { font-size: 16px; font-weight:normal; }
+    #plantel-menu { float: right; width: 280px; }
+        #plantel-menu p { margin-left: 15px; width: 260px; float: left; font-size: 16px; line-height: 30px; }
+    #plantel-financas { float: right; width: 260px; }
+    #plantel-proximo { float: right; width: 260px; }
+
+#classificacao-lista { width: 310px; float: right; font-size: 16px; line-height: 30px; }
+#classificacao-lista a { font-weight: normal; margin-left: 15px; }
+#classificacao-tabela { float: left; width: 650px; }
+#classificacao-taca { float: left; width: 650px; }
+
+#calendario-tabela { float: left; width: 650px; }
+
+#resultados-tabela { float: left; width: 650px; }
+
+#leilao-tabela { float: left; width: 650px; }
 
 .plantel-sobcontrato { display: block; width: 25px; height: 20px; background: url('../img/sobcontrato.png') center center no-repeat; float: left; }
 .plantel-semcontrato { display: block; width: 25px; height: 20px; background: url('../img/semcontrato.png') center center no-repeat; float: left; }
@@ -56,9 +71,15 @@ h2 .legenda b { font-size: 11px; }
 .cancelar-link { display: block; width: 50px; height: 32px; background: url('../img/confirmar.png') center center no-repeat; float: right }
 .voltar-link { font-family: 'Trebuchet MS'; text-decoration: underline; text-transform: uppercase; font-size: 14px; margin-left: 25px;}
 
+.porcentagem { border: 1px solid #CBDBEB; border-radius: 3px; height: 40px; background: }
+    .porcentagem .porcentagem-valor { position: absolute; font-size: 22px; font-weight: bold;  text-align: center; width: 925px; padding-top: 6px;}
+    .porcentagem .porcentagem-interior { border-radius: 3px; height: 40px; background: #CBDBEB; }
+    
 #msg-ok { padding: 10px 10px 10px 40px; background: url('../img/msg-ok.png') 10px 8px no-repeat #99C700; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
 #msg-erro { padding: 10px 10px 10px 40px; background: url('../img/msg-erro.png') 10px 8px no-repeat #C80000; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
 #msg-alerta { padding: 10px 10px 10px 40px; background: url('../img/msg-alerta.png') 10px 8px no-repeat #CAAC00; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
+
+
 
 input[type=text], input[type=password], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; }
 .submit { cursor: pointer; min-width: 200px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }

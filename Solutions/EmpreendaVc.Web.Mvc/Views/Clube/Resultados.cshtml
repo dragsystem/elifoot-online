@@ -5,48 +5,75 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
     var competicao = ViewBag.Competicao.ToString();
+    var divisao = (int)ViewBag.Divisao;
     var rodada = ViewBag.Rodada.ToString();
 }
-@competicao<br />
-@rodada
-<table>
-    @foreach (var item in Model)
+<h2>@competicao - @rodada</h2>
+
+<div id="resultados-tabela">
+    @if (Model.Count() > 0)
     {
-        <tr>
-            <th>
-                @item.Clube1.Nome
-            </th>
-            <th>
-                @item.Gol1
-            </th>
-            <th>
-                X
-            </th>
-            <th>
-                @item.Gol2
-            </th>
-            <th>
-                @item.Clube2.Nome
-            </th>
-            <th>
-                @item.Publico.ToString("N0")
-            </th>
-        </tr>
-        <tr>
-            <td colspan="2">
-                @foreach (var gol in item.Gols1)
-                {
-                    @: @gol.Jogador.Nome @gol.Minuto'<br />
-                }
-            </td>
-            <td></td>
-            <td colspan="2">
-                @foreach (var gol in item.Gols2)
-                {
-                    @: @gol.Jogador.Nome @gol.Minuto'<br />
-                }
-            </td>
-            <td></td>
-        </tr>
+        foreach (var item in Model)
+        {
+            <table class="classificacao" cellpadding="0" cellspacing="0">
+                <tr>
+                    <th style="text-align: right;">
+                        @item.Clube1.Nome
+                    </th>
+                    <th>
+                        @item.Gol1
+                    </th>
+                    <th>
+                        X
+                    </th>
+                    <th>
+                        @item.Gol2
+                    </th>
+                    <th style="text-align: left;">
+                        @item.Clube2.Nome
+                    </th>
+                    <th>
+                        @item.Publico.ToString("N0")
+                    </th>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        @foreach (var gol in item.Gols1)
+                        {
+                            @: @gol.Jogador.Nome @gol.Minuto'<br />
+                        }
+                    </td>
+                    <td></td>
+                    <td colspan="2">
+                        @foreach (var gol in item.Gols2)
+                        {
+                            @: @gol.Jogador.Nome @gol.Minuto'<br />
+                        }
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        }
     }
-</table>
+    else
+    {
+        <p>Nenhum resultado disponível.</p>
+    }    
+
+    @if (divisao > 0)
+    {
+        if (rodada < 22)
+        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodada })" >Rodada anterior</a><text> -</text>  }
+        if (rodada > 1)
+        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodada })" >Próxima rodada</a> }
+    }
+    else
+    {
+        if (rodada < 16)
+        { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodada * 2) })" >Fase anterior</a><text> -</text>  }
+        if (rodada > 1)
+        { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodada / 2) })" >Próxima fase</a> } 
+    }
+</div>
+
+@{ Html.RenderPartial("_Menu", clube); }

@@ -81,7 +81,7 @@
                 return RedirectToAction("Plantel", "Clube");
 
             var clube = clubeRepository.Get(id);
-            usuario.Clube.Partidas = clubeQueryRepository.PartidasClube(clube.Id);
+            clube.Partidas = clubeQueryRepository.PartidasClube(clube.Id);
 
             return View(clube);
         }
@@ -92,7 +92,10 @@
             var usuario = authenticationService.GetUserAuthenticated();
 
             if (usuario.Clube == null)
+            {
+                TempData["MsgErro"] = "Você não é treinador de nenhum clube. Aguarde uma proposta.";
                 return RedirectToAction("Index", "Conta");
+            }
 
             var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
             if (lstUsuarioOferta.Count() > 0)
@@ -231,7 +234,11 @@
 
         public ActionResult Taca(int? rodada)
         {
+            var usuario = authenticationService.GetUserAuthenticated();
+
             var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA");
+
+            ViewBag.Clube = usuario.Clube != null ? usuario.Clube : new Clube();
 
             var controle = controleRepository.GetAll().FirstOrDefault();
             var rodadareal = controle.Taca / 2;
@@ -370,7 +377,7 @@
         }
 
         [Authorize]
-        public ActionResult Resultados(int? divisao, int? rodada)
+        public ActionResult Resultados(int? divisao, int? rodada, int? taca)
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
@@ -382,13 +389,14 @@
             if (divisao.HasValue)
                 divisaoresult = divisao.Value;
 
-            var lstPartidas = new List<Partida>();
+            var lstPartidas = new List<Partida>();            
 
-            if (divisaoresult == 0)
+            if (!taca.HasValue)
             {
-                var numero = Convert.ToInt32(divisaoresult);
+                var numero = divisaoresult;
+                ViewBag.Divisao = divisaoresult;
                 ViewBag.Competicao = divisaoresult + "ª DIVISÃO";
-
+                
                 if (rodada.HasValue)
                 {
                     ViewBag.Rodada = rodada.Value + "ª Rodada";
@@ -404,6 +412,7 @@
             }
             else
             {
+                ViewBag.Divisao = 0;
                 ViewBag.Competicao = "TAÇA";
 
                 if (rodada.HasValue)
@@ -425,7 +434,7 @@
                 else
                 {
                     lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada).OrderBy(x => x.Rodada).ToList();
-                    var ultrodada = lstPartidas.First().Rodada;
+                    var ultrodada = lstPartidas.Count() > 0 ? lstPartidas.First().Rodada : 16;
                     if (ultrodada == 16)
                         ViewBag.Rodada = "1ª Eliminatória";
                     else if (ultrodada == 8)
