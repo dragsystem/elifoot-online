@@ -3,41 +3,26 @@
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@*
-@foreach (var item in Model.Noticias.OrderByDescending(x => x.Noticia.Dia))
+
+<h2>Olá @Model.NomeCompleto!</h2>
+
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<div class="caixa">
+    <h1>Reputação Global</h1>
+    <div class="porcentagem">
+        <div class="porcentagem-valor">@Model.ReputacaoGeral %</div>
+        <div class="porcentagem-interior" style="width: @(Model.ReputacaoGeral)%;"></div>
+    </div>
+</div>
+
+@if (Model.Clube != null)
 {
-    var noticia = item.Noticia;
-    if (noticia.Tipo == 1)
-    {
-        @: @noticia.ClubeComprador.Nome acertou a compra de @noticia.Jogador.Nome junto ao @noticia.ClubeVendedor.Nome pelo valor de $@noticia.Valor.ToString("N2").<br />
-        @: O salário oferecido foi de $@noticia.Salario.ToString("N2").
-    }
-    else if (noticia.Tipo == 2)
-    {
-        @: @noticia.Jogador.Nome deseja renovar o contrato até o final da temporada com aumento de salário de $@noticia.Jogador.Salario.ToString("N2") para $@noticia.Salario.ToString("N2").<br />
-        @: Caso você não aceite, @noticia.Jogador.Nome decidirá se irá a leilão.<br /><br />
-        if (Model.Clube.Id == noticia.ClubeComprador.Id)
-        {
-            @: <a href="@Url.Action("ResponderJogadorPedido", "Clube", new { id = noticia.JogadorPedido.Id, resposta = true })">Aceitar</a><br />
-            @: <a href="@Url.Action("ResponderJogadorPedido", "Clube", new { id = noticia.JogadorPedido.Id, resposta = false })">Rejeitar</a>
-        }
-        else
-        {
-            @: Você não é mais treinador deste clube.
-        }
-    }
-    else if (noticia.Tipo == 3)
-    {
-        @: @noticia.ClubeComprador.Nome deseja contar com você para ser o seu novo treinador. Deseja treinar o @noticia.ClubeComprador.Nome?
-        @: <a href="@Url.Action("ResponderUsuarioOferta", "Clube", new { id = noticia.UsuarioOferta.Id, resposta = true })">Aceitar</a><br />
-        @: <a href="@Url.Action("ResponderUsuarioOferta", "Clube", new { id = noticia.UsuarioOferta.Id, resposta = false })">Rejeitar</a>
-    }
-    else if (noticia.Tipo == 5)
-    {
-        @: @noticia.ClubeComprador.Nome estava insatisfeito com seu trabalho, e o demitiu. Agora você deve aguardar propostas de outros clubes.
-    }
-    else if (noticia.Tipo == 6)
-    {
-        @: @noticia.Jogador.Nome, sem contrato, decidiu ir a leilão pelo valor de $@noticia.Valor.ToString("N2").
-    }    
-}*@
+    <div class="caixa">
+        <h1>Reputação no @Model.Clube.Nome</h1>
+        <div class="porcentagem">
+            <div class="porcentagem-valor">@Model.Reputacao %</div>
+            <div class="porcentagem-interior" style="width: @(Model.Reputacao)%;"></div>
+        </div>
+    </div>
+}

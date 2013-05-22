@@ -1,77 +1,124 @@
 ﻿@model IEnumerable<EmpreendaVc.Domain.Partida>
 @{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;
     var rodada = (int)ViewBag.Rodada;
-    var mao = (int)ViewBag.Mao; 
+    var mao = (int)ViewBag.Mao;
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
 }
-<div id="classificacao-lista">
-    <ul>
-        <li><b>TAÇA</b></li>
-        @foreach (var divisao in lstdivisao)
-        {
-            <li><a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" ></a></li>
-        }        
-    </ul>
+<div id="classificacao-lista" class="caixa">
+    <h1>Competições</h1>
+    <a><b>TAÇA</b></a><br />
+    @foreach (var divisao in lstdivisao)
+    {
+        <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a><br />
+    }
 </div>
+
+
 
 <div id="classificacao-taca">
-    @if (rodada == 16)
-    { 
-        @: 1ª Eliminatória 
-    }
-    else if (rodada == 8)
-    { 
-        @: Oitavas de Final
-    }
-    else if (rodada == 4)
-    { 
-        @: Quartas de Final
-    }
-    else if (rodada == 2)
-    { 
-        @: Semi Final
-    }
-    else if (rodada == 8)
-    { 
-        @: FINAL
-    }
-    
+    <h2>
+        @if (rodada == 16)
+        { 
+            @: 1ª Eliminatória 
+        }
+        else if (rodada == 8)
+        { 
+            @: Oitavas de Final
+        }
+        else if (rodada == 4)
+        { 
+            @: Quartas de Final
+        }
+        else if (rodada == 2)
+        { 
+            @: Semi Final
+        }
+        else if (rodada == 8)
+        { 
+            @: FINAL
+        }
+    </h2>
     @if (Model.Where(x => x.Rodada == rodada).Count() > 0)
     {
-    <table>
-        @foreach (var item in Model.Where(x => x.Rodada == rodada && x.Mao == mao))
-        {
+        <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
-            @if (item.Mao == 1)
-            {
-                <td>@item.Clube1.Nome</td>
-                <td></td>
-                <td></td>
-                <td>x</td>
-                <td></td>
-                <td></td>
-                <td>@item.Clube2.Nome</td>
-            }
-            else
-            {
-                var jogoida = Model.Where(x => x.Rodada == rodada && x.Mao == 1 && x.Clube1.Id == item.Clube2.Id && x.Clube2.Id == item.Clube1.Id).FirstOrDefault();
-                <td>@item.Clube2.Nome</td>
-                <td>(@jogoida.Gol1)</td>
-                <td></td>
-                <td>x</td>
-                <td></td>
-                <td>(@jogoida.Gol2)</td>
-                <td>@item.Clube1.Nome</td>
-            }
+                <th>Clube (CASA)</th>
+                <th colspan="5"></th>
+                <th>Clube (FORA)</th>
             </tr>
-        }
-    </table>
+            @foreach (var item in Model.Where(x => x.Rodada == rodada && x.Mao == mao))
+            {
+                var style1 = "";
+                var style2 = "";
+                if (item.Clube1.Id == clube.Id)
+                { style1 = "font-weight:bold;"; style2 = "";  }
+                else if (item.Clube2.Id == clube.Id)
+                { style2 = "font-weight:bold;"; style1 = ""; }
+                else
+                { style1 = ""; style2 = ""; }
+                
+                <tr>
+                    @if (item.Realizada)
+                    {
+                        if (item.Mao == 1)
+                        {
+                            <td style="text-align: right;@style1">@item.Clube1.Nome</td>
+                            <td>@item.Gol1</td>
+                            <td colspan="3">x</td>
+                            <td>@item.Gol2</td>
+                            <td style="text-align: left;@style2">@item.Clube2.Nome</td>
+                        }
+                        else
+                        {
+                            var jogoida = Model.Where(x => x.Rodada == rodada && x.Mao == 1 && x.Clube1.Id == item.Clube2.Id && x.Clube2.Id == item.Clube1.Id).FirstOrDefault();
+                            <td style="text-align: right;@style2">@item.Clube2.Nome</td>
+                            <td>(@jogoida.Gol1)</td>
+                            <td>@item.Gol2</td>
+                            <td>x</td>
+                            <td>@item.Gol1</td>
+                            <td>(@jogoida.Gol2)</td>
+                            <td style="text-align: left;@style1">@item.Clube1.Nome</td>
+                        }
+                    }
+                    else
+                    {
+                        if (item.Mao == 1)
+                        {
+                            <td style="text-align: right;@style1">@item.Clube1.Nome</td>
+                            <td></td>
+                            <td colspan="3">x</td>
+                            <td></td>
+                            <td style="text-align: left;@style2">@item.Clube2.Nome</td>
+                        }
+                        else
+                        {
+                            var jogoida = Model.Where(x => x.Rodada == rodada && x.Mao == 1 && x.Clube1.Id == item.Clube2.Id && x.Clube2.Id == item.Clube1.Id).FirstOrDefault();
+                            <td style="text-align: right;@style2">@item.Clube2.Nome</td>
+                            <td>(@jogoida.Gol1)</td>
+                            <td></td>
+                            <td>x</td>
+                            <td></td>
+                            <td>(@jogoida.Gol2)</td>
+                            <td style="text-align: left;@style1">@item.Clube1.Nome</td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>Fase não sorteada ainda.  </p>
     }
     
-    Fase não sorteada ainda.
 
     @if (rodada < 16)
-    { <a href="@Url.Action("Taca", "Clube", new { rodada = (rodada * 2) })" >Fase anterior</a> } 
+    { <a href="@Url.Action("Taca", "Clube", new { rodada = (rodada * 2) })" >Fase anterior</a><text> -</text>  } 
     @if (rodada > 1)
-    { <a href="@Url.Action("Taca", "Clube", new { rodada = (rodada / 2) })" >Próxima anterior</a> } 
+    { <a href="@Url.Action("Taca", "Clube", new { rodada = (rodada / 2) })" >Próxima fase</a> } 
 </div>
+
+@{ Html.RenderPartial("_Menu", clube); }

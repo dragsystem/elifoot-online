@@ -60,7 +60,10 @@
         <tr @classe @style>
             <td style="text-align: left;">
                 <span style="font-weight: bold; font-size: 16px; margin: 10px; @margin">@(item.Posicao)</span>
-                @item.Clube.Nome
+                @if (clube.Id != item.Clube.Id)
+                { <a @classe href="@Url.Action("Index", "Clube", new { id = item.Clube.Id })">@item.Clube.Nome</a> }
+                else 
+                { @item.Clube.Nome }
             </td>
             <td>@item.Pontos
             </td>

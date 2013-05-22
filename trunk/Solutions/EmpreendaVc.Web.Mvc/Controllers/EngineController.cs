@@ -608,6 +608,8 @@
                 }
 
                 ////////////////////////////////////////////Gerar Partidas
+                lstclubes = lstclubes.OrderByDescending(x => x.Dinheiro).ToList();
+
                 int t1 = 0;
                 int t2 = 1;
                 int t3 = 11; // ultimo time
@@ -1158,8 +1160,9 @@
                     }
                 }
 
+                //publico 
                 var publico = 0;
-                publico = clube1.Socios * 10;
+                publico = clube1.Socios * 5;
                 publico = publico - ((publico / 12) * (divisaotabelaRepository.GetAll().Where(x => x.Clube.Id == clube1.Id).FirstOrDefault().Posicao - 1));
                 if (clube1.Ingresso > 35)
                     publico = (publico / 100) * 30;

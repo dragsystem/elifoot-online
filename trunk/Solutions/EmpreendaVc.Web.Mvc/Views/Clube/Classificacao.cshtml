@@ -5,22 +5,22 @@
     var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
 }
-<div id="classificacao-lista">
-    <ul>
-        <li><a href="@Url.Action("Taca", "Clube")">TAÇA</a></li>
+<div id="classificacao-lista" class="caixa">
+    <h1>Competições</h1>
+    <a href="@Url.Action("Taca", "Clube")">TAÇA</a><br />
         @foreach (var divisao in lstdivisao)
         {
             if (divisao.Id == Model.Id)
             {
-            <li><b>@divisao.Nome</b></li>
+                <a><b>@divisao.Nome</b></a><br />
             }
             else
             {
-            <li><a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a></li>
+                <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a><br />
             }
         }
-    </ul>
 </div>
+
 <div id="classificacao-tabela">
     <h2>@Model.Nome
         <div class="legenda">
@@ -31,34 +31,34 @@
     </h2>
     <table class="classificacao" cellpadding="0" cellspacing="0">
         <tr>
-            <th>
+            <th width="36%">
                 Clube
             </th>
-            <th>
+            <th width="7%">
                 P
             </th>
-            <th>
+            <th width="7%">
                 J
             </th>
-            <th>
+            <th width="7%">
                 V
             </th>
-            <th>
+            <th width="7%">
                 E
             </th>
-            <th>
+            <th width="7%">
                 D
             </th>
-            <th>
+            <th width="7%">
                 GP
             </th>
-            <th>
+            <th width="7%">
                 GC
             </th>
-            <th>
+            <th width="7%">
                 SG
             </th>
-            <th>
+            <th width="7%">
                 %
             </th>
         </tr>
@@ -80,7 +80,7 @@
             <tr @classe @style>
                 <td style="text-align: left;">
                     <span style="font-weight: bold; font-size: 16px; margin: 10px; @margin">@(item.Posicao)</span>
-                    @item.Clube.Nome
+                    <a @classe href="@Url.Action("Index", "Clube", new { id = item.Clube.Id })">@item.Clube.Nome</a>
                 </td>
                 <td>@item.Pontos
                 </td>
@@ -105,3 +105,5 @@
         }
     </table>
 </div>
+
+@{ Html.RenderPartial("_Menu", clube); }
