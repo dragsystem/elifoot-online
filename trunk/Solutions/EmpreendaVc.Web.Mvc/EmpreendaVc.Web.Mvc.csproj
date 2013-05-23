@@ -425,6 +425,7 @@
     <Content Include="Views\Clube\_Formacao.cshtml" />
     <Content Include="Views\Clube\Formacao.cshtml" />
     <Content Include="Views\Shared\_Menu.cshtml" />
+    <Content Include="Views\Engine\PartidaTeste.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

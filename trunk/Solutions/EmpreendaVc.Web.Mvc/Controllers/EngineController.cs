@@ -861,16 +861,8 @@
 
             var lstPartidas = partidaRepository.GetAll().Where(x => x.Dia <= controle.Dia);
 
-            var pDefesa = new List<int>();
-            pDefesa.Add(1);
-            pDefesa.Add(2);
-            pDefesa.Add(3);
-            pDefesa.Add(4);
-            pDefesa.Add(5);
+            EscalaTimes();
 
-            var pAtaque = new List<int>();
-            pAtaque.Add(6);
-            pAtaque.Add(7);
             ////////////////////////////////FOR PARTIDAS
             foreach (var partida in lstPartidas)
             {
@@ -879,13 +871,15 @@
                 var gol1 = 0;
                 var gol2 = 0;
 
-                //////////////////////////////////////////////////////////////////
-                //ESCALAR TIMES
+                var def1 = clube1.Escalacao.Where(x => x.Posicao == 1 || x.Posicao == 2 || x.Posicao == 3 || x.Posicao == 4 || x.Posicao == 5);
+                var def2 = clube2.Escalacao.Where(x => x.Posicao == 1 || x.Posicao == 2 || x.Posicao == 3 || x.Posicao == 4 || x.Posicao == 5);
+                var ata1 = clube1.Escalacao.Where(x => x.Posicao == 6 || x.Posicao == 7);
+                var ata2 = clube2.Escalacao.Where(x => x.Posicao == 6 || x.Posicao == 7);
 
-                var Defesa1 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Sum(x => x.H) / clube1.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Count());
-                var Defesa2 = Convert.ToInt32(clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pDefesa)).Count());
-                var Ataque1 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
-                var Ataque2 = Convert.ToInt32(clube1.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Sum(x => x.H) / clube2.Escalacao.Where(x => x.Posicao.IsIn(pAtaque)).Count());
+                var Defesa1 = Convert.ToInt32(def1.Sum(x => x.H) / def1.Count());
+                var Defesa2 = Convert.ToInt32(def2.Sum(x => x.H) / def2.Count());
+                var Ataque1 = Convert.ToInt32(ata1.Sum(x => x.H) / ata1.Count());
+                var Ataque2 = Convert.ToInt32(ata2.Sum(x => x.H) / ata2.Count());
 
                 var Diferenca = (Defesa1 - Defesa2) + (Ataque1 - Ataque2);
 
@@ -930,44 +924,44 @@
                         usuarioRepository.SaveOrUpdate(usuario);
                     }
 
-                    var dif7 = Convert.ToInt32((Prob1 / 100) * 2);
-                    var dif6 = Convert.ToInt32((Prob1 / 100) * 2);
-                    var dif5 = Convert.ToInt32((Prob1 / 100) * 4);
-                    var dif4 = Convert.ToInt32((Prob1 / 100) * 10);
-                    var dif3 = Convert.ToInt32((Prob1 / 100) * 30);
-                    var dif2 = Convert.ToInt32((Prob1 / 100) * 50);
+                    var dif7 = Convert.ToInt32(((double)Prob1 / 100) * 2);
+                    var dif6 = Convert.ToInt32(((double)Prob1 / 100) * 2);
+                    var dif5 = Convert.ToInt32(((double)Prob1 / 100) * 4);
+                    var dif4 = Convert.ToInt32(((double)Prob1 / 100) * 10);
+                    var dif3 = Convert.ToInt32(((double)Prob1 / 100) * 30);
+                    var dif2 = Convert.ToInt32(((double)Prob1 / 100) * 50);
 
                     if (placar <= dif7)
                     {
                         gol2 = rnd.Next(0, 2);
                         gol1 = gol2 + 7;
                     }
-                    else if (placar <= dif6)
+                    else if (placar <= (dif7 + dif6))
                     {
                         gol2 = rnd.Next(0, 2);
                         gol1 = gol2 + 6;
                     }
-                    else if (placar <= dif5)
+                    else if (placar <= (dif7 + dif6 + dif5))
                     {
                         gol2 = rnd.Next(0, 3);
                         gol1 = gol2 + 5;
                     }
-                    else if (placar <= dif4)
+                    else if (placar <= (dif7 + dif6 + dif5 + dif4))
                     {
                         gol2 = rnd.Next(0, 3);
                         gol1 = gol2 + 4;
                     }
-                    else if (placar <= dif3)
+                    else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3))
                     {
                         gol2 = rnd.Next(0, 2);
                         gol1 = gol2 + 3;
                     }
-                    else if (placar <= dif2)
+                    else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
                     {
                         gol2 = rnd.Next(0, 3);
                         gol1 = gol2 + 2;
                     }
-                    else if (placar > dif2)
+                    else if (placar > (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
                     {
                         gol2 = rnd.Next(0, 3);
                         gol1 = gol2 + 1;
@@ -1028,47 +1022,47 @@
                         usuarioRepository.SaveOrUpdate(usuario);
                     }
 
-                    var dif7 = Convert.ToInt32((Prob1 / 100) * 2);
-                    var dif6 = Convert.ToInt32((Prob1 / 100) * 2);
-                    var dif5 = Convert.ToInt32((Prob1 / 100) * 4);
-                    var dif4 = Convert.ToInt32((Prob1 / 100) * 10);
-                    var dif3 = Convert.ToInt32((Prob1 / 100) * 30);
-                    var dif2 = Convert.ToInt32((Prob1 / 100) * 50);
+                    var dif7 = Convert.ToInt32(((double)Prob2 / 100) * 2);
+                    var dif6 = Convert.ToInt32(((double)Prob2 / 100) * 2);
+                    var dif5 = Convert.ToInt32(((double)Prob2 / 100) * 4);
+                    var dif4 = Convert.ToInt32(((double)Prob2 / 100) * 10);
+                    var dif3 = Convert.ToInt32(((double)Prob2 / 100) * 30);
+                    var dif2 = Convert.ToInt32(((double)Prob2 / 100) * 50);
 
                     if (placar <= dif7)
                     {
-                        gol2 = rnd.Next(0, 2);
-                        gol1 = gol2 + 7;
+                        gol1 = rnd.Next(0, 2);
+                        gol2 = gol2 + 7;
                     }
-                    else if (placar <= dif6)
+                    else if (placar <= (dif7 + dif6))
                     {
-                        gol2 = rnd.Next(0, 2);
-                        gol1 = gol2 + 6;
+                        gol1 = rnd.Next(0, 2);
+                        gol2 = gol2 + 6;
                     }
-                    else if (placar <= dif5)
+                    else if (placar <= (dif7 + dif6 + dif5))
                     {
-                        gol2 = rnd.Next(0, 3);
-                        gol1 = gol2 + 5;
+                        gol1 = rnd.Next(0, 3);
+                        gol2 = gol2 + 5;
                     }
-                    else if (placar <= dif4)
+                    else if (placar <= (dif7 + dif6 + dif5 + dif4))
                     {
-                        gol2 = rnd.Next(0, 3);
-                        gol1 = gol2 + 4;
+                        gol1 = rnd.Next(0, 3);
+                        gol2 = gol2 + 4;
                     }
-                    else if (placar <= dif3)
+                    else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3))
                     {
-                        gol2 = rnd.Next(0, 2);
-                        gol1 = gol2 + 3;
+                        gol1 = rnd.Next(0, 2);
+                        gol2 = gol2 + 3;
                     }
-                    else if (placar <= dif2)
+                    else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
                     {
-                        gol2 = rnd.Next(0, 3);
-                        gol1 = gol2 + 2;
+                        gol1 = rnd.Next(0, 3);
+                        gol2 = gol2 + 2;
                     }
-                    else if (placar > dif2)
+                    else if (placar > (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
                     {
-                        gol2 = rnd.Next(0, 3);
-                        gol1 = gol2 + 1;
+                        gol1 = rnd.Next(0, 3);
+                        gol2 = gol2 + 1;
                     }
                 }
 
@@ -1331,7 +1325,7 @@
         #region GerarJogador
 
         [Transaction]
-        public ActionResult GerarJogador(int id)
+        public void GerarJogador(int id)
         {
             var clube = clubeRepository.Get(id);
             var divisao = clube.Divisao.Numero;
@@ -1373,10 +1367,348 @@
                 
                 jogadorRepository.SaveOrUpdate(jogador);
             }
-
-            return RedirectToAction("Index", "Engine");
         }
 
         #endregion
+
+        public ActionResult PartidaTeste()
+        {
+            var partida = new Partida();
+            var lstGols = new List<Gol>();
+
+            partida.Clube1 = clubeRepository.Get(1);
+            partida.Clube2 = clubeRepository.Get(2);
+            partida.Mao = 1;
+            partida.Rodada = 1;
+            partida.Tipo = "DIVISAO";
+            partida.Dia = 1;
+            partida.Divisao = divisaoRepository.Get(1);
+
+            //var pDefesa = "1,2,3,4,5"; //ALTEREI AQUI
+
+            //var pAtaque = "6,7"; //ALTEREI AQUI
+
+            var clube1 = clubeRepository.Get(partida.Clube1.Id);
+            var clube2 = clubeRepository.Get(partida.Clube2.Id);
+            var gol1 = 0;
+            var gol2 = 0;
+
+            //////////////////////////////////////////////////////////////////
+            //ESCALAR TIMES
+            
+
+            var def1 = clube1.Escalacao.Where(x => x.Posicao == 1 || x.Posicao == 2 || x.Posicao == 3 || x.Posicao == 4 || x.Posicao == 5);
+            var def2 = clube2.Escalacao.Where(x => x.Posicao == 1 || x.Posicao == 2 || x.Posicao == 3 || x.Posicao == 4 || x.Posicao == 5);
+            var ata1 = clube1.Escalacao.Where(x => x.Posicao == 6 || x.Posicao == 7);
+            var ata2 = clube2.Escalacao.Where(x => x.Posicao == 6 || x.Posicao == 7);
+
+            var Defesa1 = Convert.ToInt32(def1.Sum(x => x.H) / def1.Count());
+            var Defesa2 = Convert.ToInt32(def2.Sum(x => x.H) / def2.Count());
+            var Ataque1 = Convert.ToInt32(ata1.Sum(x => x.H) / ata1.Count());
+            var Ataque2 = Convert.ToInt32(ata2.Sum(x => x.H) / ata2.Count());
+
+            var Diferenca = (Defesa1 - Defesa2) + (Ataque1 - Ataque2);
+
+            var Prob1 = 60;
+            var Prob2 = 40;
+            var ProbEmpate = 0;
+
+            if ((Diferenca * (-1)) > 30)
+                ProbEmpate = 6;
+            else if ((Diferenca * (-1)) > 20)
+                ProbEmpate = 12;
+            else if ((Diferenca * (-1)) > 10)
+                ProbEmpate = 30;
+            else if ((Diferenca * (-1)) >= 0)
+                ProbEmpate = 40;
+
+            Prob1 = (Prob1 + (Diferenca));
+            Prob2 = (Prob2 - (Diferenca));
+
+            Random rnd = new Random();
+
+            var resultado = rnd.Next(0, (Prob1 + Prob2 + ProbEmpate));
+            var vencedor = new Clube();
+
+            var placar = rnd.Next(1, 101);
+
+            if (resultado <= Prob1)
+            {
+                vencedor = clube1;
+                if (clube1.Usuario != null)
+                {
+                    var usuario = clube1.Usuario;
+
+                    usuario.Reputacao = usuario.Reputacao + 4 > 50 ? 50 : usuario.Reputacao + 4;
+                    //usuarioRepository.SaveOrUpdate(usuario);
+                }
+                if (clube2.Usuario != null)
+                {
+                    var usuario = clube2.Usuario;
+
+                    usuario.Reputacao = usuario.Reputacao - 6 < 0 ? 0 : usuario.Reputacao - 6;
+                    //usuarioRepository.SaveOrUpdate(usuario);
+                }
+
+                var dif7 = Convert.ToInt32(((double)Prob1 / 100) * 2);
+                var dif6 = Convert.ToInt32(((double)Prob1 / 100) * 2);
+                var dif5 = Convert.ToInt32(((double)Prob1 / 100) * 4);
+                var dif4 = Convert.ToInt32(((double)Prob1 / 100) * 10);
+                var dif3 = Convert.ToInt32(((double)Prob1 / 100) * 30);
+                var dif2 = Convert.ToInt32(((double)Prob1 / 100) * 50);
+
+                if (placar <= dif7)
+                {
+                    gol2 = rnd.Next(0, 2);
+                    gol1 = gol2 + 7;
+                }
+                else if (placar <= (dif7 + dif6))
+                {
+                    gol2 = rnd.Next(0, 2);
+                    gol1 = gol2 + 6;
+                }
+                else if (placar <= (dif7 + dif6 + dif5))
+                {
+                    gol2 = rnd.Next(0, 3);
+                    gol1 = gol2 + 5;
+                }
+                else if (placar <= (dif7 + dif6 + dif5 + dif4))
+                {
+                    gol2 = rnd.Next(0, 3);
+                    gol1 = gol2 + 4;
+                }
+                else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3))
+                {
+                    gol2 = rnd.Next(0, 2);
+                    gol1 = gol2 + 3;
+                }
+                else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
+                {
+                    gol2 = rnd.Next(0, 3);
+                    gol1 = gol2 + 2;
+                }
+                else if (placar > (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
+                {
+                    gol2 = rnd.Next(0, 3);
+                    gol1 = gol2 + 1;
+                }
+            }
+            else if (resultado <= (Prob1 + ProbEmpate))
+            {
+                vencedor = null;
+                if (clube1.Usuario != null)
+                {
+                    var usuario = clube1.Usuario;
+
+                    usuario.Reputacao = usuario.Reputacao - 3 < 0 ? 0 : usuario.Reputacao - 3;
+                    //usuarioRepository.SaveOrUpdate(usuario);
+                }
+
+                if (placar < 35)
+                {
+                    gol2 = 0;
+                    gol1 = 0;
+                }
+                else if (placar < 70)
+                {
+                    gol2 = 1;
+                    gol1 = 1;
+                }
+                else if (placar < 90)
+                {
+                    gol2 = 2;
+                    gol1 = 2;
+                }
+                else if (placar < 98)
+                {
+                    gol2 = 3;
+                    gol1 = 3;
+                }
+                else if (placar >= 98)
+                {
+                    gol2 = 4;
+                    gol1 = 4;
+                }
+            }
+            else
+            {
+                vencedor = clube2;
+                if (clube1.Usuario != null)
+                {
+                    var usuario = clube1.Usuario;
+
+                    usuario.Reputacao = usuario.Reputacao - 8 < 0 ? 0 : usuario.Reputacao - 8;
+                    //usuarioRepository.SaveOrUpdate(usuario);
+                }
+                if (clube2.Usuario != null)
+                {
+                    var usuario = clube2.Usuario;
+
+                    usuario.Reputacao = usuario.Reputacao + 6 > 50 ? 50 : usuario.Reputacao + 6;
+                    //usuarioRepository.SaveOrUpdate(usuario);
+                }
+
+                var dif7 = Convert.ToInt32(((double)Prob2 / 100) * 2);
+                var dif6 = Convert.ToInt32(((double)Prob2 / 100) * 2);
+                var dif5 = Convert.ToInt32(((double)Prob2 / 100) * 4);
+                var dif4 = Convert.ToInt32(((double)Prob2 / 100) * 10);
+                var dif3 = Convert.ToInt32(((double)Prob2 / 100) * 30);
+                var dif2 = Convert.ToInt32(((double)Prob2 / 100) * 50);
+
+                if (placar <= dif7)
+                {
+                    gol1 = rnd.Next(0, 2);
+                    gol2 = gol2 + 7;
+                }
+                else if (placar <= (dif7 + dif6))
+                {
+                    gol1 = rnd.Next(0, 2);
+                    gol2 = gol2 + 6;
+                }
+                else if (placar <= (dif7 + dif6 + dif5))
+                {
+                    gol1 = rnd.Next(0, 3);
+                    gol2 = gol2 + 5;
+                }
+                else if (placar <= (dif7 + dif6 + dif5 + dif4))
+                {
+                    gol1 = rnd.Next(0, 3);
+                    gol2 = gol2 + 4;
+                }
+                else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3))
+                {
+                    gol1 = rnd.Next(0, 2);
+                    gol2 = gol2 + 3;
+                }
+                else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
+                {
+                    gol1 = rnd.Next(0, 3);
+                    gol2 = gol2 + 2;
+                }
+                else if (placar > (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
+                {
+                    gol1 = rnd.Next(0, 3);
+                    gol2 = gol2 + 1;
+                }
+            }
+
+            if (partida.Tipo == "TACA" && partida.Mao == 2)
+            {
+                var partida1mao = partidaRepository.GetAll().Where(x => x.Rodada == partida.Rodada && x.Mao == 1 && x.Clube1.Id == partida.Clube2.Id && x.Clube2.Id == partida.Clube1.Id).FirstOrDefault();
+
+                var totalgol1 = partida.Gol1 + partida1mao.Gol2;
+                var totalgol2 = partida.Gol2 + partida1mao.Gol1;
+
+                if (totalgol1 > totalgol2)
+                    vencedor = partida.Clube1;
+                else if (totalgol2 > totalgol1)
+                    vencedor = partida.Clube2;
+                else
+                {
+                    if (rnd.Next(1, 3) == 1)
+                    {
+                        vencedor = partida.Clube1;
+                        var penal = rnd.Next(0, 3).ToString();
+                        if (penal == "0")
+                            partida.Penalti = "5 x 4";
+                        else if (penal == "1")
+                            partida.Penalti = "4 x 3";
+                        else
+                            partida.Penalti = "3 x 2";
+                    }
+                    else
+                    {
+                        vencedor = partida.Clube2;
+                        var penal = rnd.Next(0, 3).ToString();
+                        if (penal == "0")
+                            partida.Penalti = "4 x 5";
+                        else if (penal == "1")
+                            partida.Penalti = "3 x 4";
+                        else
+                            partida.Penalti = "2 x 3";
+                    }
+                }
+
+            }
+
+            if (gol1 > 0)
+            {
+                var totalgols = clube1.Escalacao.Sum(x => x.HGol) + 1;
+                for (int i = 1; i <= gol1; i++)
+                {
+                    var gol = new Gol();
+                    gol.Clube = clube1;
+                    gol.Minuto = rnd.Next(1, 94);
+                    gol.Partida = partida;
+                    var contagem = 0;
+                    var goleador = rnd.Next(1, totalgols);
+                    foreach (var jog in clube1.Escalacao.OrderBy(x => x.Posicao))
+                    {
+                        contagem = contagem + jog.HGol;
+                        if (goleador <= contagem)
+                        {
+                            gol.Jogador = jog.Jogador;
+                            break;
+                        }
+                    }
+                    lstGols.Add(gol);
+                    //golRepository.SaveOrUpdate(gol);
+                }
+            }
+
+            var listgol2 = new List<Gol>();
+            if (gol2 > 0)
+            {
+                var totalgols = clube2.Escalacao.Sum(x => x.HGol) + 1;
+                for (int i = 1; i <= gol2; i++)
+                {
+                    var gol = new Gol();
+                    gol.Clube = clube2;
+                    gol.Minuto = rnd.Next(1, 94);
+                    gol.Partida = partida;
+                    var contagem = 0;
+                    var goleador = rnd.Next(1, totalgols);
+                    foreach (var jog in clube2.Escalacao.OrderBy(x => x.Posicao))
+                    {
+                        contagem = contagem + jog.HGol;
+                        if (goleador <= contagem)
+                        {
+                            gol.Jogador = jog.Jogador;
+                            break;
+                        }
+                    }
+                    lstGols.Add(gol);
+                    //golRepository.SaveOrUpdate(gol);
+                }
+            }
+
+            //publico 
+            var publico = 0;
+            publico = clube1.Socios * 5;
+            publico = publico - ((publico / 12) * (divisaotabelaRepository.GetAll().Where(x => x.Clube.Id == clube1.Id).FirstOrDefault().Posicao - 1));
+            if (clube1.Ingresso > 35)
+                publico = (publico / 100) * 30;
+            else if (clube1.Ingresso > 25)
+                publico = (publico / 100) * 50;
+
+            publico = rnd.Next((publico - 3000), publico);
+            if (publico > clube1.Estadio)
+                publico = clube1.Estadio;
+            else if (publico <= 0)
+                publico = rnd.Next(500, 2000);
+
+            partida.Gol1 = gol1;
+            partida.Gol2 = gol2;
+            if (partida.Tipo == "TACA" && partida.Mao == 1)
+                partida.Vencedor = null;
+            else
+                partida.Vencedor = vencedor;
+            partida.Realizada = true;
+            partida.Publico = publico;
+
+            partida.Gols = lstGols;
+
+            return View(partida);
+        }
     }
 }
