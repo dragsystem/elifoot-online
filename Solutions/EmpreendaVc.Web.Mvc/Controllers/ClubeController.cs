@@ -404,7 +404,7 @@
                 }
                 else
                 {
-                    lstPartidas = partidaRepository.GetAll().Where(x => x.Divisao.Numero == numero && x.Realizada).OrderByDescending(x => x.Rodada).ToList();
+                    lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "DIVISAO" && x.Divisao.Numero == numero && x.Realizada).OrderByDescending(x => x.Rodada).ToList();
                     var ultrodada = lstPartidas.First().Rodada;
                     ViewBag.Rodada = ultrodada + "ª Rodada";
                     lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada).ToList();

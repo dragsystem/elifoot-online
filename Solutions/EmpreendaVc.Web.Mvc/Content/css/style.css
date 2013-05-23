@@ -49,7 +49,7 @@ h2 .legenda b { font-size: 11px; }
     #plantel-financas { float: right; width: 260px; }
     #plantel-proximo { float: right; width: 260px; }
 
-#classificacao-lista { width: 310px; float: right; font-size: 16px; line-height: 30px; }
+#classificacao-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
 #classificacao-lista a { font-weight: normal; margin-left: 15px; }
 #classificacao-tabela { float: left; width: 650px; }
 #classificacao-taca { float: left; width: 650px; }

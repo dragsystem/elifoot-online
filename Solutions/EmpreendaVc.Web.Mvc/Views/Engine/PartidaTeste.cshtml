@@ -1,0 +1,41 @@
+﻿@model EmpreendaVc.Domain.Partida
+@{
+    //var lstGols = (List<EmpreendaVc.Domain.Gol>)ViewBag.Gols;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Index</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>@Model.Clube1.Nome</td>
+            <td>@Model.Gol1</td>
+            <td>x</td>
+            <td>@Model.Gol2</td>
+            <td>@Model.Clube2.Nome</td>
+            <td>@Model.Publico</td>
+            <td>@(Model.Vencedor != null? Model.Vencedor.Nome : "Empate")</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @foreach (var gol in Model.Gols.Where(x => x.Clube.Id == Model.Clube1.Id).OrderBy(x => x.Minuto))
+                {
+                    @: @gol.Jogador.Nome @gol.Minuto'<br />
+                }
+            </td>
+            <td></td>
+            <td colspan="2">
+                @foreach (var gol in Model.Gols.Where(x => x.Clube.Id == Model.Clube2.Id).OrderBy(x => x.Minuto))
+                {
+                    @: @gol.Jogador.Nome @gol.Minuto'<br />
+                }
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+   </table>
+</body>
+</html>
