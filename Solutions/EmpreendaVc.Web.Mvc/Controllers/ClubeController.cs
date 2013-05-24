@@ -91,15 +91,15 @@
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
+            var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
+            if (lstUsuarioOferta.Count() > 0)
+                return RedirectToAction("UsuarioOferta", "Conta");
+
             if (usuario.Clube == null)
             {
                 TempData["MsgErro"] = "Você não é treinador de nenhum clube. Aguarde uma proposta.";
                 return RedirectToAction("Index", "Conta");
             }
-
-            var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
-            if (lstUsuarioOferta.Count() > 0)
-                return RedirectToAction("UsuarioOferta", "Conta");
 
             var lstJogadorPedido = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
             if (lstUsuarioOferta.Count() > 0)
@@ -400,13 +400,15 @@
                 if (rodada.HasValue)
                 {
                     ViewBag.Rodada = rodada.Value + "ª Rodada";
+                    ViewBag.RodadaNum = rodada.Value;
                     lstPartidas = partidaRepository.GetAll().Where(x => x.Divisao.Numero == numero && x.Rodada == rodada.Value && x.Realizada).ToList();
                 }
                 else
                 {
                     lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "DIVISAO" && x.Divisao.Numero == numero && x.Realizada).OrderByDescending(x => x.Rodada).ToList();
-                    var ultrodada = lstPartidas.First().Rodada;
+                    var ultrodada = lstPartidas.Count() > 0 ? lstPartidas.First().Rodada : 1;
                     ViewBag.Rodada = ultrodada + "ª Rodada";
+                    ViewBag.RodadaNum = ultrodada;
                     lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada).ToList();
                 }
             }

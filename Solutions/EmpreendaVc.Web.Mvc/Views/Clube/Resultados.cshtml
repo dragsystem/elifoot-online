@@ -7,6 +7,7 @@
     var competicao = ViewBag.Competicao.ToString();
     var divisao = (int)ViewBag.Divisao;
     var rodada = ViewBag.Rodada.ToString();
+    var rodadanum = (int)ViewBag.RodadaNum;
 }
 <h2>@competicao - @rodada</h2>
 
@@ -62,16 +63,16 @@
 
     @if (divisao > 0)
     {
-        if (rodada < 22)
+        if (rodadanum > 1)
         { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodada })" >Rodada anterior</a><text> -</text>  }
-        if (rodada > 1)
+        if (rodadanum < 22)
         { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodada })" >Próxima rodada</a> }
     }
     else
     {
-        if (rodada < 16)
+        if (rodadanum < 16)
         { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodada * 2) })" >Fase anterior</a><text> -</text>  }
-        if (rodada > 1)
+        if (rodadanum > 1)
         { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodada / 2) })" >Próxima fase</a> } 
     }
 </div>
