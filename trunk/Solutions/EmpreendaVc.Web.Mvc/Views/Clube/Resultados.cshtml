@@ -64,16 +64,16 @@
     @if (divisao > 0)
     {
         if (rodadanum > 1)
-        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodada })" >Rodada anterior</a><text> -</text>  }
+        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodadanum })" >Rodada anterior</a><text> -</text>  }
         if (rodadanum < 22)
-        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodada })" >Próxima rodada</a> }
+        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodadanum })" >Próxima rodada</a> }
     }
     else
     {
         if (rodadanum < 16)
-        { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodada * 2) })" >Fase anterior</a><text> -</text>  }
+        { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodadanum * 2) })" >Fase anterior</a><text> -</text>  }
         if (rodadanum > 1)
-        { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodada / 2) })" >Próxima fase</a> } 
+        { <a href="@Url.Action("Resultados", "Clube", new { taca = 1, rodada = (rodadanum / 2) })" >Próxima fase</a> } 
     }
 </div>
 
