@@ -77,7 +77,6 @@
             this.nomeRepository = nomeRepository;
         }
 
-        //OK - GerarCampeonato(); 
         
         [Transaction]
         public ActionResult Index()
@@ -85,8 +84,11 @@
             try
             {
                 foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null).OrderByDescending(x => x.Dinheiro))
-                { 
-                    
+                {
+                    //RenovaContratos(clube);
+                    ComprarJogador(clube);
+                    VenderJogador(clube);
+                    VenderJogadorPorCaixa(clube);
                 }
             }
             catch (Exception ex)
@@ -101,7 +103,7 @@
         [Transaction]
         public void RenovaContratos(Clube clube)
         {
-            foreach (var jogador in clube.Jogadores)
+            foreach (var jogador in clube.Jogadores.Where(x => x.Contrato == false))
             {
                 jogador.Contrato = true;
                 jogadorRepository.SaveOrUpdate(jogador);

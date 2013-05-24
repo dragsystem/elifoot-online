@@ -316,7 +316,9 @@
     <Content Include="Content\css\style.css" />
     <Content Include="Content\img\bg.png" />
     <Content Include="Content\img\cancelar.png" />
-    <Content Include="Content\img\confirmar.png" />
+    <Content Include="Content\img\msg-alerta.png" />
+    <Content Include="Content\img\msg-erro.png" />
+    <Content Include="Content\img\msg-ok.png" />
     <Content Include="Content\img\semcontrato.png" />
     <Content Include="Content\img\sobcontrato.png" />
     <Content Include="Content\img\vender.png" />

@@ -17,33 +17,33 @@ namespace EmpreendaVc.Domain
 
         public virtual int Posicao { get; set; }
 
-        public virtual int H 
-        { 
-            get 
-            {
-                if (Jogador.H >= 90)
-                    return Jogador.H + 20;
-                else if (Jogador.H >= 80)
-                    return Jogador.H + 10;
-                else if (Jogador.H >= 70)
-                    return Jogador.H + 5;
-                else
-                    return Jogador.H;
-            } 
-        }
+        public virtual int H { get; set; }
+        //{ 
+        //    get 
+        //    {
+        //        if (Jogador.H >= 90)
+        //            return Jogador.H + 20;
+        //        else if (Jogador.H >= 80)
+        //            return Jogador.H + 10;
+        //        else if (Jogador.H >= 70)
+        //            return Jogador.H + 5;
+        //        else
+        //            return Jogador.H;
+        //    } 
+        //}
 
         public virtual int HGol
         {
             get
             {
-                if (Jogador.Posicao == 7)
-                    return Jogador.H;
-                else if (Jogador.Posicao == 6)
-                    return (Jogador.H * 5)/10;
-                else if (Jogador.Posicao == 1)
+                if (Posicao == 7)
+                    return H;
+                else if (Posicao == 6)
+                    return (H * 5)/10;
+                else if (Posicao == 1)
                     return 1;
                 else
-                    return Jogador.H/10;
+                    return H/10;
             }
         }
 

@@ -15,9 +15,9 @@
         Dinheiro: $@clube.Dinheiro.ToString("N2")<br />
         Estádio: @clube.Estadio.ToString("N0")<br />
         Sócios: @clube.Socios.ToString("N0")<br />
-        <div style="text-align: right;">
-            <a class="confirmar-link" title="Aceitar" href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = true })"></a>
-            <a class="cancelar-link" title="Rejeitar" href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = false })"></a>
+        <div style="text-align: right; height: 30px;">
+            <a class="submit" href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = true })">ACEITAR</a>
+            <a class="submit" href="@Url.Action("UsuarioOfertaResposta", new { id = item.Id, resposta = false })">REJEITAR</a>
         </div>
     </div>
     }
