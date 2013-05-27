@@ -43,7 +43,7 @@
         </th>
     </tr>
     @{ var i = 1; }
-    @foreach (var item in Model.DivisaoTabela.OrderByDescending(x => x.Pontos))
+    @foreach (var item in Model.DivisaoTabela.OrderBy(x => x.Posicao))
     {
         var margin = "margin-left: 15px;";
         if (i > 9) { margin = ""; }

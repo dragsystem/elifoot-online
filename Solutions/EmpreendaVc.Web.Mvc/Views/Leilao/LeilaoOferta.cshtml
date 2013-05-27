@@ -2,18 +2,13 @@
 @using EmpreendaVc.Web.Mvc.Util
 @using MvcContrib
 @using MvcContrib.FluentHtml
-
 @if (Model.Id != 0)
 {
-    @: Você já possui uma oferta no valor de $@Model.Salario.ToString("N2"). Se quiser cancelar clique <a href="@Url.Action("CancelarOferta", "Leilao", new { id = Model.Id })">AQUI</a>.
-    @: Caso queira apenas alterar, faça uma nova proposta abaixo que a antiga será desconsiderada.
+    <p>
+        Você já possui uma oferta no valor de $@Model.Salario.ToString("N2"). Se quiser cancelar clique <a href="@Url.Action("CancelarOferta", "Leilao", new { id = Model.Id })">AQUI</a>.<br />
+        Caso queira apenas alterar, faça uma nova proposta abaixo que a antiga será desconsiderada.
+    </p>
 }
-
-@using (Html.BeginForm())
-{
-    @Html.HiddenFor(x => x.Id)
-    @Html.HiddenFor(x => x.Leilao.Id)
-    @: Salário ofertado: @this.Select("Valor").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString("N2") : "")
-
-    <input type="submit" value="Confirmar" />
-}
+@Html.HiddenFor(x => x.Id)
+Salário ofertado: @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString("N2") : "")
+<input type="submit" class="submit" value="Confirmar" />

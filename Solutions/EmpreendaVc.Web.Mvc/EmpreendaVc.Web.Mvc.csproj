@@ -428,6 +428,7 @@
     <Content Include="Views\Clube\Formacao.cshtml" />
     <Content Include="Views\Shared\_Menu.cshtml" />
     <Content Include="Views\Engine\PartidaTeste.cshtml" />
+    <Content Include="Views\AI\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

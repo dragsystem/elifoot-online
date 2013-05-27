@@ -1,0 +1,24 @@
+﻿@model string
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Index</title>
+</head>
+<body>
+    <div>
+        @if (!string.IsNullOrEmpty(Model))
+        {
+            @Model
+        }
+    </div>
+    <div>
+        <h1>Menu AI</h1>
+        <a href="@Url.Action("RenovaContratos", "AI")">RenovaContratos</a><br />
+        <a href="@Url.Action("ComprarJogador", "AI")">ComprarJogador</a><br />
+        <a href="@Url.Action("VenderJogador", "AI")">VenderJogador</a><br />
+        <a href="@Url.Action("VenderJogadorPorCaixa", "AI")">VenderJogadorPorCaixa</a><br />
+    </div>
+</body>
+</html>

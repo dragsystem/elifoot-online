@@ -194,7 +194,7 @@
 
             if (leilao.IsValid())
             {
-                leilao.Dia = controle.Dia++;
+                leilao.Dia = controle.Dia + 1;
                 leilao.Jogador = jogador;
                 leilao.Espontaneo = false;
                 leilao.Clube = leilao.Jogador.Clube;
@@ -401,7 +401,7 @@
                 {
                     ViewBag.Rodada = rodada.Value + "ª Rodada";
                     ViewBag.RodadaNum = rodada.Value;
-                    lstPartidas = partidaRepository.GetAll().Where(x => x.Divisao.Numero == numero && x.Rodada == rodada.Value && x.Realizada).ToList();
+                    lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "DIVISAO" && x.Divisao.Numero == numero && x.Rodada == rodada.Value && x.Realizada).ToList();
                 }
                 else
                 {

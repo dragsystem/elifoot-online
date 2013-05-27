@@ -18,34 +18,34 @@
         {
             <table class="classificacao" cellpadding="0" cellspacing="0">
                 <tr>
-                    <th style="text-align: right;">
+                    <th style="text-align: right;" width="30%">
                         @item.Clube1.Nome
                     </th>
-                    <th>
+                    <th style="text-align: right;" width="10%">
                         @item.Gol1
                     </th>
-                    <th>
+                    <th width="5%">
                         X
                     </th>
-                    <th>
+                    <th style="text-align: left;" width="10%">
                         @item.Gol2
                     </th>
-                    <th style="text-align: left;">
+                    <th style="text-align: left;" width="30%">
                         @item.Clube2.Nome
                     </th>
-                    <th>
+                    <th width="15%">
                         @item.Publico.ToString("N0")
                     </th>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="2" style="text-align: right; vertical-align: top;">
                         @foreach (var gol in item.Gols1)
                         {
                             @: @gol.Jogador.Nome @gol.Minuto'<br />
                         }
                     </td>
                     <td></td>
-                    <td colspan="2">
+                    <td colspan="2" style="text-align: left; vertical-align: top;">
                         @foreach (var gol in item.Gols2)
                         {
                             @: @gol.Jogador.Nome @gol.Minuto'<br />
@@ -64,9 +64,9 @@
     @if (divisao > 0)
     {
         if (rodadanum > 1)
-        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodadanum })" >Rodada anterior</a><text> -</text>  }
+        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodadanum - 1 })" >Rodada anterior</a><text> -</text>  }
         if (rodadanum < 22)
-        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodadanum })" >Próxima rodada</a> }
+        { <a href="@Url.Action("Resultados", "Clube", new { divisao = divisao, rodada = rodadanum + 1 })" >Próxima rodada</a> }
     }
     else
     {
