@@ -153,14 +153,14 @@
         }
 
         [Authorize]
-        public ActionResult LeilaoOferta(int id)
+        public ActionResult LeilaoOferta(int idleilao)
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
-            
-            var leilao = leilaoRepository.Get(id);
+
+            var leilao = leilaoRepository.Get(idleilao);
             var leilaooferta = leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id && x.Clube.Id == usuario.Clube.Id).FirstOrDefault();
 
             if (leilaooferta == null)
@@ -172,7 +172,7 @@
         [Authorize]
         [HttpPost]
         [Transaction]
-        public ActionResult LeilaoOferta(FormCollection form)
+        public ActionResult LeilaoOferta(int idleilao, FormCollection form)
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
@@ -183,6 +183,7 @@
 
             TryUpdateModel(leilaooferta, form);
 
+            leilaooferta.Leilao = leilaoRepository.Get(idleilao);
             leilaooferta.Clube = usuario.Clube;
 
             if (leilaooferta.IsValid())
@@ -233,6 +234,29 @@
         }
 
         [Authorize]
+        [Transaction]
+        public ActionResult CancelarVenda(int id, bool? detalhe)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var leilao = leilaoRepository.Get(id);
+            var lstleilaooferta = leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == id);
+
+            foreach (var item in lstleilaooferta)
+            {
+                leilaoofertaRepository.Delete(item);
+            }
+
+            leilaoRepository.Delete(leilao);
+
+            return RedirectToAction("MeusJogadores", "Leilao");
+        }
+
+        [Authorize]
+        [Transaction]
         public ActionResult CancelarOferta(int id, bool? detalhe)
         {
             var usuario = authenticationService.GetUserAuthenticated();
@@ -240,12 +264,9 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var lstleilaooferta = leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == id);
+            var leilaooferta = leilaoofertaRepository.Get(id);
 
-            foreach (var item in lstleilaooferta)
-            {
-                leilaoofertaRepository.Delete(item);
-            }
+            leilaoofertaRepository.Delete(leilaooferta);
 
             return RedirectToAction("MinhasOfertas", "Leilao");
         }

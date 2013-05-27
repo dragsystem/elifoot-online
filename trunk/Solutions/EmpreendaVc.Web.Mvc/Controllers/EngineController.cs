@@ -14,6 +14,7 @@
     using System;
     using EmpreendaVc.Infrastructure.Queries.Authentication;
     using EmpreendaVc.Infrastructure.Queries.Usuarios;
+    using EmpreendaVc.Infrastructure.Queries.Clubes;
     using System.Web.Security;
     using EmpreendaVc.Web.Mvc.Controllers.ViewModels;
     using NHibernate.Criterion;
@@ -23,6 +24,7 @@
     {
 
         private readonly IUsuarioRepository usuarioRepository;
+        private readonly IClubeRepository clubeQueryRepository;
         private readonly IAuthenticationService authenticationService;
         private readonly INHibernateRepository<Clube> clubeRepository;
         private readonly INHibernateRepository<Jogador> jogadorRepository;
@@ -41,6 +43,7 @@
         private readonly INHibernateRepository<Nome> nomeRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
+            IClubeRepository clubeQueryRepository,
             IAuthenticationService authenticationService,
             INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Jogador> jogadorRepository,
@@ -59,6 +62,7 @@
             INHibernateRepository<Nome> nomeRepository)
         {
             this.usuarioRepository = usuarioRepository;
+            this.clubeQueryRepository = clubeQueryRepository;
             this.authenticationService = authenticationService;
             this.clubeRepository = clubeRepository;
             this.jogadorRepository = jogadorRepository;
@@ -201,7 +205,7 @@
                 }
 
                 var salarios = clube.Jogadores.Sum(x => x.Salario);
-                var renda = clube.Partidas.Where(x => x.Realizada).Last() != null ? clube.Partidas.Where(x => x.Realizada).Last().Publico * clube.Ingresso : 0;
+                var renda = clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Count() > 0 ? clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Last().Publico * clube.Ingresso : 0;
                 var socios = clube.Socios * 30;
 
                 clube.Dinheiro = clube.Dinheiro + (renda + socios - salarios);
@@ -220,31 +224,28 @@
                 var cancelar = false;
                 var vendido = false;
 
-                foreach (var oferta in leilao.Ofertas.Where(x => x.Clube.Dinheiro >= leilao.Valor).OrderByDescending(x => x.Salario))
+                foreach (var oferta in leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id).OrderByDescending(x => x.Salario))
                 {
                     var clubecomprador = clubeRepository.Get(oferta.Clube.Id);
                     var clubevendedor = clubeRepository.Get(leilao.Jogador.Clube.Id);
                     var jogador = leilao.Jogador;
 
-                    if (clubevendedor.Jogadores.Count() > 14 || !vendido)
+                    if (clubevendedor.Jogadores.Count() > 14 || !vendido || oferta.Clube.Dinheiro >= leilao.Valor || oferta.Clube.Dinheiro < 200000)
                     {
-                        if (clubecomprador.Jogadores.Count() < 25)
-                        {
-                            clubecomprador.Dinheiro = clubecomprador.Dinheiro - leilao.Valor;
-                            clubeRepository.SaveOrUpdate(clubecomprador);
+                        clubecomprador.Dinheiro = clubecomprador.Dinheiro - leilao.Valor;
+                        clubeRepository.SaveOrUpdate(clubecomprador);
 
-                            jogador.Clube = clubecomprador;
-                            jogador.Contrato = true;
-                            jogador.Salario = oferta.Salario;
-                            jogadorRepository.SaveOrUpdate(jogador);
+                        jogador.Clube = clubecomprador;
+                        jogador.Contrato = true;
+                        jogador.Salario = oferta.Salario;
+                        jogadorRepository.SaveOrUpdate(jogador);
 
-                            clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;
-                            clubeRepository.SaveOrUpdate(clubevendedor);
+                        clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;
+                        clubeRepository.SaveOrUpdate(clubevendedor);
 
-                            vendido = true;
-                            leilao.OfertaVencedora = oferta;
-                            leilaoRepository.SaveOrUpdate(leilao);
-                        }
+                        vendido = true;
+                        leilao.OfertaVencedora = oferta;
+                        leilaoRepository.SaveOrUpdate(leilao);
                     }
                     else
                     {
@@ -859,13 +860,10 @@
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
 
-            var lstPartidas = partidaRepository.GetAll().Where(x => x.Dia <= controle.Dia && !x.Realizada);
+            var lstPartidas = partidaRepository.GetAll().Where(x => x.Dia <= controle.Dia && !x.Realizada).ToList();
 
             try
             {
-
-            
-
                 ////////////////////////////////FOR PARTIDAS
                 foreach (var partida in lstPartidas)
                 {
@@ -1035,37 +1033,37 @@
                         if (placar <= dif7)
                         {
                             gol1 = rnd.Next(0, 2);
-                            gol2 = gol2 + 7;
+                            gol2 = gol1 + 7;
                         }
                         else if (placar <= (dif7 + dif6))
                         {
                             gol1 = rnd.Next(0, 2);
-                            gol2 = gol2 + 6;
+                            gol2 = gol1 + 6;
                         }
                         else if (placar <= (dif7 + dif6 + dif5))
                         {
                             gol1 = rnd.Next(0, 3);
-                            gol2 = gol2 + 5;
+                            gol2 = gol1 + 5;
                         }
                         else if (placar <= (dif7 + dif6 + dif5 + dif4))
                         {
                             gol1 = rnd.Next(0, 3);
-                            gol2 = gol2 + 4;
+                            gol2 = gol1 + 4;
                         }
                         else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3))
                         {
                             gol1 = rnd.Next(0, 2);
-                            gol2 = gol2 + 3;
+                            gol2 = gol1 + 3;
                         }
                         else if (placar <= (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
                         {
                             gol1 = rnd.Next(0, 3);
-                            gol2 = gol2 + 2;
+                            gol2 = gol1 + 2;
                         }
                         else if (placar > (dif7 + dif6 + dif5 + dif4 + dif3 + dif2))
                         {
                             gol1 = rnd.Next(0, 3);
-                            gol2 = gol2 + 1;
+                            gol2 = gol1 + 1;
                         }
                     }
 
@@ -1119,7 +1117,7 @@
                             gol.Partida = partida;
                             var contagem = 0;
                             var goleador = rnd.Next(1, totalgols);
-                            foreach (var jog in clube1.Escalacao.OrderBy(x => x.Posicao))
+                            foreach (var jog in clube1.Escalacao.OrderByDescending(x => x.Posicao))
                             {
                                 contagem = contagem + jog.HGol;
                                 if (goleador <= contagem)
@@ -1144,7 +1142,7 @@
                             gol.Partida = partida;
                             var contagem = 0;
                             var goleador = rnd.Next(1, totalgols);
-                            foreach (var jog in clube2.Escalacao.OrderBy(x => x.Posicao))
+                            foreach (var jog in clube2.Escalacao.OrderByDescending(x => x.Posicao))
                             {
                                 contagem = contagem + jog.HGol;
                                 if (goleador <= contagem)
@@ -1186,7 +1184,6 @@
             catch (Exception ex)
             {
                 var teste = ex.ToString();
-                throw;
             }
 
             return RedirectToAction("Index", "Engine");
@@ -1250,7 +1247,7 @@
             {            
                 foreach (var clube in clubeRepository.GetAll())
                 {
-                    foreach (var esc in clube.Escalacao)
+                    foreach (var esc in escalacaoRepository.GetAll().Where(x => x.Clube.Id == clube.Id))
                     {
                         escalacaoRepository.Delete(esc);
                     }
@@ -1268,6 +1265,8 @@
                         escalacao.H = escalacao.Jogador.H + 5;
                     else
                         escalacao.H = escalacao.Jogador.H;
+                    
+                    escalacao.HGol = 1;
                     escalacaoRepository.SaveOrUpdate(escalacao);
 
                     //LATERAL-DIREITO
@@ -1285,6 +1284,8 @@
                             escalacao.H = escalacao.Jogador.H + 5;
                         else
                             escalacao.H = escalacao.Jogador.H;
+
+                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
                         escalacaoRepository.SaveOrUpdate(escalacao);
                     }
 
@@ -1307,6 +1308,8 @@
                             escalacao.H = escalacao.Jogador.H + 5;
                         else
                             escalacao.H = escalacao.Jogador.H;
+
+                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
                         escalacaoRepository.SaveOrUpdate(escalacao);
                     }
 
@@ -1325,6 +1328,8 @@
                             escalacao.H = escalacao.Jogador.H + 5;
                         else
                             escalacao.H = escalacao.Jogador.H;
+
+                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
                         escalacaoRepository.SaveOrUpdate(escalacao);
                     }
 
@@ -1344,6 +1349,8 @@
                             escalacao.H = escalacao.Jogador.H + 5;
                         else
                             escalacao.H = escalacao.Jogador.H;
+
+                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
                         escalacaoRepository.SaveOrUpdate(escalacao);
                     }
 
@@ -1363,6 +1370,8 @@
                             escalacao.H = escalacao.Jogador.H + 5;
                         else
                             escalacao.H = escalacao.Jogador.H;
+
+                        escalacao.HGol = escalacao.Jogador.H / 2 > 1 ? escalacao.Jogador.H / 2 : 1;
                         escalacaoRepository.SaveOrUpdate(escalacao);
                     }
 
@@ -1382,6 +1391,8 @@
                             escalacao.H = escalacao.Jogador.H + 5;
                         else
                             escalacao.H = escalacao.Jogador.H;
+
+                        escalacao.HGol = escalacao.Jogador.H;
                         escalacaoRepository.SaveOrUpdate(escalacao);
                     }
                 }
@@ -1389,7 +1400,6 @@
             catch (Exception ex)
             {
                 var teste = ex.ToString();
-                throw;
             }
 
             return RedirectToAction("Index", "Engine");

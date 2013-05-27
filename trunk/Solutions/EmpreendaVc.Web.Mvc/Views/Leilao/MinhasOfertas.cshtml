@@ -3,11 +3,18 @@
 @{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var order = (int)ViewBag.Order;
 }
-@if (Model.Count() > 0)
-{
-    <table>
+<h2>
+    Leilão - Minhas Ofertas</h2>
+<div id="leilao-lista" class="caixa">
+    <h1>
+        Opções</h1>
+    <a href="@Url.Action("Index", "Leilao")">Leilão</a><br />
+    <a><b>Minhas Ofertas</b></a><br />
+    <a href="@Url.Action("MeusJogadores", "Leilao")">Meus Jogadores</a><br />
+</div>
+<div id="leilao-tabela">
+    <table class="classificacao" cellpadding="0" cellspacing="0">
         <tr>
             <th width="30%">
                 Nome
@@ -31,8 +38,10 @@
                 Ação
             </th>
         </tr>
-        @foreach (var item in Model)
+        @if (Model.Count() > 0)
         {
+            foreach (var item in Model)
+            {
             <tr>
                 <td>@item.Jogador.Nome
                 </td>
@@ -53,10 +62,16 @@
                     </a>
                 </td>
             </tr>
+            }
+
+        }
+        else
+        {
+            <tr>
+                <td colspan="7">
+                    Você não efetuou nenhuma oferta.
+                </td>
+            </tr>
         }
     </table>
-}
-else
-{
-    @:Você não efetuou nenhum oferta.
-}
+</div>
