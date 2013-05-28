@@ -115,6 +115,8 @@
     <Compile Include="Queries\Authentication\IAuthenticationService.cs" />
     <Compile Include="Queries\Clubes\IClubeRepository.cs" />
     <Compile Include="Queries\Clubes\ClubeRepository.cs" />
+    <Compile Include="Queries\Partidas\IPartidaRepository.cs" />
+    <Compile Include="Queries\Partidas\PartidaRepository.cs" />
     <Compile Include="Queries\Usuarios\IUsuarioRepository.cs" />
     <Compile Include="Queries\Usuarios\UsuarioCommand.cs" />
     <Compile Include="Queries\Usuarios\UsuarioRepository.cs" />

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using EmpreendaVc.Infrastructure.Queries.Usuarios;
+using EmpreendaVc.Infrastructure.Queries.Partidas;
 using EmpreendaVc.Domain;
 using SharpArch.NHibernate.Contracts.Repositories;
 using EmpreendaVc.Infrastructure.Queries.Authentication;
@@ -24,7 +25,7 @@ namespace EmpreendaVc.Web.Mvc.Controllers
         private readonly INHibernateRepository<Leilao> leilaoRepository;
         private readonly INHibernateRepository<LeilaoOferta> leilaoofertaRepository;
         private readonly INHibernateRepository<Divisao> divisaoRepository;
-        private readonly INHibernateRepository<Partida> partidaRepository;
+        private readonly IPartidaRepository partidaRepository;
         private readonly INHibernateRepository<Gol> golRepository;
         private readonly INHibernateRepository<DivisaoTabela> divisaotabelaRepository;
         private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
@@ -41,7 +42,7 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             INHibernateRepository<Leilao> leilaoRepository,
             INHibernateRepository<LeilaoOferta> leilaoofertaRepository,
             INHibernateRepository<Divisao> divisaoRepository,
-            INHibernateRepository<Partida> partidaRepository,
+            IPartidaRepository partidaRepository,
             INHibernateRepository<Gol> golRepository,
             INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,

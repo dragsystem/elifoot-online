@@ -45,6 +45,7 @@ namespace EmpreendaVc.Domain
 
         public Partida()
         {
+            Gols = new List<Gol>();
         }
     }
 }

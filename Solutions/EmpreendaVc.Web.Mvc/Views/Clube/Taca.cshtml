@@ -7,19 +7,8 @@
     var mao = (int)ViewBag.Mao;
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
 }
-<div id="classificacao-lista" class="caixa">
-    <h1>Competições</h1>
-    <a><b>TAÇA</b></a><br />
-    @foreach (var divisao in lstdivisao)
-    {
-        <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a><br />
-    }
-</div>
 
-
-
-<div id="classificacao-taca">
-    <h2>
+<h2>
         @if (rodada == 16)
         { 
             @: 1ª Eliminatória 
@@ -41,6 +30,20 @@
             @: FINAL
         }
     </h2>
+
+<div id="classificacao-lista" class="caixa">
+    <h1>Competições</h1>
+    <a><b>TAÇA</b></a><br />
+    @foreach (var divisao in lstdivisao)
+    {
+        <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a><br />
+    }
+</div>
+
+
+
+<div id="classificacao-taca">
+    
     @if (Model.Where(x => x.Rodada == rodada).Count() > 0)
     {
         <table class="classificacao" cellpadding="0" cellspacing="0">
