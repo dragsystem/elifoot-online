@@ -116,7 +116,12 @@ namespace EmpreendaVc.Web.Mvc.CastleWindsor
             container.Register(
               Component.For(typeof(EmpreendaVc.Infrastructure.Queries.Clubes.IClubeRepository))
                   .ImplementedBy(typeof(EmpreendaVc.Infrastructure.Queries.Clubes.ClubeRepository))
-                  .Named("clubeRepository"));
+                  .Named("clubeQueryRepository"));
+
+            container.Register(
+              Component.For(typeof(EmpreendaVc.Infrastructure.Queries.Partidas.IPartidaRepository))
+                  .ImplementedBy(typeof(EmpreendaVc.Infrastructure.Queries.Partidas.PartidaRepository))
+                  .Named("partidaRepository"));
 
         }
 

@@ -15,6 +15,7 @@
     using EmpreendaVc.Infrastructure.Queries.Authentication;
     using EmpreendaVc.Infrastructure.Queries.Usuarios;
     using EmpreendaVc.Infrastructure.Queries.Clubes;
+    using EmpreendaVc.Infrastructure.Queries.Partidas;
     using System.Web.Security;
     using EmpreendaVc.Web.Mvc.Controllers.ViewModels;
 
@@ -30,7 +31,7 @@
         private readonly INHibernateRepository<Leilao> leilaoRepository;
         private readonly INHibernateRepository<LeilaoOferta> leilaoofertaRepository;
         private readonly INHibernateRepository<Divisao> divisaoRepository;
-        private readonly INHibernateRepository<Partida> partidaRepository;
+        private readonly IPartidaRepository partidaRepository;
         private readonly INHibernateRepository<Gol> golRepository;
         private readonly INHibernateRepository<DivisaoTabela> divisaotabelaRepository;
         private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
@@ -47,7 +48,7 @@
             INHibernateRepository<Leilao> leilaoRepository,
             INHibernateRepository<LeilaoOferta> leilaoofertaRepository,
             INHibernateRepository<Divisao> divisaoRepository,
-            INHibernateRepository<Partida> partidaRepository,
+            IPartidaRepository partidaRepository,
             INHibernateRepository<Gol> golRepository,
             INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
@@ -431,6 +432,7 @@
                     else if (ultrodada == 1)
                         ViewBag.Rodada = "FINAL";
 
+                    ViewBag.RodadaNum = ultrodada;
                     lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == ultrodada && x.Realizada).ToList();
                 }
                 else
@@ -448,10 +450,14 @@
                     else if (ultrodada == 1)
                         ViewBag.Rodada = "FINAL";
                     lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada).ToList();
+
+                    ViewBag.RodadaNum = ultrodada;
                 }
             }
 
             ViewBag.Clube = usuario.Clube;
+
+            ViewBag.lstDivisao = divisaoRepository.GetAll();
 
             return View(lstPartidas);
         }

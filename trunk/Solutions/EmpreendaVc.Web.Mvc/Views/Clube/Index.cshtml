@@ -5,66 +5,83 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     
 }
-
-<h2>Plantel</h2>
-
-<div id="plantel-caixa">
-    <table class="classificacao" cellpadding="0" cellspacing="0">
-        <tr>
-            <th width="35%">JOGADOR</th>
-            <th width="10%">POSIÇÃO</th>
-            <th width="10%">H</th>
-            <th width="15%">SALÁRIO</th>
-            <th width="10%">GOLS</th>
-        </tr>
-        @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.H))
-        {
+<h2>
+    Plantel</h2>
+<div id="plantel-left">
+    <div id="plantel-caixa">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
-                <td style="text-align: left;">@jog.Nome.ToUpper()</td>
-                <td>@Util.RetornaPosicao(jog.Posicao)</td>
-                <td>@jog.H</td>
-                <td style="text-align: right;">$@jog.Salario.ToString("N2")</td>
-                <td>@jog.Gols.Count()</td>
+                <th width="35%">
+                    JOGADOR
+                </th>
+                <th width="10%">
+                    POSIÇÃO
+                </th>
+                <th width="10%">
+                    H
+                </th>
+                <th width="15%">
+                    SALÁRIO
+                </th>
+                <th width="10%">
+                    GOLS
+                </th>
             </tr>
-        }
-    </table>
+            @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.H))
+            {
+                <tr>
+                    <td style="text-align: left;">@jog.Nome.ToUpper()
+                    </td>
+                    <td>@Util.RetornaPosicao(jog.Posicao)
+                    </td>
+                    <td>@jog.H
+                    </td>
+                    <td style="text-align: right;">
+                        $@jog.Salario.ToString("N2")
+                    </td>
+                    <td>@jog.Gols.Count()
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
 </div>
-
-<div id="plantel-dados" class="caixa">
-    <h1>@Model.Nome</h1>
-    <p>
-        @if (Model.Usuario != null)
-        {
-            @:Usuário: @Model.Usuario.NomeCompleto<br />
-        }
-        Estádio: @Model.Estadio.ToString("N0")<br />
-        Sócios: @Model.Socios.ToString("N0")
-    </p>
-</div>
-
-<div id="plantel-proximo" class="caixa">
-    <h1>PRÓXIMA PARTIDA</h1>
-    @if (Model.Partidas.Where(x => !x.Realizada).Count() > 0)
-    {
-        var partida = Model.Partidas.Where(x => !x.Realizada).First();
+<div id="plantel-right">
+    <div id="plantel-dados" class="caixa">
+        <h1>@Model.Nome</h1>
         <p>
-            @if (partida.Clube1.Id == Model.Id)
+            @if (Model.Usuario != null)
             {
-                @: @partida.Clube2.Nome (CASA)
-            }
-            else
-            {
-                @: @partida.Clube1.Nome (FORA)
-            }
+                @:Usuário: @Model.Usuario.NomeCompleto<br />
+                    }
+            Estádio: @Model.Estadio.ToString("N0")<br />
+            Sócios: @Model.Socios.ToString("N0")
         </p>
-        <p>
-            @if (partida.Tipo == "DIVISAO")
-            {
-                @: @Model.Divisao.Nome (@(partida.Rodada)ª Rodada)
+    </div>
+    <div id="plantel-proximo" class="caixa">
+        <h1>
+            PRÓXIMA PARTIDA</h1>
+        @if (Model.Partidas.Where(x => !x.Realizada).Count() > 0)
+        {
+            var partida = Model.Partidas.Where(x => !x.Realizada).First();
+            <p>
+                @if (partida.Clube1.Id == Model.Id)
+                {
+                    @: @partida.Clube2.Nome (CASA)
             }
-            else if (partida.Tipo == "TACA")
-            {
-                @: Taça (@(partida.Mao)ª Partida)<br />
+                else
+                {
+                    @: @partida.Clube1.Nome (FORA)
+                            }
+            </p>
+            <p>
+                @if (partida.Tipo == "DIVISAO")
+                {
+                    @: @(partida.Rodada)ª Rodada (@Model.Divisao.Nome)
+            }
+                else if (partida.Tipo == "TACA")
+                {
+                    @: Taça (@(partida.Mao)ª Partida)<br />
                 if (partida.Mao == 2)
                 {
                     var primeiramao = Model.Partidas.Where(x => x.Realizada && x.Rodada == partida.Rodada && x.Mao == 1).Last();
@@ -73,15 +90,16 @@
                     {
                         if (primeiramao.Clube1.Id == Model.Id)
                         {
-                            @: 1º partida: @primeiramao.Gol1 x @primeiramao.Gol2
+                    @: 1º partida: @primeiramao.Gol1 x @primeiramao.Gol2
                         }
                         else
                         {
-                            @: 1º partida: @primeiramao.Gol2 x @primeiramao.Gol1
-                        }
+                    @: 1º partida: @primeiramao.Gol2 x @primeiramao.Gol1
+                                        }
                     }
                 }
-            }
-        </p>
-    }
+                }
+            </p>
+        }
+    </div>
 </div>

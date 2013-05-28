@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
     var competicao = ViewBag.Competicao.ToString();
     var divisao = (int)ViewBag.Divisao;
@@ -10,6 +11,21 @@
     var rodadanum = (int)ViewBag.RodadaNum;
 }
 <h2>@competicao - @rodada</h2>
+<div id="resultados-lista" class="caixa">
+    <h1>Competições</h1>
+    <a href="@Url.Action("Resultados", "Clube", new { taca = 1 })" >TAÇA</a><br />
+        @foreach (var div in lstdivisao)
+        {
+            if (div.Id == divisao)
+            {
+                <a><b>@div.Nome</b></a><br />
+            }
+            else
+            {
+                <a href="@Url.Action("Resultados", "Clube", new { divisao = div.Id })" >@div.Nome</a><br />
+            }
+        }
+</div>
 
 <div id="resultados-tabela">
     @if (Model.Count() > 0)

@@ -56,6 +56,8 @@ h2 .legenda b { font-size: 11px; }
 
 #calendario-tabela { float: left; width: 650px; }
 
+#resultados-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
+#resultados-lista a { font-weight: normal; margin-left: 15px; }
 #resultados-tabela { float: left; width: 650px; }
 
 #transferencias-tabela { float: left; width: 650px; }
@@ -63,6 +65,8 @@ h2 .legenda b { font-size: 11px; }
 #leilao-tabela { float: left; width: 650px; }
 #leilao-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
 #leilao-lista a { font-weight: normal; margin-left: 15px; }
+
+#calendario-tabela { float: left; width: 650px; }
 
 .plantel-sobcontrato { display: block; width: 25px; height: 20px; background: url('../img/sobcontrato.png') center center no-repeat; float: left; }
 .plantel-semcontrato { display: block; width: 25px; height: 20px; background: url('../img/semcontrato.png') center center no-repeat; float: left; }

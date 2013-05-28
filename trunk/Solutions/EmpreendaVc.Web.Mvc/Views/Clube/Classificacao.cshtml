@@ -5,6 +5,13 @@
     var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
 }
+<h2>@Model.Nome
+        <div class="legenda">
+            <b>P</b> Pontos <b>J</b> Jogos <b>V</b> Vitórias <b>E</b> Empates <b>D</b> Derrotas
+            <b>GP</b> Gols Pro<br />
+            <b>GC</b> Gols Contra <b>SG</b> Saldo Gols <b>%</b> Aproveitamento
+        </div>
+    </h2>
 <div id="classificacao-lista" class="caixa">
     <h1>Competições</h1>
     <a href="@Url.Action("Taca", "Clube")">TAÇA</a><br />
@@ -22,13 +29,6 @@
 </div>
 
 <div id="classificacao-tabela">
-    <h2>@Model.Nome
-        <div class="legenda">
-            <b>P</b> Pontos <b>J</b> Jogos <b>V</b> Vitórias <b>E</b> Empates <b>D</b> Derrotas
-            <b>GP</b> Gols Pro<br />
-            <b>GC</b> Gols Contra <b>SG</b> Saldo Gols <b>%</b> Aproveitamento
-        </div>
-    </h2>
     <table class="classificacao" cellpadding="0" cellspacing="0">
         <tr>
             <th width="36%">

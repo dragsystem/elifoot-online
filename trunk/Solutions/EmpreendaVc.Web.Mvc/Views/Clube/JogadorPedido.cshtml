@@ -3,8 +3,11 @@
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<h2>Pedido do jogador</h2>
 @if (Model != null)
 {
+   
     foreach (var item in Model)
     {
         var jogador = item.Jogador;

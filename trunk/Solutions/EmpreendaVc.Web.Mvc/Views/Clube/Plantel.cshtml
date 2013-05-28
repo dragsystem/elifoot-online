@@ -70,8 +70,18 @@
         <h1>FINANÇAS</h1>
         @{ var salarios = Model.Jogadores.Sum(x => x.Salario);
            var socios = Model.Socios * 30;
-           var renda = Model.Partidas.Where(x => x.Realizada).Count() > 0 ? (Model.Partidas.Last().Publico * Model.Ingresso) : 0;
-           var previsto = Model.Dinheiro + (socios + renda - salarios);
+           decimal renda = 0;
+
+           if (Model.Partidas.Where(x => x.Realizada).Count() > 0)
+           {
+               var ultimapartida = Model.Partidas.Where(x => x.Realizada).Last();
+               if (ultimapartida.Clube1.Id == Model.Id)
+               {
+                   renda = ultimapartida.Publico * Model.Ingresso;
+               }
+           }
+           
+           var previsto = Model.Dinheiro + (socios - salarios);
         }
         <p>
             Dinheiro em caixa: $@Model.Dinheiro.ToString("N2")
@@ -106,7 +116,7 @@
             <p>
                 @if (partida.Tipo == "DIVISAO")
                 {
-                    @: @Model.Divisao.Nome (@(partida.Rodada)ª Rodada)
+                    @: @(partida.Rodada)ª Rodada (@Model.Divisao.Nome)
                 }
                 else if (partida.Tipo == "TACA")
                 {
