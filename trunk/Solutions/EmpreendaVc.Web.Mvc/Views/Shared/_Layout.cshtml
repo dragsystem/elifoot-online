@@ -24,10 +24,13 @@
     <div id="main">
         <div id="header">
             <div id="logo">
-                <a id="linklogo" href="@Url.Action("Index", "Home")"><span style="font-size: 80px;">LOGO</span></a>
+                <a id="linklogo" href="@Url.Action("Index", "Home")"></a>
             </div>
             <div id="menu">
                 @{ Html.RenderAction("MenuTop", "Conta"); }
+            </div>
+            <div id="datacontrole">
+                @{ Html.RenderAction("DataTop", "Conta"); }
             </div>
             <div class="clear"></div>
         </div>

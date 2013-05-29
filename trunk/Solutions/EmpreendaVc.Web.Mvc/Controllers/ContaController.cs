@@ -332,5 +332,18 @@
                 return RedirectToAction("UsuarioOferta");
             }            
         }
+
+        public ActionResult DataTop(FormCollection form)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario != null)
+            {
+                var controle = controleRepository.GetAll().FirstOrDefault();
+                return View(controle);
+            }
+
+            return View();
+        }
     }
 }

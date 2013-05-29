@@ -6,10 +6,12 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
 #main { width: 980px; min-height: 400px; margin: 0 auto; }
     #header { width: 980px; height: 177px; border-bottom: 4px solid #4982B9; }
         #logo { float: left; margin: 20px; }
+            #linklogo { display: block; float: left; width: 500px; height: 140px; background: url('../img/logo.png') no-repeat; }
         #menu { float: right; margin-top: 0px; text-align: right; }
             #menu ul { margin-right: 20px; }
             #menu ul li { display: block; margin-left: 20px; float: left; list-style-type: none; color: White; text-transform: uppercase; font-size: 12px; }            
-
+        #datacontrole { float: right; margin-top: 110px; padding: 15px; }
+    
     #conteudo { padding: 15px; min-height: 350px; }
     #footer { width: 940px; height: 118px; background: #EEF3F9; margin-top: 20px; border-top: 4px solid #4982B9; font-size: 10px; padding: 20px; font-weight: bold; }
         #footer span { display: block; margin-left: 10px; margin-bottom: 12px; list-style-type: none; color: White; text-transform: uppercase; font-size: 12px; }
@@ -35,19 +37,21 @@ h2 .legenda b { font-size: 11px; }
 
 .botao { display:block; cursor: pointer; width: 260px; height: 18px; text-align: center; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
 
-#plantel-left { width: 650px; float: left; }
-    #plantel-caixa { width: 650px; }
-        #plantel-caixa table { width: 100%; }
-    #plantel-classificacao { width: 650px; }
-#plantel-right { width: 280px; float: right; }
-    #plantel-dados { float: right; width: 260px; }
-    #plantel-formacao { float: right; width: 260px; }
-        #plantel-formacao p { width: 125px; float: left; text-align: center; }
-        #plantel-formacao a { font-size: 16px; font-weight:normal; }
-    #plantel-menu { float: right; width: 280px; }
-        #plantel-menu p { margin-left: 15px; width: 260px; float: left; font-size: 16px; line-height: 30px; }
-    #plantel-financas { float: right; width: 260px; }
-    #plantel-proximo { float: right; width: 260px; }
+#right { width: 280px; float: right; }
+#left { width: 650px; float: left; }
+
+#plantel-caixa { width: 650px; }
+    #plantel-caixa table { width: 100%; }
+#plantel-classificacao { width: 650px; }
+
+#plantel-dados { float: right; width: 260px; }
+#plantel-formacao { float: right; width: 260px; }
+    #plantel-formacao p { width: 125px; float: left; text-align: center; }
+    #plantel-formacao a { font-size: 16px; font-weight:normal; }
+#plantel-menu { float: right; width: 280px; }
+    #plantel-menu p { margin-left: 15px; width: 260px; float: left; font-size: 16px; line-height: 30px; }
+#plantel-financas { float: right; width: 260px; }
+#plantel-proximo { float: right; width: 260px; }
 
 #classificacao-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
 #classificacao-lista a { font-weight: normal; margin-left: 15px; }

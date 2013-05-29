@@ -17,6 +17,8 @@ namespace EmpreendaVc.Domain
 
         public virtual int Dia { get; set; }
 
+        public virtual int DiaMax { get; set; }
+
         public virtual int Taca { get; set; }
 
         public Controle()

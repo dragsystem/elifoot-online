@@ -221,7 +221,7 @@
                 {
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = g.FirstOrDefault();
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 20 > 1 ? leilao.Jogador.H - 20 : 1)) + (leilao.Jogador.Posicao * 200000);
 
@@ -233,7 +233,7 @@
                 {
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = ld.FirstOrDefault();
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 20 > 1 ? leilao.Jogador.H - 20 : 1)) + (leilao.Jogador.Posicao * 200000);
 
@@ -245,7 +245,7 @@
                 {
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = z.FirstOrDefault();
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 20 > 1 ? leilao.Jogador.H - 20 : 1)) + (leilao.Jogador.Posicao * 200000);
 
@@ -257,7 +257,7 @@
                 {
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = le.FirstOrDefault();
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 20 > 1 ? leilao.Jogador.H - 20 : 1)) + (leilao.Jogador.Posicao * 200000);
 
@@ -269,7 +269,7 @@
                 {
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = v.FirstOrDefault();
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 20 > 1 ? leilao.Jogador.H - 20 : 1)) + (leilao.Jogador.Posicao * 200000);
 
@@ -281,7 +281,7 @@
                 {
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = mo.FirstOrDefault();
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 20 > 1 ? leilao.Jogador.H - 20 : 1)) + (leilao.Jogador.Posicao * 200000);
 
@@ -293,7 +293,7 @@
                 {
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = a.FirstOrDefault();
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 20 > 1 ? leilao.Jogador.H - 20 : 1)) + (leilao.Jogador.Posicao * 200000);
 
@@ -316,7 +316,7 @@
 
                     var leilao = new Leilao();
                     leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1;
+                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                     leilao.Jogador = jogador;
                     leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 10 > 1 ? leilao.Jogador.H - 10 : 1)) + (leilao.Jogador.Posicao * 200000);
 
