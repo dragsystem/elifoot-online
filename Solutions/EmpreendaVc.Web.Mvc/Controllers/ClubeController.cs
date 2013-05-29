@@ -38,6 +38,7 @@
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Noticia> noticiaRepository;
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
+        private readonly INHibernateRepository<Artilheiro> artilheiroRepository;
 
         public ClubeController(IUsuarioRepository usuarioRepository,
             IClubeRepository clubeQueryRepository,
@@ -54,7 +55,8 @@
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
             INHibernateRepository<Noticia> noticiaRepository,
-            INHibernateRepository<Escalacao> escalacaoRepository)
+            INHibernateRepository<Escalacao> escalacaoRepository,
+            INHibernateRepository<Artilheiro> artilheiroRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.clubeQueryRepository = clubeQueryRepository;
@@ -72,6 +74,7 @@
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.noticiaRepository = noticiaRepository;
             this.escalacaoRepository = escalacaoRepository;
+            this.artilheiroRepository = artilheiroRepository;
         }
 
         public ActionResult Index(int id)
@@ -228,6 +231,8 @@
 
             var divisao = divisaoRepository.Get(iddivisao);
 
+            ViewBag.lstArtilheiros = artilheiroRepository.GetAll().Where(x => x.Clube.Divisao.Id == divisao.Id).OrderByDescending(x => x.Divisao).Take(10).ToList();
+
             ViewBag.lstDivisao = divisaoRepository.GetAll();
 
             return View(divisao);
@@ -249,6 +254,8 @@
 
             ViewBag.Rodada = rodadareal;
             ViewBag.Mao = partidas.Where(x => x.Rodada == rodadareal && !x.Realizada && x.Mao == 1).Count() > 0 ? 1 : 2;
+
+            ViewBag.lstArtilheiros = artilheiroRepository.GetAll().OrderByDescending(x => x.Taca).Take(10).ToList();
 
             ViewBag.lstDivisao = divisaoRepository.GetAll();
 
@@ -355,6 +362,7 @@
             }
 
             ViewBag.Formacao = formacao;
+            ViewBag.Clube = clube;
 
             return View(escalacao);
         }

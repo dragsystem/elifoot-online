@@ -42,6 +42,7 @@
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
         private readonly INHibernateRepository<Historico> historicoRepository;
         private readonly INHibernateRepository<Nome> nomeRepository;
+        private readonly INHibernateRepository<Artilheiro> artilheiroRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IClubeRepository clubeQueryRepository,
@@ -60,7 +61,8 @@
             INHibernateRepository<Noticia> noticiaRepository,
             INHibernateRepository<Escalacao> escalacaoRepository,
             INHibernateRepository<Historico> historicoRepository,
-            INHibernateRepository<Nome> nomeRepository)
+            INHibernateRepository<Nome> nomeRepository,
+            INHibernateRepository<Artilheiro> artilheiroRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.clubeQueryRepository = clubeQueryRepository;
@@ -80,6 +82,7 @@
             this.escalacaoRepository = escalacaoRepository;
             this.historicoRepository = historicoRepository;
             this.nomeRepository = nomeRepository;
+            this.artilheiroRepository = artilheiroRepository;
         }
 
         //OK - GerarCampeonato(); 
@@ -118,7 +121,7 @@
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             controle.Data = DateTime.Now;
-            controle.Dia = controle.Dia + 1;
+            controle.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
             controleRepository.SaveOrUpdate(controle);
 
             return RedirectToAction("Index", "Engine");
@@ -177,7 +180,7 @@
                         var usuariooferta = new UsuarioOferta();
 
                         usuariooferta.Clube = clube;
-                        usuariooferta.Dia = controle.Dia + 1;
+                        usuariooferta.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                         usuariooferta.Usuario = tecniconovo;
 
                         usuarioofertaRepository.SaveOrUpdate(usuariooferta);
@@ -198,7 +201,7 @@
                         var usuariooferta = new UsuarioOferta();
 
                         usuariooferta.Clube = clube;
-                        usuariooferta.Dia = controle.Dia + 1;
+                        usuariooferta.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                         usuariooferta.Usuario = tecniconovo;
 
                         usuarioofertaRepository.SaveOrUpdate(usuariooferta);
@@ -287,7 +290,7 @@
                         {
                             var leilao = new Leilao();
 
-                            leilao.Dia = controle.Dia + 1;
+                            leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                             leilao.Espontaneo = true;
                             leilao.Jogador = pedidojog.Jogador;
                             leilao.Clube = pedidojog.Jogador.Clube;
@@ -335,7 +338,7 @@
                         decimal aumento = (rnd.Next(1, 4)) / 10;
 
                         var pedidojog = new JogadorPedido();
-                        pedidojog.Dia = controle.Dia + 1;
+                        pedidojog.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                         pedidojog.Jogador = lstjognovo[jog];
                         pedidojog.Salario = lstjognovo[jog].Salario + (lstjognovo[jog].Salario * aumento);
 
@@ -375,7 +378,7 @@
                         var jog = rnd.Next(0, lstjognovo.Count());
 
                         var leilao = new Leilao();
-                        leilao.Dia = controle.Dia + 1;
+                        leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
                         leilao.Espontaneo = true;
                         leilao.Jogador = lstjognovo[jog];
                         leilao.Clube = lstjognovo[jog].Clube;
@@ -446,9 +449,10 @@
             historico.Taca = true;
             historico.Campeao = partidafinaltaca.Vencedor;
             historico.Vice = partidafinaltaca.Vencedor == partidafinaltaca.Clube1 ? partidafinaltaca.Clube2 : partidafinaltaca.Clube1;
-            var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Tipo == "TACA")).FirstOrDefault();
-            historico.Artilheiro = artilheiro;
-            historico.Gols = artilheiro.Gols.Count();
+            var artilheiro = artilheiroRepository.GetAll().OrderByDescending(x => x.Taca).FirstOrDefault();
+            historico.Artilheiro = artilheiro.Jogador;
+            historico.ArtilheiroClube = artilheiro.Jogador.Clube;
+            historico.Gols = artilheiro.Taca;
             historicoRepository.SaveOrUpdate(historico);
 
             return RedirectToAction("Index", "Engine");
@@ -541,9 +545,10 @@
                 historico.Divisao = divisao;
                 historico.Campeao = clube1;
                 historico.Vice = clube2;
-                var artilheiro = jogadorRepository.GetAll().OrderByDescending(x => x.Gols.Where(y => y.Partida.Divisao.Id == divisao.Id)).FirstOrDefault();
-                historico.Artilheiro = artilheiro;
-                historico.Gols = artilheiro.Gols.Count();
+                var artilheiro = artilheiroRepository.GetAll().Where(x => x.Clube.Divisao.Id == divisao.Id).OrderByDescending(x => x.Divisao).FirstOrDefault();
+                historico.Artilheiro = artilheiro.Jogador;
+                historico.ArtilheiroClube = artilheiro.Jogador.Clube;
+                historico.Gols = artilheiro.Divisao;
                 historicoRepository.SaveOrUpdate(historico);
 
                 ////////////////////////////////////////////Pagar prêmios
@@ -794,20 +799,22 @@
 
         [Transaction]
         public ActionResult GerarTaca()
-        {         
-            var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada && x.Mao == 2).OrderByDescending(x => x.Rodada);
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            
             var lstTaca = new List<Clube>();
-            var rodada = 0;
+            var rodada = controle.Taca / 2;
+
+            var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada && x.Mao == 2 && x.Rodada == rodada).OrderByDescending(x => x.Rodada);
+
             var dia1 = 0;
             var dia2 = 0;            
 
             foreach (var part in partidas)
             {
-                rodada = part.Rodada;
                 lstTaca.Add(part.Vencedor);
             }
 
-            var controle = controleRepository.GetAll().FirstOrDefault();
             controle.Taca = rodada;
             controleRepository.SaveOrUpdate(controle);
 
@@ -833,14 +840,14 @@
             {
                 rodada = 1;
                 dia1 = 28;
-                dia2 = 31;
+                dia2 = 32;
             }
 
             for (int i = 0; i < rodada; i++) //rodada = numero de partidas
             {
                 Random rnd = new Random();
 
-                var maxclubes = rodada - (2 * i);
+                var maxclubes = (rodada * 2) - (2 * i);
                 var clube1 = lstTaca[rnd.Next(0, maxclubes)];
                 var clube2 = lstTaca[rnd.Next(0, maxclubes)];
 
@@ -850,8 +857,6 @@
                 }
 
                 var partida1 = new Partida();
-                var partida2 = new Partida();
-
                 partida1.Dia = dia1;
                 partida1.Mao = 1;
                 partida1.Rodada = rodada;
@@ -859,6 +864,7 @@
                 partida1.Clube1 = clube1;
                 partida1.Clube2 = clube2;
 
+                var partida2 = new Partida();
                 partida2.Dia = dia2;
                 partida2.Mao = 2;
                 partida2.Rodada = rodada;
@@ -866,11 +872,11 @@
                 partida2.Clube1 = clube2;
                 partida2.Clube2 = clube1;
 
-                lstTaca.Remove(clube1);
-                lstTaca.Remove(clube2);
-
                 partidaRepository.SaveOrUpdate(partida1);
                 partidaRepository.SaveOrUpdate(partida2);
+
+                lstTaca.Remove(clube1);
+                lstTaca.Remove(clube2);
             }            
 
             return RedirectToAction("Index", "Engine");

@@ -3,7 +3,8 @@
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var lstdivisao = (List<EmpreendaVc.Domain.Divisao>)ViewBag.lstDivisao;
-    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
+    var lstartilheiros = (List<EmpreendaVc.Domain.Artilheiro>)ViewBag.lstArtilheiros;
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
 }
 <h2>@Model.Nome
         <div class="legenda">
@@ -12,98 +13,137 @@
             <b>GC</b> Gols Contra <b>SG</b> Saldo Gols <b>%</b> Aproveitamento
         </div>
     </h2>
-<div id="classificacao-lista" class="caixa">
-    <h1>Competições</h1>
-    <a href="@Url.Action("Taca", "Clube")">TAÇA</a><br />
-        @foreach (var divisao in lstdivisao)
-        {
-            if (divisao.Id == Model.Id)
-            {
-                <a><b>@divisao.Nome</b></a><br />
-            }
-            else
-            {
-                <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a><br />
-            }
-        }
-</div>
 
-<div id="classificacao-tabela">
-    <table class="classificacao" cellpadding="0" cellspacing="0">
-        <tr>
-            <th width="36%">
-                Clube
-            </th>
-            <th width="7%">
-                P
-            </th>
-            <th width="7%">
-                J
-            </th>
-            <th width="7%">
-                V
-            </th>
-            <th width="7%">
-                E
-            </th>
-            <th width="7%">
-                D
-            </th>
-            <th width="7%">
-                GP
-            </th>
-            <th width="7%">
-                GC
-            </th>
-            <th width="7%">
-                SG
-            </th>
-            <th width="7%">
-                %
-            </th>
-        </tr>
-        @{ var i = 1; }
-        @foreach (var item in Model.DivisaoTabela.OrderBy(x => x.Posicao))
-        {
-            var margin = "margin-left: 15px;";
-            if (i > 9) { margin = ""; }
 
-            var style = "";
-            if (clube.Id == item.Clube.Id) { style = "style=font-weight:bold;"; }
-            else { style = ""; }
-
-            var classe = "";
-            if (i > 10) { classe = "class=rebaixa"; }
-            else if (i < 3) { classe = "class=promove"; }
-            else { classe = ""; }
-            
-            <tr @classe @style>
-                <td style="text-align: left;">
-                    <span style="font-weight: bold; font-size: 16px; margin: 10px; @margin">@(item.Posicao)</span>
-                    <a @classe href="@Url.Action("Index", "Clube", new { id = item.Clube.Id })">@item.Clube.Nome</a>
-                </td>
-                <td>@item.Pontos
-                </td>
-                <td>@item.J
-                </td>
-                <td>@item.V
-                </td>
-                <td>@item.E
-                </td>
-                <td>@item.D
-                </td>
-                <td>@item.GP
-                </td>
-                <td>@item.GC
-                </td>
-                <td>@item.Saldo
-                </td>
-                <td>@item.Aproveitamento.ToString("N2")
-                </td>
+<div id="left">
+    <div id="classificacao-tabela">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="36%">
+                    Clube
+                </th>
+                <th width="7%">
+                    P
+                </th>
+                <th width="7%">
+                    J
+                </th>
+                <th width="7%">
+                    V
+                </th>
+                <th width="7%">
+                    E
+                </th>
+                <th width="7%">
+                    D
+                </th>
+                <th width="7%">
+                    GP
+                </th>
+                <th width="7%">
+                    GC
+                </th>
+                <th width="7%">
+                    SG
+                </th>
+                <th width="7%">
+                    %
+                </th>
             </tr>
-            i++;
-        }
-    </table>
+            @{ var i = 1; }
+            @foreach (var item in Model.DivisaoTabela.OrderBy(x => x.Posicao))
+            {
+                var margin = "margin-left: 15px;";
+                if (i > 9) { margin = ""; }
+
+                var style = "";
+                if (clube.Id == item.Clube.Id) { style = "style=font-weight:bold;"; }
+                else { style = ""; }
+
+                var classe = "";
+                if (i > 10) { classe = "class=rebaixa"; }
+                else if (i < 3) { classe = "class=promove"; }
+                else { classe = ""; }
+            
+                <tr @classe @style>
+                    <td style="text-align: left;">
+                        <span style="font-weight: bold; font-size: 16px; margin: 10px; @margin">@(item.Posicao)</span>
+                        <a @classe href="@Url.Action("Index", "Clube", new { id = item.Clube.Id })">@item.Clube.Nome</a>
+                    </td>
+                    <td>@item.Pontos
+                    </td>
+                    <td>@item.J
+                    </td>
+                    <td>@item.V
+                    </td>
+                    <td>@item.E
+                    </td>
+                    <td>@item.D
+                    </td>
+                    <td>@item.GP
+                    </td>
+                    <td>@item.GC
+                    </td>
+                    <td>@item.Saldo
+                    </td>
+                    <td>@item.Aproveitamento.ToString("N2")
+                    </td>
+                </tr>
+                i++;
+            }
+        </table>
+    </div>
+    <h2>Artilheiros</h2>
+    <div id="classificacao-artilheiro">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="15%">
+                    Posição
+                </th>
+                <th width="35%">
+                    Nome
+                </th>
+                <th width="35%">
+                    Clube
+                </th>
+                <th width="15%">
+                    Gols
+                </th>
+            </tr>
+            @{ i = 1; }
+            @foreach (var item in lstartilheiros)
+            {
+                var style = "";
+                if (clube.Id == item.Clube.Id) { style = "style=font-weight:bold;"; }
+                else { style = ""; }
+            
+                <tr @style>
+                    <td>@i</td>
+                    <td style="text-align: left;">@item.Jogador.Nome</td>
+                    <td style="text-align: left;">@item.Clube.Nome</td>
+                    <td style="text-align: left;">@item.Divisao</td>
+                </tr>
+                i++;
+            }
+        </table>
+    </div>
 </div>
 
-@{ Html.RenderPartial("_Menu", clube); }
+<div id="right">
+    <div id="classificacao-lista" class="caixa">
+        <h1>Competições</h1>
+        <a href="@Url.Action("Taca", "Clube")">TAÇA</a><br />
+            @foreach (var divisao in lstdivisao)
+            {
+                if (divisao.Id == Model.Id)
+                {
+                    <a><b>@divisao.Nome</b></a><br />
+                }
+                else
+                {
+                    <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a><br />
+                }
+            }
+    </div>
+    @{ Html.RenderPartial("_Menu", clube); }
+</div>

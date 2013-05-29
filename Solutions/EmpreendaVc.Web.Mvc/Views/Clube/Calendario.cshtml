@@ -8,106 +8,110 @@
 }
 <h2>
     Calendário</h2>
-<div id="calendario-tabela">
-    <table class="classificacao" cellpadding="0" cellspacing="0">
-        <tr>
-            <th width="25%">
-                Adversário
-            </th>
-            <th width="10%">
-                Data
-            </th>
-            <th width="37%">
-                Competição
-            </th>
-            <th width="5%">
-            </th>
-            <th width="8%">
-                Resultado
-            </th>
-            <th width="15%">
-                Público
-            </th>
-        </tr>
-        @foreach (var item in Model)
-        {
+<div id="left">
+    <div id="calendario-tabela">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
-                <td>
-                    @if (item.Clube1.Id == clube.Id)
-                    { @item.Clube2.Nome }
-                    else
-                    { @item.Clube1.Nome }
-                </td>
-                <td>@(DateTime.Now.AddDays(item.Dia - dia).ToShortDateString())
-                </td>
-                <td>
-                    @if (item.Tipo == "DIVISAO")
-                    { @clube.Divisao.Nome }
-                    else
-                    {
-                        @:<span style="font-size: 10px;">
-                        if (item.Rodada == 16)
+                <th width="25%">
+                    Adversário
+                </th>
+                <th width="10%">
+                    Data
+                </th>
+                <th width="37%">
+                    Competição
+                </th>
+                <th width="5%">
+                </th>
+                <th width="8%">
+                    Resultado
+                </th>
+                <th width="15%">
+                    Público
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.Clube1.Id == clube.Id)
+                        { @item.Clube2.Nome }
+                        else
+                        { @item.Clube1.Nome }
+                    </td>
+                    <td>@(DateTime.Now.AddDays(item.Dia - dia).ToShortDateString())
+                    </td>
+                    <td>
+                        @if (item.Tipo == "DIVISAO")
+                        { @clube.Divisao.Nome }
+                        else
                         {
-                            @: TAÇA - 1ª Eliminatória - @(item.Mao)ª Mão
+                            @:<span style="font-size: 10px;">
+                            if (item.Rodada == 16)
+                            {
+                                @: TAÇA - 1ª Eliminatória - @(item.Mao)ª Mão
+                            }
+                            else if (item.Rodada == 8)
+                            {
+                                @: TAÇA - Oitavas de Final - @(item.Mao)ª Mão
+                            }
+                            else if (item.Rodada == 4)
+                            {
+                                @: TAÇA - Quartas de Final - @(item.Mao)ª Mão
+                            }
+                            else if (item.Rodada == 2)
+                            {
+                                @: TAÇA - Semi Final - @(item.Mao)ª Mão
+                            }
+                            else if (item.Rodada == 1)
+                            {
+                                @: TAÇA - FINAL - @(item.Mao)ª Mão
+                            }
+                            @: </span>
                         }
-                        else if (item.Rodada == 8)
+                    </td>
+                    <td>
+                        @if (item.Clube1.Id == clube.Id)
                         {
-                            @: TAÇA - Oitavas de Final - @(item.Mao)ª Mão
-                        }
-                        else if (item.Rodada == 4)
-                        {
-                            @: TAÇA - Quartas de Final - @(item.Mao)ª Mão
-                        }
-                        else if (item.Rodada == 2)
-                        {
-                            @: TAÇA - Semi Final - @(item.Mao)ª Mão
-                        }
-                        else if (item.Rodada == 1)
-                        {
-                            @: TAÇA - FINAL - @(item.Mao)ª Mão
-                        }
-                        @: </span>
-                    }
-                </td>
-                <td>
-                    @if (item.Clube1.Id == clube.Id)
-                    {
-                        @: C
-                }
-                    else
-                    { 
-                        @: F
-                                    }
-                </td>
-                <td>
-                    @if (item.Realizada)
-                    {
-                        if (item.Clube1.Id == clube.Id)
-                        {
-                        @: @item.Gol1 x @item.Gol2
+                            @: C
                     }
                         else
                         { 
-                        @: @item.Gol2 x @item.Gol1
+                            @: F
+                                        }
+                    </td>
+                    <td>
+                        @if (item.Realizada)
+                        {
+                            if (item.Clube1.Id == clube.Id)
+                            {
+                            @: @item.Gol1 x @item.Gol2
+                        }
+                            else
+                            { 
+                            @: @item.Gol2 x @item.Gol1
+                        }
+                        }
+                        else
+                        { 
+                            @: -
+                                        }
+                    </td>
+                    <td>
+                        @if (item.Realizada)
+                        {
+                            @: @item.Publico.ToString("N0")
                     }
-                    }
-                    else
-                    { 
-                        @: -
-                                    }
-                </td>
-                <td>
-                    @if (item.Realizada)
-                    {
-                        @: @item.Publico.ToString("N0")
-                }
-                    else
-                    {
-                        @: -
-                                    }
-                </td>
-            </tr>    
-        }
-    </table>
+                        else
+                        {
+                            @: -
+                                        }
+                    </td>
+                </tr>    
+            }
+        </table>
+    </div>
 </div>
-@{ Html.RenderPartial("_Menu", clube); }
+<div id="right">
+    @{ Html.RenderPartial("_Menu", clube); }
+</div>

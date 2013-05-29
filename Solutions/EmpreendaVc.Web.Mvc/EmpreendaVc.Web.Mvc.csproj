@@ -429,6 +429,7 @@
     <Content Include="Views\Shared\_Menu.cshtml" />
     <Content Include="Views\Engine\PartidaTeste.cshtml" />
     <Content Include="Views\AI\Index.cshtml" />
+    <Content Include="Views\Shared\DataTop.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

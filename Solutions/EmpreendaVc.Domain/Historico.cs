@@ -17,6 +17,8 @@ namespace EmpreendaVc.Domain
 
         public virtual Jogador Artilheiro { get; set; }
 
+        public virtual Clube ArtilheiroClube { get; set; }
+
         public virtual bool Taca { get; set; }
 
         public virtual int Gols { get; set; }
