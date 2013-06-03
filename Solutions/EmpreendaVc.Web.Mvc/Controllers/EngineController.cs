@@ -114,6 +114,12 @@
             return View();
         }
 
+        [Transaction]
+        public ActionResult MudarDia()
+        {
+            return RedirectToAction("ZerarDelayUsuario", "Engine");
+        }
+
         #region MudarDia
 
         [Transaction]
@@ -140,6 +146,7 @@
             }
 
             return RedirectToAction("Index", "Engine");
+            //return RedirectToAction("ZerarOfertaTecnico", "Engine");
         }
 
         [Transaction]
@@ -161,6 +168,7 @@
             }
 
             return RedirectToAction("Index", "Engine");
+            //return RedirectToAction("AtualizarTransferencias", "Engine");
         }
 
         [Transaction]
@@ -217,13 +225,14 @@
             }
 
             return RedirectToAction("Index", "Engine");
+            //return RedirectToAction("VariarJogadorH", "Engine");
         }
 
         [Transaction]
         public ActionResult AtualizarTransferencias()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
-            foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia < controle.Dia))
+            foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia <= controle.Dia && x.OfertaVencedora == null))
             {
                 var cancelar = false;
                 var vendido = false;
@@ -231,10 +240,10 @@
                 foreach (var oferta in leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id).OrderByDescending(x => x.Salario).ThenBy(x => x.Clube.Divisao.Numero).ThenByDescending(x => x.Clube.Dinheiro))
                 {
                     var clubecomprador = clubeRepository.Get(oferta.Clube.Id);
-                    var clubevendedor = clubeRepository.Get(leilao.Jogador.Clube.Id);
+                    var clubevendedor = clubeRepository.Get(leilao.Clube.Id);
                     var jogador = leilao.Jogador;
 
-                    if (clubevendedor.Jogadores.Count() > 14 || !vendido || oferta.Clube.Dinheiro >= leilao.Valor || oferta.Clube.Dinheiro < 200000)
+                    if (clubevendedor.Jogadores.Count() > 14 && !vendido && oferta.Clube.Dinheiro >= leilao.Valor && oferta.Clube.Dinheiro > 200000)
                     {
                         clubecomprador.Dinheiro = clubecomprador.Dinheiro - leilao.Valor;
                         clubeRepository.SaveOrUpdate(clubecomprador);
@@ -267,6 +276,7 @@
             }
 
             return RedirectToAction("Index", "Engine");
+            //return RedirectToAction("AlterarFinancasVerificaTecnicos", "Engine");
         }
 
         [Transaction]
@@ -408,7 +418,7 @@
                 jogadorRepository.SaveOrUpdate(jogador);
             }
 
-            return RedirectToAction("Index", "Engine");
+            return RedirectToAction("AtualizarDataDia", "Engine");
         }
 
         #endregion
