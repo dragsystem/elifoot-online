@@ -196,10 +196,11 @@
 
                     if (compra)
                     {
+                        Random rnd = new Random();
                         var leilaooferta = new LeilaoOferta();
                         leilaooferta.Clube = clube;
                         leilaooferta.Leilao = leilao;
-                        leilaooferta.Salario = (leilao.Jogador.Salario * 150) / 100;
+                        leilaooferta.Salario = ((leilao.Jogador.Salario * 150) / 100) + (rnd.Next(1, 6) * 1000);
 
                         leilaoofertaRepository.SaveOrUpdate(leilaooferta);
                     }
@@ -306,22 +307,19 @@
         [Transaction]
         public ActionResult VenderJogadorPorCaixa()
         {
-            foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null).OrderByDescending(x => x.Dinheiro))
+            foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null && x.Dinheiro < 200000).OrderByDescending(x => x.Dinheiro))
             {
-                if (clube.Dinheiro < 200000)
-                {
-                    var controle = controleRepository.GetAll().FirstOrDefault();
+                var controle = controleRepository.GetAll().FirstOrDefault();
 
-                    var jogador = clube.Jogadores.OrderBy(x => (x.Salario / x.H)).FirstOrDefault();
+                var jogador = clube.Jogadores.OrderBy(x => (x.Salario / x.H)).FirstOrDefault();
 
-                    var leilao = new Leilao();
-                    leilao.Clube = clube;
-                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
-                    leilao.Jogador = jogador;
-                    leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 10 > 1 ? leilao.Jogador.H - 10 : 1)) + (leilao.Jogador.Posicao * 200000);
+                var leilao = new Leilao();
+                leilao.Clube = clube;
+                leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
+                leilao.Jogador = jogador;
+                leilao.Valor = (leilao.Jogador.H * (leilao.Jogador.H - 10 > 1 ? leilao.Jogador.H - 10 : 1)) + (leilao.Jogador.Posicao * 200000);
 
-                    leilaoRepository.SaveOrUpdate(leilao);
-                }
+                leilaoRepository.SaveOrUpdate(leilao);
             }
             return RedirectToAction("Index", "AI");
         }
