@@ -12,6 +12,14 @@
     {
         <li><a href="@Url.Action("Index", "Conta")">INÍCIO</a></li>
         <li><a href="@Url.Action("Plantel", "Clube")">PLANTEL</a></li>
+        <li>
+            <a href="@Url.Action("UsuarioOferta", "Conta")">PROPOSTAS 
+            @if ((int)ViewBag.Propostas > 0)
+            {
+                @: (<span style='color: Red;'>@((int)ViewBag.Propostas)</span>) 
+            } 
+            </a>                                                                                                                                                                                    
+        </li>
         <li><a href="@Url.Action("Sair", "Conta")">Sair</a></li>
     }
 </ul>

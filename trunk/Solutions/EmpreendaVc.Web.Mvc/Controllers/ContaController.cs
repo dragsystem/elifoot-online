@@ -204,11 +204,16 @@
         public ActionResult MenuTop()
         {
             var usuario = authenticationService.GetUserAuthenticated();
-            
+
             if (usuario == null)
                 return View();
             else
+            {
+                var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
+                ViewBag.Propostas = lstUsuarioOferta.Count();
+
                 return View(usuario);
+            }
         }
 
         public ActionResult Ativar(string id)
