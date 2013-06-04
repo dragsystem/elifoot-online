@@ -6,7 +6,7 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
 #main { width: 980px; min-height: 400px; margin: 0 auto; }
     #header { width: 980px; height: 177px; border-bottom: 4px solid #4982B9; }
         #logo { float: left; margin: 20px; }
-            #linklogo { display: block; float: left; width: 500px; height: 140px; background: url('../img/logo.png') no-repeat; }
+            #linklogo { display: block; float: left; width: 450px; height: 140px; background: url('../img/logo.png') no-repeat; }
         #menu { float: right; margin-top: 0px; text-align: right; }
             #menu ul { margin-right: 20px; }
             #menu ul li { display: block; margin-left: 20px; float: left; list-style-type: none; color: White; text-transform: uppercase; font-size: 12px; }            

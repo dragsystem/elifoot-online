@@ -95,9 +95,9 @@
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
-            var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
-            if (lstUsuarioOferta.Count() > 0)
-                return RedirectToAction("UsuarioOferta", "Conta");
+            
+            //if (lstUsuarioOferta.Count() > 0)
+            //    return RedirectToAction("UsuarioOferta", "Conta");
 
             if (usuario.Clube == null)
             {
@@ -106,8 +106,8 @@
             }
 
             var lstJogadorPedido = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
-            if (lstUsuarioOferta.Count() > 0)
-                return RedirectToAction("JogadorPedido", "Clube");
+            //if (lstUsuarioOferta.Count() > 0)
+            //    return RedirectToAction("JogadorPedido", "Clube");
 
             usuario.Clube.Partidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id);
             

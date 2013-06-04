@@ -280,6 +280,24 @@
         }
 
         [Transaction]
+        public ActionResult ZeraTransferencias()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia < controle.Dia && x.OfertaVencedora == null))
+            {
+                foreach (var oferta in leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id))
+                {
+                    leilaoofertaRepository.Delete(oferta);
+                }
+
+                leilaoRepository.Delete(leilao);
+            }
+
+            return RedirectToAction("Index", "Engine");
+            //return RedirectToAction("AlterarFinancasVerificaTecnicos", "Engine");
+        }
+
+        [Transaction]
         public ActionResult ZerarPedidoJogadores()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
