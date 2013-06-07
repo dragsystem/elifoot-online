@@ -319,6 +319,8 @@
     <Content Include="Content\img\bgtrans.png" />
     <Content Include="Content\img\cancelar.png" />
     <Content Include="Content\img\loading.gif" />
+    <Content Include="Content\img\logo-footer.png" />
+    <Content Include="Content\img\logo.png" />
     <Content Include="Content\img\msg-alerta.png" />
     <Content Include="Content\img\msg-erro.png" />
     <Content Include="Content\img\msg-ok.png" />
