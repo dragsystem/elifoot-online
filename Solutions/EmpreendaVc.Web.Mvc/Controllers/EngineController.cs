@@ -167,8 +167,8 @@
                 clubeRepository.SaveOrUpdate(clube);
             }
 
-            return RedirectToAction("Index", "Engine");
-            //return RedirectToAction("AtualizarTransferencias", "Engine");
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("AtualizarTransferencias", "Engine");
         }
 
         [Transaction]
@@ -224,8 +224,8 @@
                 clubeRepository.SaveOrUpdate(clube);
             }
 
-            return RedirectToAction("Index", "Engine");
-            //return RedirectToAction("VariarJogadorH", "Engine");
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("ZeraTransferencias", "Engine");
         }
 
         [Transaction]
@@ -275,8 +275,8 @@
                 }
             }
 
-            return RedirectToAction("Index", "Engine");
-            //return RedirectToAction("AlterarFinancasVerificaTecnicos", "Engine");
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("AlterarFinancasVerificaTecnicos", "Engine");
         }
 
         [Transaction]
@@ -293,8 +293,8 @@
                 leilaoRepository.Delete(leilao);
             }
 
-            return RedirectToAction("Index", "Engine");
-            //return RedirectToAction("AlterarFinancasVerificaTecnicos", "Engine");
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("VariarJogadorH", "Engine");
         }
 
         [Transaction]
@@ -1342,10 +1342,7 @@
             {            
                 foreach (var clube in clubeRepository.GetAll())
                 {
-                    foreach (var esc in escalacaoRepository.GetAll().Where(x => x.Clube.Id == clube.Id))
-                    {
-                        escalacaoRepository.Delete(esc);
-                    }
+                    var lstnova = new List<Escalacao>();
 
                     //GOLEIRO
                     var escalacao = new Escalacao();
@@ -1361,8 +1358,8 @@
                     else
                         escalacao.H = escalacao.Jogador.H;
                     
-                    escalacao.HGol = 1;
-                    escalacaoRepository.SaveOrUpdate(escalacao);
+                    //escalacao.HGol = 1;
+                    lstnova.Add(escalacao);
 
                     //LATERAL-DIREITO
                     if (clube.Formacao.Substring(0, 1) != "3")
@@ -1380,8 +1377,8 @@
                         else
                             escalacao.H = escalacao.Jogador.H;
 
-                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
-                        escalacaoRepository.SaveOrUpdate(escalacao);
+                        //escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
+                        lstnova.Add(escalacao);
                     }
 
                     //ZAGUEIROS
@@ -1404,8 +1401,8 @@
                         else
                             escalacao.H = escalacao.Jogador.H;
 
-                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
-                        escalacaoRepository.SaveOrUpdate(escalacao);
+                        //escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
+                        lstnova.Add(escalacao);
                     }
 
                     //LATERAL-ESQUERDO
@@ -1424,8 +1421,8 @@
                         else
                             escalacao.H = escalacao.Jogador.H;
 
-                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
-                        escalacaoRepository.SaveOrUpdate(escalacao);
+                        //escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
+                        lstnova.Add(escalacao);
                     }
 
                     //VOLANTE
@@ -1445,8 +1442,8 @@
                         else
                             escalacao.H = escalacao.Jogador.H;
 
-                        escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
-                        escalacaoRepository.SaveOrUpdate(escalacao);
+                        //escalacao.HGol = escalacao.Jogador.H / 5 > 1 ? escalacao.Jogador.H / 5 : 1;
+                        lstnova.Add(escalacao);
                     }
 
                     //MEIA OFENSIVO
@@ -1466,8 +1463,8 @@
                         else
                             escalacao.H = escalacao.Jogador.H;
 
-                        escalacao.HGol = escalacao.Jogador.H / 2 > 1 ? escalacao.Jogador.H / 2 : 1;
-                        escalacaoRepository.SaveOrUpdate(escalacao);
+                        //escalacao.HGol = escalacao.Jogador.H / 2 > 1 ? escalacao.Jogador.H / 2 : 1;
+                        lstnova.Add(escalacao);
                     }
 
                     //ATACANTES
@@ -1487,8 +1484,28 @@
                         else
                             escalacao.H = escalacao.Jogador.H;
 
-                        escalacao.HGol = escalacao.Jogador.H;
-                        escalacaoRepository.SaveOrUpdate(escalacao);
+                        //escalacao.HGol = escalacao.Jogador.H;
+                        lstnova.Add(escalacao);
+                    }
+
+                    var i = 0;
+                    var lstescalacao = escalacaoRepository.GetAll().Where(x => x.Clube.Id == clube.Id);
+
+                    foreach (var item in lstescalacao)
+                    {
+                        item.Posicao = lstnova[i].Posicao;
+                        if (item.Jogador != null && clube.Usuario != null)
+                        {
+                            item.H = Util.Util.RetornaHabilidadePosicao(item.Jogador, item.Posicao);
+                        }
+                        else
+                        {
+                            item.Jogador = lstnova[i].Jogador;
+                            item.H = Util.Util.RetornaHabilidadePosicao(item.Jogador, item.Posicao);
+                        }
+                        escalacaoRepository.SaveOrUpdate(item);
+
+                        i++;
                     }
                 }
             }

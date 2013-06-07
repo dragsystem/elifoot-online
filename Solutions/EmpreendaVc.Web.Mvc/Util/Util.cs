@@ -49,6 +49,116 @@ namespace EmpreendaVc.Web.Mvc.Util
                 return "ATACANTE";
         }
 
+        public static List<SelectListItem> RetornaPosicaoEscalacao(IList<Escalacao> lstEscalacao)
+        {
+            return lstEscalacao.Select(x => new SelectListItem() { Text = RetornaPosicao(x.Posicao), Value = x.Id.ToString() }).ToList();
+        }
+
+        public static int RetornaHabilidadePosicao(Jogador jogador, int posformacao)
+        {
+            int h = jogador.H;
+
+            if (jogador.Posicao == 1)
+            {
+                if (posformacao != 1)
+                    h = 1;
+            }
+            else if (jogador.Posicao == 2)
+            {
+                if (posformacao == 1)
+                    h = 1;
+                else if (posformacao == 3)
+                    h = jogador.H - 30;
+                else if (posformacao == 4)
+                    h = jogador.H - 10;
+                else if (posformacao == 5)
+                    h = jogador.H - 20;
+                else if (posformacao == 6)
+                    h = jogador.H - 40;
+                else if (posformacao == 7)
+                    h = jogador.H - 60;
+            }
+            else if (jogador.Posicao == 3)
+            {
+                if (posformacao == 1)
+                    h = 1;
+                else if (posformacao == 2 || posformacao == 4)
+                    h = jogador.H - 20;
+                else if (posformacao == 5)
+                    h = jogador.H - 20;
+                else if (posformacao == 6)
+                    h = jogador.H - 40;
+                else if (posformacao == 7)
+                    h = jogador.H - 60;
+            }
+            else if (jogador.Posicao == 4)
+            {
+                if (posformacao == 1)
+                    h = 1;
+                else if (posformacao == 3)
+                    h = jogador.H - 30;
+                else if (posformacao == 2)
+                    h = jogador.H - 10;
+                else if (posformacao == 5)
+                    h = jogador.H - 20;
+                else if (posformacao == 6)
+                    h = jogador.H - 40;
+                else if (posformacao == 7)
+                    h = jogador.H - 60;
+            }
+            else if (jogador.Posicao == 5)
+            {
+                if (posformacao == 1)
+                    h = 1;
+                else if (posformacao == 2 || posformacao == 4)
+                    h = jogador.H - 20;
+                else if (posformacao == 3)
+                    h = jogador.H - 20;
+                else if (posformacao == 6)
+                    h = jogador.H - 30;
+                else if (posformacao == 7)
+                    h = jogador.H - 60;
+            }
+            else if (jogador.Posicao == 6)
+            {
+                if (posformacao == 1)
+                    h = 1;
+                else if (posformacao == 2 || posformacao == 4)
+                    h = jogador.H - 40;
+                else if (posformacao == 3)
+                    h = jogador.H - 60;
+                else if (posformacao == 5)
+                    h = jogador.H - 30;
+                else if (posformacao == 7)
+                    h = jogador.H - 20;
+            }
+            else
+            {
+                if (posformacao == 1)
+                    h = 1;
+                else if (posformacao == 2 || posformacao == 4)
+                    h = jogador.H - 60;
+                else if (posformacao == 3)
+                    h = jogador.H - 60;
+                else if (posformacao == 5)
+                    h = jogador.H - 40;
+                else if (posformacao == 6)
+                    h = jogador.H - 20;
+            }
+
+            if (h >= 90)
+                h = h + 20;
+            else if (h >= 80)
+                h = h + 10;
+            else if (h >= 70)
+                h = h + 5;
+
+            if (h < 0)
+                h = 1;
+
+            return h;
+        }
+
         public static List<SelectListItem> RetornaValorVenda()
         {
             var lst = new List<SelectListItem>();

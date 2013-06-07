@@ -14,6 +14,7 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
     
     #conteudo { padding: 15px; min-height: 350px; }
     #footer { width: 940px; height: 118px; background: #EEF3F9; margin-top: 20px; border-top: 4px solid #4982B9; font-size: 10px; padding: 20px; font-weight: bold; }
+        #footer-logo { position: absolute; margin-left: 770px; margin-top: 15px; width: 150px; height: 65px; background: url('../img/logo-footer.png') no-repeat; }
         #footer span { display: block; margin-left: 10px; margin-bottom: 12px; list-style-type: none; color: White; text-transform: uppercase; font-size: 12px; }
 
 #home-texto { font-size: 16px; float: left; width: 480px; text-align: justify; }    
@@ -91,8 +92,11 @@ h2 .legenda b { font-size: 11px; }
 #msg-erro { padding: 10px 10px 10px 40px; background: url('../img/msg-erro.png') 10px 8px no-repeat #C80000; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
 #msg-alerta { padding: 10px 10px 10px 40px; background: url('../img/msg-alerta.png') 10px 8px no-repeat #CAAC00; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
 
+.select-escalacao { background: #FBFBFB; padding: 0px; border: none; font-size: 14px; font-weight: bold; text-align: center; width: 48px; }
 
-
-input[type=text], input[type=password], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; }
+input[type="text"], input[type="password"], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; }
 .submit { cursor: pointer; min-width: 200px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
 .submit:hover { background: #444; }
+
+#loading { position: absolute; z-index: 10000; text-align: center; background: url('../img/bgtrans.png'); display: none; }
+#loading-image { height: 60px; width: 60px; margin: 0 auto; margin-top: 300px; z-index: 11000; text-align: center; background: url('../img/loading.gif') 1px 1px no-repeat #fff; border: 1px solid #CBDBEB; border-radius: 3px; }

@@ -181,6 +181,7 @@
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\SendMailController.cs" />
     <Compile Include="Controllers\ViewModels\ErrorDictionary.cs" />
+    <Compile Include="Controllers\ViewModels\EscalacaoView.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -315,7 +316,9 @@
     <Content Include="Content\adm\wysiwyg.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\img\bg.png" />
+    <Content Include="Content\img\bgtrans.png" />
     <Content Include="Content\img\cancelar.png" />
+    <Content Include="Content\img\loading.gif" />
     <Content Include="Content\img\msg-alerta.png" />
     <Content Include="Content\img\msg-erro.png" />
     <Content Include="Content\img\msg-ok.png" />
