@@ -347,24 +347,155 @@
             if (clube.Formacao != formacao)
             {
                 var lstescalacao = escalacaoRepository.GetAll().Where(x => x.Clube.Id == clube.Id);
-
+                
                 clube.Formacao = formacao;
-                clubeRepository.SaveOrUpdate(clube);
 
-                foreach (var item in lstescalacao)
+                if (lstescalacao.Count() != 11)
                 {
-                    item.Clube = null;
-                    item.Jogador = null;
-                    escalacaoRepository.Delete(item);
+                    foreach (var item in lstescalacao)
+                    {
+                        item.Clube = null;
+                        item.Jogador = null;
+                        escalacaoRepository.Delete(item);
+                    }
+
+                    var lstnova = CriarFormacao(clube);
+                    foreach (var item in lstnova)
+                    {
+                        escalacaoRepository.SaveOrUpdate(item);
+                    }
                 }
-                           
-                escalacao = EscalarTime(clube);
+                else
+                {
+                    var lstnova = CriarFormacao(clube);
+                    var i = 0;
+
+                    foreach (var item in lstescalacao)
+                    {
+                        item.Posicao = lstnova[i].Posicao;
+                        if (item.Jogador != null)
+                        {
+                            item.H = Util.Util.RetornaHabilidadePosicao(item.Jogador, item.Posicao);
+                        }
+                        escalacaoRepository.SaveOrUpdate(item);
+
+                        i++;
+                    }
+                }
+
+                clubeRepository.SaveOrUpdate(clube);
             }
 
-            ViewBag.Formacao = formacao;
-            ViewBag.Clube = clube;
+            return RedirectToAction("Plantel", "Clube");
+        }
 
-            return View(escalacao);
+        public List<Escalacao> CriarFormacao(Clube clube)
+        {
+            var lstescalacao = new List<Escalacao>();
+            var qnt = 0;
+
+            //GOLEIRO
+            var escalacao = new Escalacao();
+            escalacao.Clube = clube;
+            escalacao.Posicao = 1;
+            lstescalacao.Add(escalacao);
+
+            //LATERAL-DIREITO
+            if (clube.Formacao.Substring(0, 1) != "3")
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 2;
+                lstescalacao.Add(escalacao);
+            }
+
+            //ZAGUEIROS
+            qnt = 3;
+            if (clube.Formacao.Substring(0, 1) == "4")
+                qnt = 2;
+
+            for (int i = 0; i < qnt; i++)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 3;
+                lstescalacao.Add(escalacao);
+            }
+
+            //LATERAL-ESQUERDO
+            if (clube.Formacao.Substring(0, 1) != "3")
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 4;
+                lstescalacao.Add(escalacao);
+            }
+
+            //VOLANTE
+            qnt = Convert.ToInt32(clube.Formacao.Substring(1, 1));
+            for (int i = 0; i < qnt; i++)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 5;
+                lstescalacao.Add(escalacao);
+            }
+
+            //MEIA OFENSIVO
+            qnt = Convert.ToInt32(clube.Formacao.Substring(2, 1));
+            for (int i = 0; i < qnt; i++)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 6;
+                lstescalacao.Add(escalacao);
+            }
+
+            //ATACANTES
+            qnt = Convert.ToInt32(clube.Formacao.Substring(3, 1));
+            for (int i = 0; i < qnt; i++)
+            {
+                escalacao = new Escalacao();
+                escalacao.Clube = clube;
+                escalacao.Posicao = 7;
+                lstescalacao.Add(escalacao);
+            }
+
+            return lstescalacao;
+        }
+
+        [Transaction]
+        [HttpGet]//[AcceptVerbs(HttpVerbs.Get)]
+        public JsonResult EscalaJogador(int id, int idescalacao)
+        {
+            System.Web.Script.Serialization.JavaScriptSerializer oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+            var usuario = authenticationService.GetUserAuthenticated();
+            var clube = usuario.Clube;
+            var escalacao = clube.Escalacao;
+
+            if (idescalacao > 0)
+            {
+                var escalacaoitem = clube.Escalacao.FirstOrDefault(x => x.Id == idescalacao);
+                escalacaoitem.Jogador = jogadorRepository.Get(id);
+                escalacaoitem.H = Util.Util.RetornaHabilidadePosicao(escalacaoitem.Jogador, escalacaoitem.Posicao);
+                escalacaoRepository.SaveOrUpdate(escalacaoitem);
+            }
+            else
+            {
+                var escalacaoitem = clube.Escalacao.FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == id);
+                escalacaoitem.Jogador = null;
+                escalacaoitem.H = 0;
+                escalacaoRepository.SaveOrUpdate(escalacaoitem);
+            }            
+
+            var novaescalacao = escalacaoRepository.GetAll().Where(x => x.Clube.Id == clube.Id).OrderBy(x => x.Posicao).Select(x => new EscalacaoView() { 
+                                                                                                                Id = x.Id, 
+                                                                                                                JogadorId = x.Jogador != null ? x.Jogador.Id : 0, 
+                                                                                                                Posicao = Util.Util.RetornaPosicao(x.Posicao) 
+                                                                                                                });
+
+            return Json(oSerializer.Serialize(novaescalacao), JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
@@ -470,93 +601,93 @@
             return View(lstPartidas);
         }
 
-        [Transaction]
-        public List<Escalacao> EscalarTime(Clube clube)
-        {
-            var lstescalacao = new List<Escalacao>();
+        //[Transaction] FORMAÇÃO OLD
+        //public List<Escalacao> EscalarTime(Clube clube)
+        //{
+        //    var lstescalacao = new List<Escalacao>();
 
-            //GOLEIRO
-            var escalacao = new Escalacao();
-            escalacao.Clube = clube;
-            escalacao.Posicao = 1;
-            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
-            escalacaoRepository.SaveOrUpdate(escalacao);
-            lstescalacao.Add(escalacao);
+        //    //GOLEIRO
+        //    var escalacao = new Escalacao();
+        //    escalacao.Clube = clube;
+        //    escalacao.Posicao = 1;
+        //    escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
+        //    escalacaoRepository.SaveOrUpdate(escalacao);
+        //    lstescalacao.Add(escalacao);
 
-            //LATERAL-DIREITO
-            if (clube.Formacao.Substring(0, 1) != "3")
-            {
-                escalacao = new Escalacao();
-                escalacao.Clube = clube;
-                escalacao.Posicao = 2;
-                escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
-                escalacaoRepository.SaveOrUpdate(escalacao);
-                lstescalacao.Add(escalacao);
-            }
+        //    //LATERAL-DIREITO
+        //    if (clube.Formacao.Substring(0, 1) != "3")
+        //    {
+        //        escalacao = new Escalacao();
+        //        escalacao.Clube = clube;
+        //        escalacao.Posicao = 2;
+        //        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
+        //        escalacaoRepository.SaveOrUpdate(escalacao);
+        //        lstescalacao.Add(escalacao);
+        //    }
 
-            //ZAGUEIROS
-            var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(3);
-            if (clube.Formacao.Substring(0, 1) == "4")
-                zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
+        //    //ZAGUEIROS
+        //    var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(3);
+        //    if (clube.Formacao.Substring(0, 1) == "4")
+        //        zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
 
-            foreach (var zag in zagueiros)
-            {
-                escalacao = new Escalacao();
-                escalacao.Clube = clube;
-                escalacao.Posicao = 3;
-                escalacao.Jogador = zag;
-                escalacaoRepository.SaveOrUpdate(escalacao);
-                lstescalacao.Add(escalacao);
-            }
+        //    foreach (var zag in zagueiros)
+        //    {
+        //        escalacao = new Escalacao();
+        //        escalacao.Clube = clube;
+        //        escalacao.Posicao = 3;
+        //        escalacao.Jogador = zag;
+        //        escalacaoRepository.SaveOrUpdate(escalacao);
+        //        lstescalacao.Add(escalacao);
+        //    }
 
-            //LATERAL-ESQUERDO
-            if (clube.Formacao.Substring(0, 1) != "3")
-            {
-                escalacao = new Escalacao();
-                escalacao.Clube = clube;
-                escalacao.Posicao = 4;
-                escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
-                escalacaoRepository.SaveOrUpdate(escalacao);
-                lstescalacao.Add(escalacao);
-            }
+        //    //LATERAL-ESQUERDO
+        //    if (clube.Formacao.Substring(0, 1) != "3")
+        //    {
+        //        escalacao = new Escalacao();
+        //        escalacao.Clube = clube;
+        //        escalacao.Posicao = 4;
+        //        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
+        //        escalacaoRepository.SaveOrUpdate(escalacao);
+        //        lstescalacao.Add(escalacao);
+        //    }
 
-            //VOLANTE
-            var volantes = clube.Jogadores.Where(x => x.Posicao == 5).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(1, 1)));
-            foreach (var vol in volantes)
-            {
-                escalacao = new Escalacao();
-                escalacao.Clube = clube;
-                escalacao.Posicao = 5;
-                escalacao.Jogador = vol;
-                escalacaoRepository.SaveOrUpdate(escalacao);
-                lstescalacao.Add(escalacao);
-            }
+        //    //VOLANTE
+        //    var volantes = clube.Jogadores.Where(x => x.Posicao == 5).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(1, 1)));
+        //    foreach (var vol in volantes)
+        //    {
+        //        escalacao = new Escalacao();
+        //        escalacao.Clube = clube;
+        //        escalacao.Posicao = 5;
+        //        escalacao.Jogador = vol;
+        //        escalacaoRepository.SaveOrUpdate(escalacao);
+        //        lstescalacao.Add(escalacao);
+        //    }
 
-            //MEIA OFENSIVO
-            var meias = clube.Jogadores.Where(x => x.Posicao == 6).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(2, 1)));
-            foreach (var mei in meias)
-            {
-                escalacao = new Escalacao();
-                escalacao.Clube = clube;
-                escalacao.Posicao = 6;
-                escalacao.Jogador = mei;
-                escalacaoRepository.SaveOrUpdate(escalacao);
-                lstescalacao.Add(escalacao);
-            }
+        //    //MEIA OFENSIVO
+        //    var meias = clube.Jogadores.Where(x => x.Posicao == 6).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(2, 1)));
+        //    foreach (var mei in meias)
+        //    {
+        //        escalacao = new Escalacao();
+        //        escalacao.Clube = clube;
+        //        escalacao.Posicao = 6;
+        //        escalacao.Jogador = mei;
+        //        escalacaoRepository.SaveOrUpdate(escalacao);
+        //        lstescalacao.Add(escalacao);
+        //    }
 
-            //ATACANTES
-            var atacantes = clube.Jogadores.Where(x => x.Posicao == 7).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(3, 1)));
-            foreach (var ata in atacantes)
-            {
-                escalacao = new Escalacao();
-                escalacao.Clube = clube;
-                escalacao.Posicao = 7;
-                escalacao.Jogador = ata;
-                escalacaoRepository.SaveOrUpdate(escalacao);
-                lstescalacao.Add(escalacao);
-            }
+        //    //ATACANTES
+        //    var atacantes = clube.Jogadores.Where(x => x.Posicao == 7).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(3, 1)));
+        //    foreach (var ata in atacantes)
+        //    {
+        //        escalacao = new Escalacao();
+        //        escalacao.Clube = clube;
+        //        escalacao.Posicao = 7;
+        //        escalacao.Jogador = ata;
+        //        escalacaoRepository.SaveOrUpdate(escalacao);
+        //        lstescalacao.Add(escalacao);
+        //    }
 
-            return lstescalacao;
-        }
+        //    return lstescalacao;
+        //}
     }
 }

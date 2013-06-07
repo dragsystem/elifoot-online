@@ -1,6 +1,7 @@
 <html dir="ltr" lang="pt-BR">
 <head id="Head1" runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=100" >
     <title>Bola na Rede</title>
     <link type="text/css" href="@Url.Content("~/Content/css/style.css")" rel="stylesheet" />
     <link type="text/css" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" rel="stylesheet" />
@@ -14,6 +15,10 @@
     <script type="text/javascript">
         $(function () {
             $(document).tooltip();
+
+            var wid = $(document).width();
+            var hei = $(document).height();
+            $('#loading').attr("style", "width:" + wid + "px; height: " + hei + "px;");
         });
     </script>
     <style type="text/css">
@@ -21,6 +26,9 @@
     </style>
 </head>
 <body>
+    <div id="loading">
+        <div id="loading-image"></div>
+    </div>
     <div id="main">
         <div id="header">
             <div id="logo">
@@ -40,6 +48,7 @@
         <div class="clear">
         </div>
         <div id="footer">
+            <div id="footer-logo"></div>
             <span><a href="@Url.Action("Index", "Home")">Home</a></span>
             <span><a href="@Url.Action("Cadastro", "Conta")">Cadastrar</a></span>
             <span><a href="@Url.Action("Regras", "Home")">Regras</a></span>

@@ -32,20 +32,20 @@ namespace EmpreendaVc.Domain
         //    } 
         //}
 
-        public virtual int HGol { get; set; }
-        //{
-        //    get
-        //    {
-        //        if (Posicao == 7)
-        //            return H;
-        //        else if (Posicao == 6)
-        //            return (H * 5)/10;
-        //        else if (Posicao == 1)
-        //            return 1;
-        //        else
-        //            return H/10;
-        //    }
-        //}
+        public virtual int HGol
+        {
+            get
+            {
+                if (Posicao == 7)
+                    return H;
+                else if (Posicao == 6)
+                    return H/2;
+                else if (Posicao == 1)
+                    return 1;
+                else
+                    return H/5;
+            }
+        }
 
         public Escalacao()
         {
