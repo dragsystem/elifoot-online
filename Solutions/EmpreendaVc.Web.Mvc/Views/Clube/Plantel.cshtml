@@ -71,7 +71,7 @@
                 <tr>
                     <td>
                         @{ var selected = Model.Escalacao.Count > 0 ? Model.Escalacao.Where(x => x.Jogador != null && x.Jogador.Id == jog.Id).Count() > 0 ? Model.Escalacao.FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jog.Id).Id.ToString() : "" : "";
-                           var lstEscalacao = selected != "" ? Model.Escalacao : Model.Escalacao.Where(x => x.Jogador == null).ToList();
+                           var lstEscalacao = selected != "" ? Model.Escalacao.Where(x => x.Jogador == null || (x.Jogador != null && x.Jogador.Id == jog.Id)).ToList() : Model.Escalacao.Where(x => x.Jogador == null).ToList();
                             }
                         @this.Select("F" + jog.Id).Options(Util.RetornaPosicaoEscalacao(lstEscalacao)).FirstOption("--").Selected(selected).Class("select-escalacao")
                     </td>
