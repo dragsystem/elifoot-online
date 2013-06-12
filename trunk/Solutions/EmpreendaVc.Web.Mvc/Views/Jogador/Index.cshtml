@@ -1,0 +1,120 @@
+﻿@model EmpreendaVc.Domain.Jogador
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var controle = (EmpreendaVc.Domain.Controle)ViewBag.Controle;
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
+}
+<script type="text/javascript">
+    var idelemento = '';
+
+    $(function () {
+        $("#Situacao").change(function () {
+            situacao($(this).val());
+        });
+    });
+
+    function situacao(situacao) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("AlteraSituacao", "Jogador")',
+            data: { id: @Model.Id, situacao: situacao },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                if (result != "ok") {
+                    alert('Erro ao tentar mudar a situação do jogador.');
+                }
+            }
+        });
+    }
+</script>
+
+<h2>@Model.Nome @(Model.Clube != null ? "(" + Model.Clube.Nome + ")" : "")</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+    <div id="left">
+    <div id="jogador-tabela">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="33%">Posição</th>
+                <th width="33%">Salário</th>
+                <th width="33%">Contrato</th>
+            </tr>
+            <tr>
+                <td>@Util.RetornaPosicaoCompleta(Model.Posicao)</td>
+                @if (Model.Clube != null)
+                {
+                    <td>$@Model.Salario.ToString("N2")</td>
+                    <td>@Model.Contrato ano(s)</td>
+                }
+                else
+                {
+                    <td>-</td>
+                    <td>-</td>
+                }
+            </tr>
+        </table>
+    </div>
+    @if (Model.Clube.Id == clube.Id)
+    {
+        <div id="jogador-situacao">
+            <p>
+                Situação do jogador no plantel:
+                @this.Select("Situacao").Options(Util.RetornaSituacao()).Selected(Model.Situacao > 0 ? Model.Situacao.ToString() : "").Styles(@width => "477px;")
+            </p>
+        </div>
+    }
+    <div id="jogador-historico">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="10%">Ano</th>
+                <th width="40%">Clube</th>
+                <th width="20%"></th>
+                <th width="10%">Jogos</th>
+                <th width="10%">Gols</th>
+                <th width="10%">Nota</th>
+            </tr>
+            @if (Model.Clube != null)
+            {
+                <tr>
+                    <td>@controle.Ano</td>
+                    <td>@Model.Clube.Nome</td>
+                    <td></td>
+                    <td>@Model.Jogos</td>
+                    <td>@Model.Gols.Where(x => x.Clube.Id == Model.Clube.Id).Count()</td>
+                    <td>@(Model.NotaMedia > 0 ? Model.NotaMedia.ToString() : "0.00")</td>
+                </tr>
+            }
+            @foreach (var historico in Model.Historico.OrderByDescending(x => x.Ano).ThenByDescending(x => x.Data))
+            {
+                <tr>
+                    <td>@historico.Ano</td>
+                    <td>@historico.Clube.Nome</td>
+                    <td>@(historico.Valor > 0 ? "$" + historico.Valor.ToString("N2") : "$0,00")</td>
+                    <td>@historico.Jogos</td>
+                    <td>@historico.Gols</td>
+                    <td>@(historico.NotaMedia > 0 ? historico.NotaMedia.ToString() : "0.00")</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<div id="right">
+    <div id="jogador-lista" class="caixa">
+        <h1>Lesão</h1>
+        @if (Model.Lesionado > 0)
+        {
+            @: Lesionado até @(DateTime.Now.AddDays(Model.Lesionado).ToShortDateString()).
+        }
+        else
+        {
+            @: Nenhuma lesão, 100% para a próxima partida.
+        }
+    </div>
+    @{ Html.RenderAction("_MenuJogador", "Jogador", new { id = Model.Id }); }
+</div>

@@ -11,36 +11,35 @@
     <div id="plantel-caixa">
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
-                <th width="35%">
-                    JOGADOR
-                </th>
-                <th width="10%">
-                    POSIÇÃO
-                </th>
-                <th width="10%">
-                    H
-                </th>
-                <th width="15%">
-                    SALÁRIO
-                </th>
-                <th width="10%">
-                    GOLS
-                </th>
+                <th width="10%"></th>
+                <th width="30%">JOGADOR</th>
+                <th width="15%">POSIÇÃO</th>
+                <th width="15%">NOTA MÉDIA</th>
+                <th width="15%">JOGOS</th>
+                <th width="15%">GOLS</th>
             </tr>
             @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.H))
             {
                 <tr>
-                    <td style="text-align: left;">@jog.Nome.ToUpper()
+                    <td>
+                        @if (jog.Lesionado == 0)
+                        {
+                            if (Model.Escalacao.Where(x => x.Jogador != null && x.Jogador.Id == jog.Id).Count() > 0)
+                            {
+                                var escalacao = Model.Escalacao.FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jog.Id);
+                                <b style="font-size: 14px;">@Util.RetornaPosicao(escalacao.Posicao)</b>
+                            }
+                        }
+                        else
+                        {
+                            <a class="lesionado" title="Lesionado por @jog.Lesionado dia(s)"></a>                     
+                        }
                     </td>
-                    <td>@Util.RetornaPosicao(jog.Posicao)
-                    </td>
-                    <td>@jog.H
-                    </td>
-                    <td style="text-align: right;">
-                        $@jog.Salario.ToString("N2")
-                    </td>
-                    <td>@jog.Gols.Count()
-                    </td>
+                    <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = jog.Id })">@jog.Nome.ToUpper()</a></td>
+                    <td>@Util.RetornaPosicao(jog.Posicao)</td>
+                    <td>@(jog.NotaMedia > 0 ? jog.NotaMedia.ToString() : "0.00")</td>
+                    <td>@jog.Jogos</td>
+                    <td>@jog.Gols.Where(x => x.Clube.Id == Model.Id).Count()</td>
                 </tr>
             }
         </table>

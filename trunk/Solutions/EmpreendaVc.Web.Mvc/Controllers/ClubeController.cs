@@ -115,47 +115,6 @@
         }
 
         [Authorize]
-        public ActionResult JogadorRenovar(int id)
-        {
-            var usuario = authenticationService.GetUserAuthenticated();
-            var jogador = jogadorRepository.Get(id);
-            var clube = jogador.Clube;
-
-            if (usuario.Clube == null || usuario.Clube.Id != clube.Id)
-                return RedirectToAction("Index", "Conta");
-
-            return View(jogador);
-        }
-
-        [Authorize]
-        [Transaction]
-        [HttpPost]
-        public ActionResult JogadorRenovar(FormCollection form)
-        {
-            var usuario = authenticationService.GetUserAuthenticated();
-            var jogador = jogadorRepository.Get(Convert.ToInt32(form["Jogador"]));
-            var clube = jogador.Clube;
-
-            var valor = Convert.ToDecimal(form["Salario"]);
-
-            if (jogador != null)
-            {
-                if (valor >= (jogador.Salario + (jogador.Salario / 100) * 30))
-                {
-                    jogador.Salario = valor;
-                    jogador.Contrato = true;
-                    jogadorRepository.SaveOrUpdate(jogador);
-
-                    TempData["MsgOk"] = jogador.Nome + " aceitou sua proposta e renovou até o final da temporada!";
-                    return RedirectToAction("Plantel", "Clube");
-                }
-            }
-
-            TempData["MsgErro"] = jogador.Nome + " rejeitou o contrato proposto.";
-            return View(jogador);
-        }
-
-        [Authorize]
         public ActionResult JogadorVender(int id)
         {
             var usuario = authenticationService.GetUserAuthenticated();
@@ -278,40 +237,40 @@
                 return View();
         }
 
-        [Authorize]
-        [Transaction]
-        public ActionResult JogadorPedidoResposta(int id, bool resposta)
-        {
-            var usuario = authenticationService.GetUserAuthenticated();
-            var pedido = jogadorpedidoRepository.Get(id);
-            var jogador = jogadorRepository.Get(pedido.Jogador.Id);
+        //[Authorize]
+        //[Transaction]
+        //public ActionResult JogadorPedidoResposta(int id, bool resposta)
+        //{
+        //    var usuario = authenticationService.GetUserAuthenticated();
+        //    var pedido = jogadorpedidoRepository.Get(id);
+        //    var jogador = jogadorRepository.Get(pedido.Jogador.Id);
 
-            if (resposta)
-            {
-                jogador.Contrato = true;
-                jogador.Salario = pedido.Salario;
-                jogadorRepository.SaveOrUpdate(jogador);                
-            }
-            else
-            {
-                var rnd = new Random();
+        //    if (resposta)
+        //    {
+        //        jogador.Contrato = true;
+        //        jogador.Salario = pedido.Salario;
+        //        jogadorRepository.SaveOrUpdate(jogador);                
+        //    }
+        //    else
+        //    {
+        //        var rnd = new Random();
 
-                if (rnd.Next(0, 2) == 1)
-                {
-                    var controle = controleRepository.GetAll().FirstOrDefault();
-                    var leilao = new Leilao();
-                    leilao.Dia = controle.Dia++;
-                    leilao.Espontaneo = true;
-                    leilao.Jogador = jogador;
-                    leilao.Valor = jogador.H * 50000;
+        //        if (rnd.Next(0, 2) == 1)
+        //        {
+        //            var controle = controleRepository.GetAll().FirstOrDefault();
+        //            var leilao = new Leilao();
+        //            leilao.Dia = controle.Dia++;
+        //            leilao.Espontaneo = true;
+        //            leilao.Jogador = jogador;
+        //            leilao.Valor = jogador.H * 50000;
 
-                    leilaoRepository.SaveOrUpdate(leilao);
-                }
-            }
+        //            leilaoRepository.SaveOrUpdate(leilao);
+        //        }
+        //    }
 
-            jogadorpedidoRepository.Delete(pedido);
-            return RedirectToAction("Plantel", "Clube");
-        }
+        //    jogadorpedidoRepository.Delete(pedido);
+        //    return RedirectToAction("Plantel", "Clube");
+        //}
 
         [Authorize]
         public ActionResult Calendario()

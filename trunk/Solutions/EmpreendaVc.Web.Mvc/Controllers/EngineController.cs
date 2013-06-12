@@ -31,7 +31,7 @@
         private readonly INHibernateRepository<Jogador> jogadorRepository;
         private readonly INHibernateRepository<Controle> controleRepository;
         private readonly INHibernateRepository<Leilao> leilaoRepository;
-        private readonly INHibernateRepository<LeilaoOferta> leilaoofertaRepository;
+        private readonly INHibernateRepository<JogadorOferta> jogadorofertaRepository;
         private readonly INHibernateRepository<Divisao> divisaoRepository;
         private readonly IPartidaRepository partidaRepository;
         private readonly INHibernateRepository<Gol> golRepository;
@@ -43,6 +43,7 @@
         private readonly INHibernateRepository<Historico> historicoRepository;
         private readonly INHibernateRepository<Nome> nomeRepository;
         private readonly INHibernateRepository<Artilheiro> artilheiroRepository;
+        private readonly INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IClubeRepository clubeQueryRepository,
@@ -51,7 +52,7 @@
             INHibernateRepository<Jogador> jogadorRepository,
             INHibernateRepository<Controle> controleRepository,
             INHibernateRepository<Leilao> leilaoRepository,
-            INHibernateRepository<LeilaoOferta> leilaoofertaRepository,
+            INHibernateRepository<JogadorOferta> jogadorofertaRepository,
             INHibernateRepository<Divisao> divisaoRepository,
             IPartidaRepository partidaRepository,
             INHibernateRepository<Gol> golRepository,
@@ -62,7 +63,8 @@
             INHibernateRepository<Escalacao> escalacaoRepository,
             INHibernateRepository<Historico> historicoRepository,
             INHibernateRepository<Nome> nomeRepository,
-            INHibernateRepository<Artilheiro> artilheiroRepository)
+            INHibernateRepository<Artilheiro> artilheiroRepository,
+            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.clubeQueryRepository = clubeQueryRepository;
@@ -71,7 +73,7 @@
             this.jogadorRepository = jogadorRepository;
             this.controleRepository = controleRepository;
             this.leilaoRepository = leilaoRepository;
-            this.leilaoofertaRepository = leilaoofertaRepository;
+            this.jogadorofertaRepository = jogadorofertaRepository;
             this.divisaoRepository = divisaoRepository;
             this.partidaRepository = partidaRepository;
             this.golRepository = golRepository;
@@ -83,6 +85,7 @@
             this.historicoRepository = historicoRepository;
             this.nomeRepository = nomeRepository;
             this.artilheiroRepository = artilheiroRepository;
+            this.jogadorhistoricoRepository = jogadorhistoricoRepository;
         }
 
         //OK - GerarCampeonato(); 
@@ -172,7 +175,69 @@
         }
 
         [Transaction]
-        public ActionResult AlterarFinancasVerificaTecnicos()
+        public ActionResult CriarJogadoresTemporarios()
+        {
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                var nomes = nomeRepository.GetAll();
+                var rnd = new Random();
+
+                for (int pos = 1; pos < 8; pos++)
+                {
+                    var min = 0;
+
+                    if (pos == 1 || pos == 2 || pos == 4)
+                        min = 1;
+                    else if (pos == 3 || pos == 5 || pos == 6 || pos == 7)
+                        min = 2;
+
+                    if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() < min)
+                    {
+                        var jogador = new Jogador();
+                        jogador.Clube = clube;
+                        jogador.Posicao = pos;
+                        jogador.Temporario = true;
+                        jogador.H = 1;
+                        jogador.HF = 1;
+
+                        var objnome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
+                        if (!objnome.Comum) { objnome = nomes.ElementAt(rnd.Next(0, nomes.Count())); }
+
+                        jogador.Nome = objnome.NomeJogador.ToUpper();
+                        jogadorRepository.SaveOrUpdate(jogador);
+                    }
+                    else if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() > min)
+                    {
+                        foreach (var jog in clube.Jogadores.Where(x => x.Temporario))
+                        {
+                            jog.Clube = null;
+                            jogadorRepository.SaveOrUpdate(jog);
+                        }
+                    }
+                }
+            }
+
+            return RedirectToAction("UpdateFinancas", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult UpdateFinancas()
+        {
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                var salarios = clube.Jogadores.Sum(x => x.Salario);
+                var renda = clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Count() > 0 ? clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Last().Publico * clube.Ingresso : 0;
+                var socios = clube.Socios * 30;
+
+                clube.Dinheiro = clube.Dinheiro + (renda + socios - salarios);
+                clubeRepository.SaveOrUpdate(clube);
+            }
+
+            return RedirectToAction("VerificaTecnicos", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult VerificaTecnicos()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
@@ -195,11 +260,13 @@
                     }
 
                     tecnicoatual.Clube = null;
+                    tecnicoatual.Reputacao = 30;
                     tecnicoatual.DelayTroca = 0;
                     tecnicoatual.ReputacaoGeral = tecnicoatual.ReputacaoGeral - 10 < 0 ? 0 : tecnicoatual.ReputacaoGeral - 10;
                     usuarioRepository.SaveOrUpdate(tecnicoatual);
 
                     clube.Usuario = null;
+                    clubeRepository.SaveOrUpdate(clube);
                 }
                 else if (clube.Usuario == null && clube.ReputacaoAI < 10)
                 {
@@ -214,215 +281,318 @@
 
                         usuarioofertaRepository.SaveOrUpdate(usuariooferta);
                     }
-                }
-
-                var salarios = clube.Jogadores.Sum(x => x.Salario);
-                var renda = clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Count() > 0 ? clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Last().Publico * clube.Ingresso : 0;
-                var socios = clube.Socios * 30;
-
-                clube.Dinheiro = clube.Dinheiro + (renda + socios - salarios);
-                clubeRepository.SaveOrUpdate(clube);
+                }                
             }
 
             //return RedirectToAction("Index", "Engine");
             return RedirectToAction("ZeraTransferencias", "Engine");
         }
 
+        //[Transaction]
+        //public ActionResult AtualizarTransferencias()
+        //{
+        //    var controle = controleRepository.GetAll().FirstOrDefault();
+        //    foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia <= controle.Dia && x.OfertaVencedora == null))
+        //    {
+        //        var cancelar = false;
+        //        var vendido = false;
+
+        //        foreach (var oferta in jogadorofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id).OrderByDescending(x => x.Salario).ThenBy(x => x.Clube.Divisao.Numero).ThenByDescending(x => x.Clube.Dinheiro))
+        //        {
+        //            var clubecomprador = clubeRepository.Get(oferta.Clube.Id);
+        //            var clubevendedor = clubeRepository.Get(leilao.Clube.Id);
+        //            var jogador = leilao.Jogador;
+
+        //            if (clubevendedor.Jogadores.Count() > 14 && !vendido && oferta.Clube.Dinheiro >= leilao.Valor && oferta.Clube.Dinheiro > 200000)
+        //            {
+        //                clubecomprador.Dinheiro = clubecomprador.Dinheiro - leilao.Valor;
+        //                clubeRepository.SaveOrUpdate(clubecomprador);
+
+        //                jogador.Clube = clubecomprador;
+        //                jogador.Contrato = true;
+        //                jogador.Salario = oferta.Salario;
+        //                jogadorRepository.SaveOrUpdate(jogador);
+
+        //                clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;
+        //                clubeRepository.SaveOrUpdate(clubevendedor);
+
+        //                vendido = true;
+        //                leilao.OfertaVencedora = oferta;
+        //                leilaoRepository.SaveOrUpdate(leilao);
+        //            }
+        //            else
+        //            {
+        //                if (clubevendedor.Jogadores.Count < 15 && !vendido)
+        //                    cancelar = true;
+
+        //                jogadorofertaRepository.Delete(oferta);
+        //            }
+        //        }
+
+        //        if (cancelar)
+        //        {
+        //            leilaoRepository.Delete(leilao);
+        //        }
+        //    }
+
+        //    //return RedirectToAction("Index", "Engine");
+        //    return RedirectToAction("AlterarFinancasVerificaTecnicos", "Engine");
+        //}
+
         [Transaction]
         public ActionResult AtualizarTransferencias()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
-            foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia <= controle.Dia && x.OfertaVencedora == null))
+            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Dia <= controle.Dia && x.Estagio == 2).OrderByDescending(x => x.Pontos))
             {
-                var cancelar = false;
-                var vendido = false;
+                var jogador = jogadoroferta.Jogador;
+                var clubecomprador = clubeRepository.Get(jogadoroferta.Clube.Id);
+                var clubevendedor = clubeRepository.Get(jogador.Clube.Id);
+                var vendido = "";
 
-                foreach (var oferta in leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id).OrderByDescending(x => x.Salario).ThenBy(x => x.Clube.Divisao.Numero).ThenByDescending(x => x.Clube.Dinheiro))
+                if (clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14 && vendido == "" && clubecomprador.Dinheiro >= jogadoroferta.Valor && jogadoroferta.Pontos > 0)
                 {
-                    var clubecomprador = clubeRepository.Get(oferta.Clube.Id);
-                    var clubevendedor = clubeRepository.Get(leilao.Clube.Id);
-                    var jogador = leilao.Jogador;
+                    clubecomprador.Dinheiro = clubecomprador.Dinheiro - jogadoroferta.Valor;
+                    clubeRepository.SaveOrUpdate(clubecomprador);
 
-                    if (clubevendedor.Jogadores.Count() > 14 && !vendido && oferta.Clube.Dinheiro >= leilao.Valor && oferta.Clube.Dinheiro > 200000)
+                    jogador.Clube = clubecomprador;
+                    jogador.Contrato = jogadoroferta.Contrato;
+                    jogador.Salario = jogadoroferta.Salario;
+                    jogadorRepository.SaveOrUpdate(jogador);
+
+                    clubevendedor.Dinheiro = clubecomprador.Dinheiro + jogadoroferta.Valor;
+                    clubeRepository.SaveOrUpdate(clubevendedor);
+
+                    var historico = new JogadorHistorico();
+                    historico.Ano = controle.Ano;
+                    historico.Clube = clubevendedor;
+                    historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clubevendedor.Id).Count();
+                    historico.Jogador = jogador;
+                    historico.Jogos = jogador.Jogos;
+                    historico.NotaMedia = jogador.NotaMedia;
+                    historico.Valor = jogadoroferta.Valor;
+                    jogadorhistoricoRepository.SaveOrUpdate(historico);
+
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = jogador.Nome + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
+
+                    if (clubecomprador.Usuario != null)
                     {
-                        clubecomprador.Dinheiro = clubecomprador.Dinheiro - leilao.Valor;
-                        clubeRepository.SaveOrUpdate(clubecomprador);
-
-                        jogador.Clube = clubecomprador;
-                        jogador.Contrato = true;
-                        jogador.Salario = oferta.Salario;
-                        jogadorRepository.SaveOrUpdate(jogador);
-
-                        clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;
-                        clubeRepository.SaveOrUpdate(clubevendedor);
-
-                        vendido = true;
-                        leilao.OfertaVencedora = oferta;
-                        leilaoRepository.SaveOrUpdate(leilao);
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
                     }
-                    else
+                    if (clubevendedor.Usuario != null)
                     {
-                        if (clubevendedor.Jogadores.Count < 15 && !vendido)
-                            cancelar = true;
-
-                        leilaoofertaRepository.Delete(oferta);
+                        noticia.Usuario = clubevendedor.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
                     }
+
+                    vendido = clubecomprador.Nome;
+                    jogadorofertaRepository.Delete(jogadoroferta);
                 }
-
-                if (cancelar)
+                else if (jogadoroferta.Pontos < 1)
                 {
-                    leilaoRepository.Delete(leilao);
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = jogador.Nome + " (" + clubevendedor.Nome + ") rejeitou sua proposta.";
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadorofertaRepository.Delete(jogadoroferta);
+                }
+                else if (vendido != "")
+                {
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = jogador.Nome + " (" + clubevendedor.Nome + ") rejeitou sua proposta e foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2");
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadorofertaRepository.Delete(jogadoroferta);
+                }
+                else if (clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14)
+                {
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = clubevendedor.Nome + " cancelou a venda de " + jogador.Nome + " por estar com poucos jogadores no elenco.";
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadorofertaRepository.Delete(jogadoroferta);
+                }
+                else if (clubecomprador.Dinheiro < jogadoroferta.Valor)
+                {
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Sua proposta por " + jogador.Nome + " foi cancelada, pois você não possui dinheiro para fechar a compra.";
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadorofertaRepository.Delete(jogadoroferta);
                 }
             }
 
             //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("AlterarFinancasVerificaTecnicos", "Engine");
+            return RedirectToAction("UpdateFinancas", "Engine");
         }
 
+        //[Transaction]
+        //public ActionResult ZeraTransferencias()
+        //{
+        //    var controle = controleRepository.GetAll().FirstOrDefault();
+        //    foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia < controle.Dia && x.OfertaVencedora == null))
+        //    {
+        //        foreach (var oferta in jogadorofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id))
+        //        {
+        //            jogadorofertaRepository.Delete(oferta);
+        //        }
+
+        //        leilaoRepository.Delete(leilao);
+        //    }
+
+        //    //return RedirectToAction("Index", "Engine");
+        //    return RedirectToAction("VariarJogadorH", "Engine");
+        //}
+
+        //[Transaction]
+        //public ActionResult ZerarPedidoJogadores()
+        //{
+        //    var controle = controleRepository.GetAll().FirstOrDefault();
+        //    foreach (var pedidojog in jogadorpedidoRepository.GetAll().Where(x => x.Dia < controle.Dia))
+        //    {
+        //        var clube = clubeRepository.Get(pedidojog.Jogador.Clube.Id);
+
+        //        if (clube.Jogadores.Count() > 14)
+        //        {
+        //            var jogposicao = clube.Jogadores.Where(x => x.Posicao == pedidojog.Jogador.Posicao).Count();
+        //            if ((jogposicao > 1 && pedidojog.Jogador.Posicao == 1) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 2) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 4) ||
+        //                (jogposicao > 1 && pedidojog.Jogador.Posicao == 5) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 6) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 7) ||
+        //                (jogposicao > 2 && pedidojog.Jogador.Posicao == 3))
+        //            {
+        //                Random rnd = new Random();
+
+        //                if (rnd.Next(0, 100) < 70)
+        //                {
+        //                    var leilao = new Leilao();
+
+        //                    leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
+        //                    leilao.Espontaneo = true;
+        //                    leilao.Jogador = pedidojog.Jogador;
+        //                    leilao.Clube = pedidojog.Jogador.Clube;
+        //                    leilao.Valor = pedidojog.Jogador.H * 50000;
+        //                }
+        //                else
+        //                {
+        //                    var jogador = jogadorRepository.Get(pedidojog.Jogador.Id);
+
+        //                    jogador.Contrato = true;
+        //                    jogador.Salario = pedidojog.Salario;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                var jogador = jogadorRepository.Get(pedidojog.Jogador.Id);
+
+        //                jogador.Contrato = true;
+        //                jogador.Salario = pedidojog.Salario;
+        //            }
+        //        }
+        //        jogadorpedidoRepository.Delete(pedidojog);
+        //    }
+
+        //    return RedirectToAction("Index", "Engine");
+        //}
+
+        //[Transaction]
+        //public ActionResult CriarPedidoSaidasJogadores()
+        //{
+        //    var controle = controleRepository.GetAll().FirstOrDefault();
+        //    foreach (var clube in clubeRepository.GetAll())
+        //    {
+        //        Random rnd = new Random();
+
+        //        var lstjog = clube.Jogadores.ToList();
+
+        //        if (rnd.Next(1, 3) == 1)
+        //        {
+        //            if (lstjog.Where(x => !x.Contrato).Count() > 0 && rnd.Next(0, 100) > 70)
+        //            {
+        //                var lstjognovo = lstjog.Where(x => !x.Contrato).ToList();
+        //                var jog = rnd.Next(0, lstjognovo.Count());
+
+        //                decimal aumento = (rnd.Next(1, 4)) / 10;
+
+        //                var pedidojog = new JogadorPedido();
+        //                pedidojog.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
+        //                pedidojog.Jogador = lstjognovo[jog];
+        //                pedidojog.Salario = lstjognovo[jog].Salario + (lstjognovo[jog].Salario * aumento);
+
+        //                jogadorpedidoRepository.SaveOrUpdate(pedidojog);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (lstjog.Where(x => !x.Contrato).Count() > 0 && rnd.Next(0, 100) > 50)
+        //            {
+        //                var g = lstjog.Where(x => x.Posicao == 1).Count();
+        //                var ld = lstjog.Where(x => x.Posicao == 2).Count();
+        //                var z = lstjog.Where(x => x.Posicao == 3).Count();
+        //                var le = lstjog.Where(x => x.Posicao == 4).Count();
+        //                var v = lstjog.Where(x => x.Posicao == 5).Count();
+        //                var mo = lstjog.Where(x => x.Posicao == 6).Count();
+        //                var a = lstjog.Where(x => x.Posicao == 7).Count();
+
+        //                var lstPos = new List<int>();
+
+        //                if (g > 1)
+        //                    lstPos.Add(1);
+        //                if (ld > 1)
+        //                    lstPos.Add(2);
+        //                if (z > 2)
+        //                    lstPos.Add(3);
+        //                if (le > 1)
+        //                    lstPos.Add(4);
+        //                if (v > 2)
+        //                    lstPos.Add(5);
+        //                if (mo > 2)
+        //                    lstPos.Add(6);
+        //                if (a > 2)
+        //                    lstPos.Add(7);
+
+        //                var lstjognovo = lstjog.Where(x => !x.Contrato && x.Posicao.IsIn(lstPos)).ToList();
+        //                var jog = rnd.Next(0, lstjognovo.Count());
+
+        //                var leilao = new Leilao();
+        //                leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
+        //                leilao.Espontaneo = true;
+        //                leilao.Jogador = lstjognovo[jog];
+        //                leilao.Clube = lstjognovo[jog].Clube;
+        //                leilao.Valor = lstjognovo[jog].H * 50000;
+        //                leilaoRepository.SaveOrUpdate(leilao);
+        //            }
+        //        }
+        //    }
+        //    return RedirectToAction("Index", "Engine");
+        //}
+
         [Transaction]
-        public ActionResult ZeraTransferencias()
-        {
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            foreach (var leilao in leilaoRepository.GetAll().Where(x => x.Dia < controle.Dia && x.OfertaVencedora == null))
-            {
-                foreach (var oferta in leilaoofertaRepository.GetAll().Where(x => x.Leilao.Id == leilao.Id))
-                {
-                    leilaoofertaRepository.Delete(oferta);
-                }
-
-                leilaoRepository.Delete(leilao);
-            }
-
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("VariarJogadorH", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult ZerarPedidoJogadores()
-        {
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            foreach (var pedidojog in jogadorpedidoRepository.GetAll().Where(x => x.Dia < controle.Dia))
-            {
-                var clube = clubeRepository.Get(pedidojog.Jogador.Clube.Id);
-
-                if (clube.Jogadores.Count() > 14)
-                {
-                    var jogposicao = clube.Jogadores.Where(x => x.Posicao == pedidojog.Jogador.Posicao).Count();
-                    if ((jogposicao > 1 && pedidojog.Jogador.Posicao == 1) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 2) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 4) ||
-                        (jogposicao > 1 && pedidojog.Jogador.Posicao == 5) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 6) || (jogposicao > 1 && pedidojog.Jogador.Posicao == 7) ||
-                        (jogposicao > 2 && pedidojog.Jogador.Posicao == 3))
-                    {
-                        Random rnd = new Random();
-
-                        if (rnd.Next(0, 100) < 70)
-                        {
-                            var leilao = new Leilao();
-
-                            leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
-                            leilao.Espontaneo = true;
-                            leilao.Jogador = pedidojog.Jogador;
-                            leilao.Clube = pedidojog.Jogador.Clube;
-                            leilao.Valor = pedidojog.Jogador.H * 50000;
-                        }
-                        else
-                        {
-                            var jogador = jogadorRepository.Get(pedidojog.Jogador.Id);
-
-                            jogador.Contrato = true;
-                            jogador.Salario = pedidojog.Salario;
-                        }
-                    }
-                    else
-                    {
-                        var jogador = jogadorRepository.Get(pedidojog.Jogador.Id);
-
-                        jogador.Contrato = true;
-                        jogador.Salario = pedidojog.Salario;
-                    }
-                }
-                jogadorpedidoRepository.Delete(pedidojog);
-            }
-
-            return RedirectToAction("Index", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult CriarPedidoSaidasJogadores()
-        {
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            foreach (var clube in clubeRepository.GetAll())
-            {
-                Random rnd = new Random();
-
-                var lstjog = clube.Jogadores.ToList();
-
-                if (rnd.Next(1, 3) == 1)
-                {
-                    if (lstjog.Where(x => !x.Contrato).Count() > 0 && rnd.Next(0, 100) > 70)
-                    {
-                        var lstjognovo = lstjog.Where(x => !x.Contrato).ToList();
-                        var jog = rnd.Next(0, lstjognovo.Count());
-
-                        decimal aumento = (rnd.Next(1, 4)) / 10;
-
-                        var pedidojog = new JogadorPedido();
-                        pedidojog.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
-                        pedidojog.Jogador = lstjognovo[jog];
-                        pedidojog.Salario = lstjognovo[jog].Salario + (lstjognovo[jog].Salario * aumento);
-
-                        jogadorpedidoRepository.SaveOrUpdate(pedidojog);
-                    }
-                }
-                else
-                {
-                    if (lstjog.Where(x => !x.Contrato).Count() > 0 && rnd.Next(0, 100) > 50)
-                    {
-                        var g = lstjog.Where(x => x.Posicao == 1).Count();
-                        var ld = lstjog.Where(x => x.Posicao == 2).Count();
-                        var z = lstjog.Where(x => x.Posicao == 3).Count();
-                        var le = lstjog.Where(x => x.Posicao == 4).Count();
-                        var v = lstjog.Where(x => x.Posicao == 5).Count();
-                        var mo = lstjog.Where(x => x.Posicao == 6).Count();
-                        var a = lstjog.Where(x => x.Posicao == 7).Count();
-
-                        var lstPos = new List<int>();
-
-                        if (g > 1)
-                            lstPos.Add(1);
-                        if (ld > 1)
-                            lstPos.Add(2);
-                        if (z > 2)
-                            lstPos.Add(3);
-                        if (le > 1)
-                            lstPos.Add(4);
-                        if (v > 2)
-                            lstPos.Add(5);
-                        if (mo > 2)
-                            lstPos.Add(6);
-                        if (a > 2)
-                            lstPos.Add(7);
-
-                        var lstjognovo = lstjog.Where(x => !x.Contrato && x.Posicao.IsIn(lstPos)).ToList();
-                        var jog = rnd.Next(0, lstjognovo.Count());
-
-                        var leilao = new Leilao();
-                        leilao.Dia = controle.Dia + 1 < controle.DiaMax ? controle.Dia + 1 : 1;
-                        leilao.Espontaneo = true;
-                        leilao.Jogador = lstjognovo[jog];
-                        leilao.Clube = lstjognovo[jog].Clube;
-                        leilao.Valor = lstjognovo[jog].H * 50000;
-                        leilaoRepository.SaveOrUpdate(leilao);
-                    }
-                }
-            }
-            return RedirectToAction("Index", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult VariarJogadorH()
+        public ActionResult VariarJogador()
         {
             var rnd = new Random();
-            foreach (var jogador in jogadorRepository.GetAll())
+            foreach (var jogador in jogadorRepository.GetAll().Where(x => !x.Temporario))
             {
                 var variavel = rnd.Next(-2, 3);
 
@@ -433,7 +603,60 @@
                 else if (jogador.H < (jogador.HF - 10))
                     jogador.H = jogador.HF - 10;
 
+                var clubejogadores = jogador.Clube.Jogadores.Where(x => !x.Temporario);
+
+                var hmediotime = clubejogadores.Sum(x => x.H) / clubejogadores.Count();
+
+                if (jogador.Lesionado == 0)
+                {
+                    //definir nota do treino
+                }
+                else
+                {
+                    jogador.Lesionado = jogador.Lesionado - 1;
+                }                
+
                 jogadorRepository.SaveOrUpdate(jogador);
+            }
+
+            return RedirectToAction("AtualizarDataDia", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult LesionarJogador()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var rnd = new Random();
+            var lstjogador = jogadorRepository.GetAll().Where(x => !x.Temporario);
+
+            var qnt = Convert.ToInt32(lstjogador.Count() / 100);
+
+            for (int i = 0; i < qnt; i++)
+            {
+                var jogador = lstjogador.ElementAt(rnd.Next(0, lstjogador.Count()));
+
+                if (jogador.Lesionado == 0)
+                {
+                    jogador.Lesionado = rnd.Next(1, 6);
+                    jogadorRepository.SaveOrUpdate(jogador);
+
+                    var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador.Id == jogador.Id);
+                    if (escalacao != null)
+                    {
+                        escalacao.Jogador = null;
+                        escalacao.H = 0;
+                        escalacaoRepository.SaveOrUpdate(escalacao);
+                    }
+
+                    if (jogador.Clube.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = jogador.Nome + " se lesionou por " + jogador.Lesionado + " dia(s)";
+                        noticia.Usuario = jogador.Clube.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+                }
             }
 
             return RedirectToAction("AtualizarDataDia", "Engine");
@@ -471,6 +694,11 @@
                 usuario.Reputacao = (usuario.Reputacao + 40) > 50 ? 50 : (usuario.Reputacao + 40);
                 usuario.ReputacaoGeral = usuario.ReputacaoGeral + 40;
                 usuarioRepository.SaveOrUpdate(usuario);
+
+                var noticia = new Noticia();
+                noticia.Dia = controle.Dia;
+                noticia.Texto = "Parabéns! Você conquistou a TAÇA!";
+                noticiaRepository.SaveOrUpdate(noticia);
             }
 
             historico.Ano = controle.Ano;
@@ -487,11 +715,43 @@
         }
 
         [Transaction]
-        public ActionResult ZerarContratos()
+        public ActionResult ZeraAnoJogadores()
         {
-            foreach (var jog in jogadorRepository.GetAll())
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            foreach (var jog in jogadorRepository.GetAll().Where(x => !x.Temporario && x.Clube != null))
             {
-                jog.Contrato = false;
+                var historico = new JogadorHistorico();
+                historico.Ano = controle.Ano;
+                historico.Clube = jog.Clube;
+                historico.Jogador = jog;
+                historico.NotaMedia = jog.NotaMedia;
+                historico.Jogos = jog.Jogos;
+                historico.Gols = jog.Gols.Where(x => x.Clube.Id == jog.Clube.Id).Count();
+                jogadorhistoricoRepository.SaveOrUpdate(historico);
+
+                jog.Jogos = 0;
+                jog.NotaTotal = 0;
+                jog.NotaUlt = 0;
+                jog.Treinos = 0;
+                jog.TreinoTotal = 0;
+                jog.TreinoUlt = 0;
+                jog.Contrato = (jog.Contrato - 1) >= 0 ? jog.Contrato - 1 : 0;
+
+                if (jog.Contrato == 0)
+                {
+                    if (jog.Clube.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = jog.Nome + " encerrou seu contrato e deixou o clube.";
+                        noticia.Usuario = jog.Clube.Usuario;
+                    }
+
+                    jog.Clube = null;
+                    jog.Jogos = 0;
+                    jog.Salario = 0;
+                }
+
                 jogadorRepository.SaveOrUpdate(jog);
             }
 
@@ -501,6 +761,7 @@
         [Transaction]
         public ActionResult AlterarDivisaoTimes()
         {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
 
             foreach (var divisao in divisaoRepository.GetAll().OrderBy(x => x.Numero))
@@ -520,6 +781,11 @@
                     usuario.Reputacao = (usuario.Reputacao + (40 / divisao.Numero)) > 50 ? 50 : usuario.Reputacao + (40 / divisao.Numero);
                     usuario.ReputacaoGeral = usuario.ReputacaoGeral + (40 / divisao.Numero);
                     usuarioRepository.SaveOrUpdate(usuario);
+
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = "Parabéns! Você foi o CAMPEÃO da " + divisao.Nome +"!";
+                    noticiaRepository.SaveOrUpdate(noticia);
                 }
                 else
                 {
@@ -533,6 +799,11 @@
                     usuario.Reputacao = (usuario.Reputacao + (20 / divisao.Numero)) > 50 ? 50 : usuario.Reputacao + (20 / divisao.Numero);
                     usuario.ReputacaoGeral = usuario.ReputacaoGeral + (20 / divisao.Numero);
                     usuarioRepository.SaveOrUpdate(usuario);
+
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = "Parabéns! Você foi o vice-campeão da " + divisao.Nome + "!";
+                    noticiaRepository.SaveOrUpdate(noticia);
                 }
                 else
                 {
@@ -566,7 +837,6 @@
                 }
 
                 ////////////////////////////////////////////Gerar historico
-                var controle = controleRepository.GetAll().FirstOrDefault();
                 var historico = new Historico();
                 historico.Usuario = clube1.Usuario != null ? clube1.Usuario : null;
                 historico.Ano = controle.Ano;
@@ -590,6 +860,21 @@
 
                     clube1.Divisao = promodivisao;
                     clube2.Divisao = promodivisao;
+
+                    if (clube1.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Você foi promovido para a " + promodivisao.Nome + " devido ao título!";
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+                    if (clube2.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Você foi promovido para a " + promodivisao.Nome + " devido ao vice-campeonato!";
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
                 }
 
                 if (divisao.Numero < ultdivisao)
@@ -598,6 +883,21 @@
 
                     clube11.Divisao = rebaixadivisao;
                     clube12.Divisao = rebaixadivisao;
+
+                    if (clube11.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Você foi rebaixado para a " + rebaixadivisao.Nome + " devido a sua posição final!";
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+                    if (clube12.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Você foi promovido para a " + rebaixadivisao.Nome + " devido a sua posição final!";
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
                 }
 
                 clubeRepository.SaveOrUpdate(clube1);
@@ -760,6 +1060,7 @@
         public ActionResult ClassificadosTaca()
         {
             var itaca = 1;
+            var controle = controleRepository.GetAll().FirstOrDefault();
 
             foreach (var divisaotabela in divisaotabelaRepository.GetAll().OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Posicao))
             {
@@ -767,6 +1068,14 @@
                 clube.Taca = true;
 
                 clubeRepository.SaveOrUpdate(clube);
+
+                if (clube.Usuario != null)
+                {
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = "Devido sua colocação você foi classificado para participar da TAÇA.";
+                    noticiaRepository.SaveOrUpdate(noticia);
+                }
 
                 itaca++;
                 if (itaca > 32)
@@ -1561,7 +1870,8 @@
                 
                 jogador.H = jogador.HF;
                 jogador.Salario = ((jogador.HF / 2) / divisao) * 1000;
-                
+                jogador.Contrato = 2;
+
                 jogadorRepository.SaveOrUpdate(jogador);
             }
 

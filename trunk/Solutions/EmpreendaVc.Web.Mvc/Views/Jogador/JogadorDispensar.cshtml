@@ -1,0 +1,20 @@
+﻿@model EmpreendaVc.Domain.Jogador
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>
+    Dispensar</h2>
+
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+    Para encerrar o contrato com @Model.Nome, você terá que pagar uma multa de $@(((Model.Salario * 3) * Model.Contrato).ToString("N2")).<br />
+    Deseja continuar?
+    <br /><br />
+    <a class="submit" href="@Url.Action("JogadorDispensarConfirma", new { id = @Model.Id })">CONFIRMAR</a>
+    <a class="voltar-link" href="@Url.Action("Index", "Jogador", new { id = @Model.Id })">VOLTAR</a>

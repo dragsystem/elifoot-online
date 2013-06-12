@@ -1,0 +1,15 @@
+﻿@model EmpreendaVc.Domain.Jogador
+@{
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;    
+}
+    <div id="plantel-menu">
+    @if (Model.Clube.Id != clube.Id)
+    {
+        <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id })">Fazer Proposta</a><br />
+    }
+    @if (Model.Clube.Id == clube.Id)
+    {
+        <a class="botao" href="@Url.Action("JogadorRenovar", "Jogador", new { id = Model.Id })">Renovar Contrato</a><br />
+        <a class="botao" href="@Url.Action("JogadorDispensar", "Jogador", new { id = Model.Id })">Dispensar</a><br />
+    }
+</div>

@@ -211,6 +211,32 @@ namespace EmpreendaVc.Web.Mvc.Util
             return lst;
         }
 
+        public static List<SelectListItem> RetornaDuracaoContrato()
+        {
+            var lst = new List<SelectListItem>();
+            int temporada = 1;
+
+            while (temporada <= 5)
+            {
+                lst.Add(new SelectListItem { Text = temporada.ToString("N2") + " ano(s)", Value = temporada.ToString() });
+
+                temporada++;
+            }
+
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaSituacao()
+        {
+            var lst = new List<SelectListItem>();
+            
+            lst.Add(new SelectListItem { Text = "Este jogador é muito imporante para o clube", Value = "1" });
+            lst.Add(new SelectListItem { Text = "Este jogador é considerado reserva no clube", Value = "2" });
+            lst.Add(new SelectListItem { Text = "Este jogador está disponível para venda", Value = "3" });
+
+            return lst;
+        }
+
         public static List<SelectListItem> SelectListMeses()
         {
             var lst = new List<SelectListItem>();

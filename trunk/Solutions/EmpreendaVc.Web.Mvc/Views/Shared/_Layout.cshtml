@@ -19,6 +19,10 @@
             var wid = $(document).width();
             var hei = $(document).height();
             $('#loading').attr("style", "width:" + wid + "px; height: " + hei + "px;");
+
+            $('a').click(function () {
+                $('#loading').fadeIn();
+            });
         });
     </script>
     <style type="text/css">

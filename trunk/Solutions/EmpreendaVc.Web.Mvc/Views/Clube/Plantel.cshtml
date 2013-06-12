@@ -59,34 +59,43 @@
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
                 <th width="10%"></th>
-                <th width="25%">JOGADOR</th>
-                <th width="10%">POSIÇÃO</th>
-                <th width="10%">H</th>
-                <th width="15%">SALÁRIO</th>
+                <th width="30%">JOGADOR</th>
+                <th width="15%">POSIÇÃO</th>
+                <th width="15%">NOTA MÉDIA</th>
+                <th width="15%">NOTA TREINO</th>
+                <th width="10%">JOGOS</th>
                 <th width="10%">GOLS</th>
-                <th width="10%">AÇÕES</th>
+                @*<th width="10%">AÇÕES</th>*@
             </tr>
             @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.H))
             {
                 <tr>
                     <td>
-                        @{ var selected = Model.Escalacao.Count > 0 ? Model.Escalacao.Where(x => x.Jogador != null && x.Jogador.Id == jog.Id).Count() > 0 ? Model.Escalacao.FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jog.Id).Id.ToString() : "" : "";
-                           var lstEscalacao = selected != "" ? Model.Escalacao.Where(x => x.Jogador == null || (x.Jogador != null && x.Jogador.Id == jog.Id)).ToList() : Model.Escalacao.Where(x => x.Jogador == null).ToList();
-                            }
-                        @this.Select("F" + jog.Id).Options(Util.RetornaPosicaoEscalacao(lstEscalacao)).FirstOption("--").Selected(selected).Class("select-escalacao")
+                        @if (jog.Lesionado == 0)
+                        {
+                            var selected = Model.Escalacao.Count > 0 ? Model.Escalacao.Where(x => x.Jogador != null && x.Jogador.Id == jog.Id).Count() > 0 ? Model.Escalacao.FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jog.Id).Id.ToString() : "" : "";
+                            var lstEscalacao = selected != "" ? Model.Escalacao.Where(x => x.Jogador == null || (x.Jogador != null && x.Jogador.Id == jog.Id)).ToList() : Model.Escalacao.Where(x => x.Jogador == null).ToList();
+                            
+                            @this.Select("F" + jog.Id).Options(Util.RetornaPosicaoEscalacao(lstEscalacao)).FirstOption("--").Selected(selected).Class("select-escalacao")
+                        }
+                        else
+                        {
+                            <a class="lesionado" title="Lesionado por @jog.Lesionado dia(s)"></a>                     
+                        }
                     </td>
-                    <td style="text-align: left;">@jog.Nome.ToUpper()</td>
+                    <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = jog.Id })">@jog.Nome.ToUpper()</a></td>
                     <td>@Util.RetornaPosicao(jog.Posicao)</td>
-                    <td>@jog.H</td>
-                    <td style="text-align: right;">$@jog.Salario.ToString("N2")</td>
-                    <td>@jog.Gols.Count()</td>
-                    <td>
+                    <td>@(jog.NotaMedia > 0 ? jog.NotaMedia.ToString() : "0.00")</td>
+                    <td>@(jog.TreinoMedia > 0 ? jog.TreinoMedia.ToString() : "0.00")</td>
+                    <td>@jog.Jogos</td>
+                    <td>@jog.Gols.Where(x => x.Clube.Id == Model.Id).Count()</td>
+                    @*<td>
                         @if (jog.Contrato)
                         { <a class="plantel-sobcontrato" title="Sob-contrato" /> }
                         else
                         { <a class="plantel-semcontrato" title="Renovar contrato" href="@Url.Action("JogadorRenovar", new { id = jog.Id })" /> }
                             <a class="plantel-vender" title="Vender" href="@Url.Action("JogadorVender", new { id = jog.Id })" />
-                    </td>
+                    </td>*@
                 </tr>
             }
         </table>
