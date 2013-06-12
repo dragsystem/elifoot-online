@@ -1,0 +1,42 @@
+﻿@model EmpreendaVc.Domain.JogadorOferta
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>
+    Leilão
+</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+<div id="leilao-valorproposta">
+    @using (Html.BeginForm("JogadorOferta", "Jogador", new { id = Model.Jogador.Id }))
+    {
+        if (Model.Id != 0)
+        {
+            <p>
+                Você já possui uma oferta no valor de $@Model.Valor.ToString("N2"). Se quiser cancelar clique 
+                <a href="@Url.Action("CancelarOferta", "Jogador", new { id = Model.Id })">AQUI</a>.<br />
+                Caso queira apenas alterar, faça uma nova proposta abaixo que a antiga será alterada.
+            </p>
+        }
+        @Html.HiddenFor(x => x.Id)
+
+        if (Model.Tipo == 1)
+        {
+            @:Tipo de Proposta: Proposta de Compra<br />
+            @:Valor: @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model != null ? Model.Valor.ToString("N2") : "")
+        }
+        else if (Model.Tipo == 2)
+        {
+            @:Tipo de Proposta: Assinatura de contrato<br />
+        }
+
+        <h3>Contrato proposto ao jogador</h3>
+        @:Salário ofertado: @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString("N2") : "")<br />
+        @:Duração do contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model != null ? Model.Contrato.ToString("N2") : "")
+        <input type="submit" class="submit" value="Confirmar" />
+    }
+</div>
+<a href="@Url.Action("Index", "Jogador", new { id = Model.Jogador.Id })" >Voltar</a>

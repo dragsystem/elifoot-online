@@ -173,6 +173,7 @@
     <Compile Include="Controllers\ControllerCustom.cs" />
     <Compile Include="Controllers\ClubeController.cs" />
     <Compile Include="Controllers\AIController.cs" />
+    <Compile Include="Controllers\JogadorController.cs" />
     <Compile Include="Controllers\LeilaoController.cs" />
     <Compile Include="Controllers\EngineController.cs" />
     <Compile Include="Controllers\ErroController.cs" />
@@ -318,6 +319,7 @@
     <Content Include="Content\img\bg.png" />
     <Content Include="Content\img\bgtrans.png" />
     <Content Include="Content\img\cancelar.png" />
+    <Content Include="Content\img\lesionado.png" />
     <Content Include="Content\img\loading.gif" />
     <Content Include="Content\img\logo-footer.png" />
     <Content Include="Content\img\logo.png" />
@@ -413,7 +415,7 @@
     <Content Include="Views\Engine\Index.cshtml" />
     <Content Include="Views\Conta\Index.cshtml" />
     <Content Include="Views\Clube\JogadorVender.cshtml" />
-    <Content Include="Views\Clube\JogadorRenovar.cshtml" />
+    <Content Include="Views\Jogador\JogadorRenovar.cshtml" />
     <Content Include="Views\Clube\Classificacao.cshtml" />
     <Content Include="Views\Conta\UsuarioOferta.cshtml" />
     <Content Include="Views\Clube\JogadorPedido.cshtml" />
@@ -435,6 +437,12 @@
     <Content Include="Views\Engine\PartidaTeste.cshtml" />
     <Content Include="Views\AI\Index.cshtml" />
     <Content Include="Views\Shared\DataTop.cshtml" />
+    <Content Include="Views\Jogador\Index.cshtml" />
+    <Content Include="Views\Jogador\JogadorOferta.cshtml" />
+    <Content Include="Views\Jogador\MeusJogadores.cshtml" />
+    <Content Include="Views\Jogador\MinhasPropostas.cshtml" />
+    <Content Include="Views\Shared\_MenuJogador.cshtml" />
+    <Content Include="Views\Jogador\JogadorDispensar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
