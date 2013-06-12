@@ -103,4 +103,5 @@ input[type="text"], input[type="password"], textarea, select { background: #EEF3
 .submit:hover { background: #444; }
 
 #loading { position: absolute; z-index: 10000; text-align: center; background: url('../img/bgtrans.png'); display: none; }
-#loading-image { height: 60px; width: 60px; margin: 0 auto; margin-top: 300px; z-index: 20000; text-align: center; background: url('../img/loading.gif') 1px 1px no-repeat #fff; border: 1px solid #CBDBEB; border-radius: 3px; }
+#loading-image { height: 80px; width: 80px; margin: 0 auto; margin-top: 300px; z-index: 11000; background: #fff; border: 1px solid #CBDBEB; border-radius: 3px; }
+#loading-image img { margin-top: 10px; margin-left: -1px; }
