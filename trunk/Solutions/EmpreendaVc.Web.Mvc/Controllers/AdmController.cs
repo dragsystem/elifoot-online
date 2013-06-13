@@ -22,8 +22,6 @@ namespace EmpreendaVc.Web.Mvc.Controllers
         private readonly INHibernateRepository<Clube> clubeRepository;
         private readonly INHibernateRepository<Jogador> jogadorRepository;
         private readonly INHibernateRepository<Controle> controleRepository;
-        private readonly INHibernateRepository<Leilao> leilaoRepository;
-        private readonly INHibernateRepository<LeilaoOferta> leilaoofertaRepository;
         private readonly INHibernateRepository<Divisao> divisaoRepository;
         private readonly IPartidaRepository partidaRepository;
         private readonly INHibernateRepository<Gol> golRepository;
@@ -39,8 +37,6 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Jogador> jogadorRepository,
             INHibernateRepository<Controle> controleRepository,
-            INHibernateRepository<Leilao> leilaoRepository,
-            INHibernateRepository<LeilaoOferta> leilaoofertaRepository,
             INHibernateRepository<Divisao> divisaoRepository,
             IPartidaRepository partidaRepository,
             INHibernateRepository<Gol> golRepository,
@@ -56,8 +52,6 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             this.clubeRepository = clubeRepository;
             this.jogadorRepository = jogadorRepository;
             this.controleRepository = controleRepository;
-            this.leilaoRepository = leilaoRepository;
-            this.leilaoofertaRepository = leilaoofertaRepository;
             this.divisaoRepository = divisaoRepository;
             this.partidaRepository = partidaRepository;
             this.golRepository = golRepository;

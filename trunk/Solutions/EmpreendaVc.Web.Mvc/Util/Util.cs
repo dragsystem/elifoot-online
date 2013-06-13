@@ -49,6 +49,43 @@ namespace EmpreendaVc.Web.Mvc.Util
                 return "ATACANTE";
         }
 
+        public static List<SelectListItem> RetornaListaPosicao()
+        {
+            var lst = new List<SelectListItem>();
+
+            lst.Add(new SelectListItem { Text = "GOLEIRO", Value = "1" });
+            lst.Add(new SelectListItem { Text = "LATERAL-DIREITO", Value = "2" });
+            lst.Add(new SelectListItem { Text = "ZAGUEIRO", Value = "3" });
+            lst.Add(new SelectListItem { Text = "LATERA-ESQUERDO", Value = "4" });
+            lst.Add(new SelectListItem { Text = "VOLANTE", Value = "5" });
+            lst.Add(new SelectListItem { Text = "MEIA-OFENSIVO", Value = "6" });
+            lst.Add(new SelectListItem { Text = "ATACANTE", Value = "7" });
+
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaListaContrato()
+        {
+            var lst = new List<SelectListItem>();
+
+            lst.Add(new SelectListItem { Text = "SEM CLUBE", Value = "-1" });
+            lst.Add(new SelectListItem { Text = "TERMINANDO", Value = "1" });
+
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaListaOrdenacao()
+        {
+            var lst = new List<SelectListItem>();
+
+            lst.Add(new SelectListItem { Text = "NOME", Value = "0" });
+            lst.Add(new SelectListItem { Text = "POSIÇÃO - D > A", Value = "1" });
+            lst.Add(new SelectListItem { Text = "POSIÇÃO - A > D", Value = "2" });
+            lst.Add(new SelectListItem { Text = "NOTA MÉDIA", Value = "3" });
+
+            return lst;
+        }
+
         public static List<SelectListItem> RetornaPosicaoEscalacao(IList<Escalacao> lstEscalacao)
         {
             return lstEscalacao.Select(x => new SelectListItem() { Text = RetornaPosicao(x.Posicao), Value = x.Id.ToString() }).ToList();
@@ -216,9 +253,9 @@ namespace EmpreendaVc.Web.Mvc.Util
             var lst = new List<SelectListItem>();
             int temporada = 1;
 
-            while (temporada <= 5)
+            while (temporada < 5)
             {
-                lst.Add(new SelectListItem { Text = temporada.ToString("N2") + " ano(s)", Value = temporada.ToString() });
+                lst.Add(new SelectListItem { Text = temporada.ToString() + " ano(s)", Value = temporada.ToString() });
 
                 temporada++;
             }
@@ -233,6 +270,23 @@ namespace EmpreendaVc.Web.Mvc.Util
             lst.Add(new SelectListItem { Text = "Este jogador é muito imporante para o clube", Value = "1" });
             lst.Add(new SelectListItem { Text = "Este jogador é considerado reserva no clube", Value = "2" });
             lst.Add(new SelectListItem { Text = "Este jogador está disponível para venda", Value = "3" });
+
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaListaIngresso()
+        {
+            var lst = new List<SelectListItem>();
+
+            lst.Add(new SelectListItem { Text = "$10,00", Value = "10" });
+            lst.Add(new SelectListItem { Text = "$15,00", Value = "15" });
+            lst.Add(new SelectListItem { Text = "$20,00", Value = "20" });
+            lst.Add(new SelectListItem { Text = "$25,00", Value = "25" });
+            lst.Add(new SelectListItem { Text = "$30,00", Value = "30" });
+            lst.Add(new SelectListItem { Text = "$35,00", Value = "35" });
+            lst.Add(new SelectListItem { Text = "$40,00", Value = "40" });
+            lst.Add(new SelectListItem { Text = "$45,00", Value = "45" });
+            lst.Add(new SelectListItem { Text = "$50,00", Value = "50" });
 
             return lst;
         }

@@ -28,8 +28,6 @@
         private readonly INHibernateRepository<Clube> clubeRepository;
         private readonly INHibernateRepository<Jogador> jogadorRepository;
         private readonly INHibernateRepository<Controle> controleRepository;
-        private readonly INHibernateRepository<Leilao> leilaoRepository;
-        private readonly INHibernateRepository<LeilaoOferta> leilaoofertaRepository;
         private readonly INHibernateRepository<Divisao> divisaoRepository;
         private readonly IPartidaRepository partidaRepository;
         private readonly INHibernateRepository<Gol> golRepository;
@@ -46,8 +44,6 @@
             INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Jogador> jogadorRepository,
             INHibernateRepository<Controle> controleRepository,
-            INHibernateRepository<Leilao> leilaoRepository,
-            INHibernateRepository<LeilaoOferta> leilaoofertaRepository,
             INHibernateRepository<Divisao> divisaoRepository,
             IPartidaRepository partidaRepository,
             INHibernateRepository<Gol> golRepository,
@@ -64,8 +60,6 @@
             this.clubeRepository = clubeRepository;
             this.jogadorRepository = jogadorRepository;
             this.controleRepository = controleRepository;
-            this.leilaoRepository = leilaoRepository;
-            this.leilaoofertaRepository = leilaoofertaRepository;
             this.divisaoRepository = divisaoRepository;
             this.partidaRepository = partidaRepository;
             this.golRepository = golRepository;
@@ -112,63 +106,6 @@
             usuario.Clube.Partidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id);
             
             return View(usuario.Clube);
-        }
-
-        [Authorize]
-        public ActionResult JogadorVender(int id)
-        {
-            var usuario = authenticationService.GetUserAuthenticated();
-            var jogador = jogadorRepository.Get(id);
-            var clube = jogador.Clube;
-            var verificaleilao = leilaoRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id && x.OfertaVencedora == null);
-
-            if (usuario.Clube == null || usuario.Clube.Id != clube.Id)
-                return RedirectToAction("Index", "Conta");
-
-            if (clube.Jogadores.Count() < 15)
-            {
-                TempData["MsgErro"] = "Você já possui o número mínimo de jogadores.";
-                return View();
-            }
-            else if (verificaleilao.Count() > 0)
-            {
-                TempData["MsgErro"] = "Este jogador já está sendo leiloado. Se quiser alterar cancele o leilão atual.";
-                return View();
-            }
-            else
-            {
-                var leilao = new Leilao() { Jogador = jogador };
-                return View(leilao);                
-            }
-        }
-
-        [Authorize]
-        [Transaction]
-        [HttpPost]
-        public ActionResult JogadorVender(FormCollection form)
-        {
-            var usuario = authenticationService.GetUserAuthenticated();            
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            var jogador = jogadorRepository.Get(Convert.ToInt32(form["Jogador"]));
-
-            var leilao = new Leilao();
-
-            TryUpdateModel(leilao, form);
-
-            if (leilao.IsValid())
-            {
-                leilao.Dia = controle.Dia + 1;
-                leilao.Jogador = jogador;
-                leilao.Espontaneo = false;
-                leilao.Clube = leilao.Jogador.Clube;
-                leilaoRepository.SaveOrUpdate(leilao);
-
-                TempData["MsgOk"] = jogador.Nome + " será vendido no próximo leilão!";
-                return RedirectToAction("Plantel", "Clube");
-            }
-
-            TempData["MsgErro"] = "Erro na validação dos campos!";
-            return View(leilao);
         }
 
         public ActionResult ClassificacaoClube(int iddivisao)
@@ -222,20 +159,51 @@
         }
 
         [Authorize]
-        public ActionResult JogadorPedido()
+        public ActionResult Emprego()
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
-            if (usuario.Clube == null)
+            var lst = clubeRepository.GetAll().Where(x => x.Usuario == null).OrderBy(x => x.Divisao.Numero).ThenBy(x => x.Nome);
+
+            return View(lst);
+        }
+
+        [Authorize]
+        public ActionResult Proposta(int id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if ((usuario.Clube != null && usuario.Clube.Id == id) || usuario.IdUltimoClube == id)
                 return RedirectToAction("Index", "Conta");
 
-            var pedidos = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
+            var clube = clubeRepository.Get(id);
 
-            if (pedidos.Count() > 0)
-                return View(pedidos);
+            var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
+            var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
+
+            if (usuario.ReputacaoGeral >= repgeral && usuario.IdUltimoClube != clube.Id && usuario.DelayTroca == 0)
+                ViewBag.Aceita = true;
             else
-                return View();
+                ViewBag.Aceita = false;
+
+            return View(clube);
         }
+
+        //[Authorize]
+        //public ActionResult JogadorPedido()
+        //{
+        //    var usuario = authenticationService.GetUserAuthenticated();
+
+        //    if (usuario.Clube == null)
+        //        return RedirectToAction("Index", "Conta");
+
+        //    var pedidos = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
+
+        //    if (pedidos.Count() > 0)
+        //        return View(pedidos);
+        //    else
+        //        return View();
+        //}
 
         //[Authorize]
         //[Transaction]
@@ -273,7 +241,7 @@
         //}
 
         [Authorize]
-        public ActionResult Calendario()
+        public ActionResult Calendario(int? id)
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             ViewBag.Dia = controle.Dia;
@@ -283,11 +251,18 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var lstPartidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id).OrderBy(x => x.Dia);
+            ViewBag.Clube = usuario.Clube;
 
-            ViewBag.Clube = usuario.Clube;            
-
-            return View(lstPartidas);
+            if (id.HasValue)
+            {
+                var lstPartidas = clubeQueryRepository.PartidasClube(id.Value).OrderBy(x => x.Dia);
+                return View(lstPartidas);
+            }
+            else
+            {
+                var lstPartidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id).OrderBy(x => x.Dia);
+                return View(lstPartidas);
+            }            
         }
 
         [Authorize]
@@ -457,23 +432,23 @@
             return Json(oSerializer.Serialize(novaescalacao), JsonRequestBehavior.AllowGet);
         }
 
-        [Authorize]
-        public ActionResult Transferencias()
-        {
-            var usuario = authenticationService.GetUserAuthenticated();
+        //[Authorize]
+        //public ActionResult Transferencias()
+        //{
+        //    var usuario = authenticationService.GetUserAuthenticated();
 
-            if (usuario.Clube == null)
-                return RedirectToAction("Index", "Conta");
+        //    if (usuario.Clube == null)
+        //        return RedirectToAction("Index", "Conta");
 
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            ViewBag.Dia = controle.Dia;
+        //    var controle = controleRepository.GetAll().FirstOrDefault();
+        //    ViewBag.Dia = controle.Dia;
 
-            var lstLeilao = leilaoRepository.GetAll().Where(x => x.OfertaVencedora != null).OrderBy(x => x.Dia);
+        //    var lstLeilao = leilaoRepository.GetAll().Where(x => x.OfertaVencedora != null).OrderBy(x => x.Dia);
 
-            ViewBag.Clube = usuario.Clube;
+        //    ViewBag.Clube = usuario.Clube;
 
-            return View(lstLeilao);
-        }
+        //    return View(lstLeilao);
+        //}
 
         [Authorize]
         public ActionResult Resultados(int? divisao, int? rodada, int? taca)
@@ -558,6 +533,43 @@
             ViewBag.lstDivisao = divisaoRepository.GetAll();
 
             return View(lstPartidas);
+        }
+
+        [Authorize]
+        public ActionResult _Menu(int? id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            ViewBag.Usuario = usuario;
+
+            var clube = usuario.Clube;
+
+            if (id.HasValue)
+                clube = clubeRepository.Get(id.Value);
+
+            return View(clube);
+        }
+
+        [HttpGet]
+        [Transaction]
+        public JsonResult AlteraIngresso(decimal valor)
+        {
+            var result = "";
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return Json(result, JsonRequestBehavior.AllowGet);
+
+            var clube = usuario.Clube;
+            clube.Ingresso = valor;
+
+            clubeRepository.SaveOrUpdate(clube);
+            result = "ok";
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         //[Transaction] FORMAÇÃO OLD

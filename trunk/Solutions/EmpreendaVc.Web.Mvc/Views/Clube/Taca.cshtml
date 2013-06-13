@@ -194,7 +194,7 @@
             <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = divisao.Id })" >@divisao.Nome</a><br />
         }
     </div>
-    @{ Html.RenderPartial("_Menu", clube); }
+    @{ Html.RenderAction("_Menu", "Clube"); }
 
 </div>
 

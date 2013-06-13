@@ -1,0 +1,67 @@
+﻿@model EmpreendaVc.Web.Mvc.Controllers.ViewModels.JogadorFiltroView
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+    var lst = (IList<EmpreendaVc.Domain.Jogador>)ViewBag.Resultado;
+}
+<h2>
+    Buscar</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+@using (Html.BeginForm())
+{
+    Html.AntiForgeryToken();
+    <div id="busca-filtro">
+        Nome: @Html.TextBoxFor(x => x.Nome)<br />
+        Posição: @this.Select("Posicao").Options(Util.RetornaListaPosicao()).FirstOption("TODAS").Selected(Model.Posicao != 0 ? Model.Posicao.ToString() : "")<br />
+        Contrato: @this.Select("Contrato").Options(Util.RetornaListaContrato()).FirstOption("TODOS").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br />
+        Situação: @this.Select("Situacao").Options(Util.RetornaSituacao()).FirstOption("TODAS").Selected(Model.Situacao != 0 ? Model.Situacao.ToString() : "")<br />
+        Ordenar por: @this.Select("Ordenacao").Options(Util.RetornaListaOrdenacao()).Selected(Model.Ordenacao != 0 ? Model.Ordenacao.ToString() : "1")<br />
+    </div>
+}
+<div id="left">
+    <div id="jogador-tabela">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="30%">JOGADOR</th>
+                <th width="25%">CLUBE</th>
+                <th width="10%">POSIÇÃO</th>
+                <th width="15%">NOTA MÉDIA</th>
+                <th width="10%">JOGOS</th>
+                <th width="10%">GOLS</th>
+            </tr>
+            @if (lst.Count() > 0)
+            {
+                foreach (var item in lst)
+                {
+                    <tr>
+                        <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Nome.ToUpper()</a></td>
+                        <td>@item.Clube.Nome
+                        </td>
+                        <td>@Util.RetornaPosicao(item.Posicao)
+                        </td>
+                        <td>@(item.NotaMedia > 0 ? item.NotaMedia.ToString() : "0.00")</td>
+                        <td>@item.Jogos</td>
+                        <td>@item.Gols.Where(x => x.Clube.Id == item.Clube.Id).Count()</td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td colspan="6"><i>Nenhum jogador listado.</i></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="right">
+    <div id="jogador-lista" class="caixa">
+        <h1>
+            Opções</h1>
+        <a><b>Buscar</b></a><br />
+        <a href="@Url.Action("MinhasOfertas", "Leilao")">Minhas Ofertas</a><br />
+        <a href="@Url.Action("MeusJogadores", "Leilao")">Meus Jogadores</a><br />
+    </div>
+    @{ Html.RenderAction("_Menu", "Clube"); }
+</div>

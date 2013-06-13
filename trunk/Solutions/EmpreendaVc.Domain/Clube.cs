@@ -60,7 +60,7 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<Partida> Partidas { get; set; }
 
-        public virtual IList<LeilaoOferta> Ofertas { get; set; }
+        public virtual IList<JogadorOferta> Ofertas { get; set; }
 
         public Clube()
         {
@@ -70,7 +70,7 @@ namespace EmpreendaVc.Domain
             Jogadores = new List<Jogador>();
             Escalacao = new List<Escalacao>();
             Partidas = new List<Partida>();
-            Ofertas = new List<LeilaoOferta>();
+            Ofertas = new List<JogadorOferta>();
             Formacao = "4222";
         }
     }

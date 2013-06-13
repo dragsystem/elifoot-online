@@ -14,6 +14,7 @@
     using System;
     using EmpreendaVc.Infrastructure.Queries.Authentication;
     using EmpreendaVc.Infrastructure.Queries.Usuarios;
+    using EmpreendaVc.Infrastructure.Queries.Clubes;
     using EmpreendaVc.Infrastructure.Queries.Partidas;
     using System.Web.Security;
     using EmpreendaVc.Web.Mvc.Controllers.ViewModels;
@@ -24,6 +25,7 @@
         private readonly IUsuarioRepository usuarioRepository;
         private readonly IAuthenticationService authenticationService;
         private readonly INHibernateRepository<Clube> clubeRepository;
+        private readonly IClubeRepository clubeQueryRepository;
         private readonly INHibernateRepository<Jogador> jogadorRepository;
         private readonly INHibernateRepository<Controle> controleRepository;
         private readonly INHibernateRepository<Jogador> leilaoRepository;
@@ -39,6 +41,7 @@
         public JogadorController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
             INHibernateRepository<Clube> clubeRepository,
+            IClubeRepository clubeQueryRepository,
             INHibernateRepository<Jogador> jogadorRepository,
             INHibernateRepository<Controle> controleRepository,
             INHibernateRepository<Jogador> leilaoRepository,
@@ -54,6 +57,7 @@
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
             this.clubeRepository = clubeRepository;
+            this.clubeQueryRepository = clubeQueryRepository;
             this.jogadorRepository = jogadorRepository;
             this.controleRepository = controleRepository;
             this.leilaoRepository = leilaoRepository;
@@ -85,6 +89,104 @@
         }
 
         [Authorize]
+        public ActionResult Busca()
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var jogadorfiltro = new JogadorFiltroView();
+
+            if (Session["JogadorFiltroView"] != null)
+            {
+                jogadorfiltro = (JogadorFiltroView)Session["JogadorFiltroView"];
+
+                var lstJogador = jogadorRepository.GetAll()
+                            .Where(x => x.Clube.Id != usuario.Clube.Id && !x.Temporario);
+
+                if (jogadorfiltro.Nome != "")
+                    lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome));
+                if (jogadorfiltro.Posicao != 0)
+                    lstJogador = lstJogador.Where(x => x.Posicao == jogadorfiltro.Posicao);
+                if (jogadorfiltro.Situacao != 0)
+                    lstJogador = lstJogador.Where(x => x.Situacao == jogadorfiltro.Situacao);
+                if (jogadorfiltro.Contrato != 0)
+                {
+                    if (jogadorfiltro.Contrato == (-1))
+                        lstJogador = lstJogador.Where(x => x.Clube == null);
+                    else
+                        lstJogador = lstJogador.Where(x => x.Contrato == 1);
+                }
+                if (jogadorfiltro.Ordenacao == 0)
+                    lstJogador = lstJogador.OrderBy(x => x.Nome);
+                else if (jogadorfiltro.Ordenacao == 1)
+                    lstJogador = lstJogador.OrderBy(x => x.Posicao);
+                else if (jogadorfiltro.Ordenacao == 2)
+                    lstJogador = lstJogador.OrderByDescending(x => x.Posicao);
+                else if (jogadorfiltro.Ordenacao == 3)
+                    lstJogador = lstJogador.OrderByDescending(x => x.NotaMedia);
+
+                ViewBag.Resultado = lstJogador;
+            }
+            else
+            {
+                ViewBag.Resultado = new List<Jogador>();
+            }
+
+            ViewBag.Clube = usuario.Clube;
+
+            return View(jogadorfiltro);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult Busca(FormCollection form)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var jogadorfiltro = new JogadorFiltroView();
+
+            TryUpdateModel(jogadorfiltro, form);
+
+            Session["JogadorFiltroView"] = jogadorfiltro;
+
+            var lstJogador = jogadorRepository.GetAll()
+                            .Where(x => x.Clube.Id != usuario.Clube.Id);
+
+            if (jogadorfiltro.Nome != "")
+                lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome));
+            if (jogadorfiltro.Posicao != 0)
+                lstJogador = lstJogador.Where(x => x.Posicao == jogadorfiltro.Posicao);
+            if (jogadorfiltro.Situacao != 0)
+                lstJogador = lstJogador.Where(x => x.Situacao == jogadorfiltro.Situacao);
+            if (jogadorfiltro.Contrato != 0)
+            {
+                if (jogadorfiltro.Contrato == (-1))
+                    lstJogador = lstJogador.Where(x => x.Clube == null);
+                else
+                    lstJogador = lstJogador.Where(x => x.Contrato == 1);
+            }
+            if (jogadorfiltro.Ordenacao == 0)
+                lstJogador = lstJogador.OrderBy(x => x.Nome);
+            else if (jogadorfiltro.Ordenacao == 1)
+                lstJogador = lstJogador.OrderBy(x => x.Posicao);
+            else if (jogadorfiltro.Ordenacao == 2)
+                lstJogador = lstJogador.OrderByDescending(x => x.Posicao);
+            else if (jogadorfiltro.Ordenacao == 3)
+                lstJogador = lstJogador.OrderByDescending(x => x.NotaMedia);
+
+            ViewBag.Resultado = lstJogador;
+            ViewBag.Clube = usuario.Clube;
+            //ViewBag.Controle = controleRepository.GetAll().FirstOrDefault();
+
+            return View(jogadorfiltro);
+        }
+
+        [Authorize]
         public ActionResult JogadorOferta(int id)
         {
             var usuario = authenticationService.GetUserAuthenticated();
@@ -103,13 +205,15 @@
             else
                 jogadoroferta.Tipo = 2;
 
+            jogadoroferta.Jogador = jogador;
+
             return View(jogadoroferta);
         }
 
         [Authorize]
         [HttpPost]
         [Transaction]
-        public ActionResult JogadorOferta(int id, FormCollection form)
+        public ActionResult JogadorOferta(int idjogador, FormCollection form)
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
 
@@ -118,13 +222,15 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var jogador = jogadorRepository.Get(id);
+            var jogador = jogadorRepository.Get(idjogador);
             var jogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id && x.Clube.Id == usuario.Clube.Id).FirstOrDefault();
 
             if (jogadoroferta == null)
                 jogadoroferta = new JogadorOferta();
 
             TryUpdateModel(jogadoroferta, form);
+
+            jogadoroferta.Jogador = jogador;
 
             if (jogador.Clube != null)
             {
@@ -141,14 +247,6 @@
 
             if (jogadoroferta.IsValid())
             {
-                var pontos = Convert.ToInt32((jogadoroferta.Salario - jogador.Salario) / 10000);
-
-                if (jogador.Clube != null)
-                    pontos = pontos + (jogador.Clube.Divisao.Numero - jogadoroferta.Clube.Divisao.Numero);
-
-                jogadoroferta.Pontos = pontos;
-                jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
-
                 if (jogador.Clube.Usuario != null)
                 {
                     var noticia = new Noticia();
@@ -159,8 +257,19 @@
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
 
+                var pontos = Convert.ToInt32((jogadoroferta.Salario - jogador.Salario) / 10000);
+
+                if (jogador.Clube != null)
+                {
+                    pontos = pontos + (jogador.Clube.Divisao.Numero - jogadoroferta.Clube.Divisao.Numero);
+                    pontos = pontos + (jogador.Situacao - 1);
+                }
+
+                jogadoroferta.Pontos = pontos;
+                jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+
                 TempData["MsgOk"] = "Proposta feita com sucesso!";
-                return RedirectToAction("Index", "Jogador");
+                return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
             }
             else
             {
@@ -254,8 +363,10 @@
 
             if (jogador != null)
             {
-                var perc = 10 * contrato;
-                if (salario >= (jogador.Salario + (jogador.Salario / 100) * perc))
+                int pontos = Convert.ToInt32((salario - jogador.Salario) / 10000);
+                pontos = pontos - jogador.Situacao;
+
+                if (pontos > 0)
                 {
                     jogador.Salario = salario;
                     jogador.Contrato = contrato;

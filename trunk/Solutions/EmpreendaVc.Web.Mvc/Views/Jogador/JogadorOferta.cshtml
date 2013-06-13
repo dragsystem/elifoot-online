@@ -7,11 +7,33 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h2>
-    Leilão
+    PROPOSTA POR @Model.Jogador.Nome @(Model.Jogador.Clube != null ? "(" + Model.Jogador.Clube.Nome + ")" : "")
 </h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
-<div id="leilao-valorproposta">
-    @using (Html.BeginForm("JogadorOferta", "Jogador", new { id = Model.Jogador.Id }))
+
+<table class="classificacao" cellpadding="0" cellspacing="0">
+    <tr>
+        <th width="33%">Posição</th>
+        <th width="33%">Salário</th>
+        <th width="33%">Contrato</th>
+    </tr>
+    <tr>
+        <td>@Util.RetornaPosicaoCompleta(Model.Jogador.Posicao)</td>
+        @if (Model.Jogador.Clube != null)
+        {
+            <td>$@Model.Jogador.Salario.ToString("N2")</td>
+            <td>@Model.Jogador.Contrato ano(s)</td>
+        }
+        else
+        {
+            <td>-</td>
+            <td>-</td>
+        }
+    </tr>
+</table>
+
+<div id="jogador-valorproposta">
+    @using (Html.BeginForm("JogadorOferta", "Jogador", new { idjogador = Model.Jogador.Id }))
     {
         if (Model.Id != 0)
         {
@@ -21,12 +43,11 @@
                 Caso queira apenas alterar, faça uma nova proposta abaixo que a antiga será alterada.
             </p>
         }
-        @Html.HiddenFor(x => x.Id)
 
         if (Model.Tipo == 1)
         {
-            @:Tipo de Proposta: Proposta de Compra<br />
-            @:Valor: @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model != null ? Model.Valor.ToString("N2") : "")
+            @:Tipo de Proposta: Proposta de Compra<br /><br />
+            @:Valor: @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model.Valor != 0 ? Model.Valor.ToString("N2") : "")
         }
         else if (Model.Tipo == 2)
         {
@@ -34,9 +55,9 @@
         }
 
         <h3>Contrato proposto ao jogador</h3>
-        @:Salário ofertado: @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? Model.Salario.ToString("N2") : "")<br />
-        @:Duração do contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model != null ? Model.Contrato.ToString("N2") : "")
+        @:Salário ofertado: @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model.Salario != 0 ? Model.Salario.ToString() : "")
+        @:Duração do contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br /><br />
         <input type="submit" class="submit" value="Confirmar" />
+        <a href="@Url.Action("Index", "Jogador", new { id = Model.Jogador.Id })" >Voltar</a>
     }
 </div>
-<a href="@Url.Action("Index", "Jogador", new { id = Model.Jogador.Id })" >Voltar</a>

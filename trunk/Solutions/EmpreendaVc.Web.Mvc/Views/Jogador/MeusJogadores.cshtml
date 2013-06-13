@@ -9,6 +9,7 @@
 <div id="jogador-lista" class="caixa">
     <h1>
         Opções</h1>
+        <a href="@Url.Action("Busca", "Jogador")">Buscar</a><br />
     <a href="@Url.Action("MinhasPropostas", "Jogador")" >Minhas Propostas</a><br />
     <a><b>Propostas Recebidas</b></a>
 </div>
@@ -34,8 +35,7 @@
             foreach (var item in Model)
             {
             <tr>
-                <td>@item.Jogador.Nome
-                </td>
+                <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Jogador.Nome.ToUpper()</a></td>
                 <td>@item.Clube.Nome
                 </td>
                 <td>

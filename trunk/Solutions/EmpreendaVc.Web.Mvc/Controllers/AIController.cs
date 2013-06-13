@@ -28,7 +28,6 @@
         private readonly INHibernateRepository<Clube> clubeRepository;
         private readonly INHibernateRepository<Jogador> jogadorRepository;
         private readonly INHibernateRepository<Controle> controleRepository;
-        private readonly INHibernateRepository<Leilao> leilaoRepository;
         private readonly INHibernateRepository<JogadorOferta> jogadorofertaRepository;
         private readonly INHibernateRepository<Divisao> divisaoRepository;
         private readonly IPartidaRepository partidaRepository;
@@ -47,7 +46,6 @@
             INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Jogador> jogadorRepository,
             INHibernateRepository<Controle> controleRepository,
-            INHibernateRepository<Leilao> leilaoRepository,
             INHibernateRepository<JogadorOferta> jogadorofertaRepository,
             INHibernateRepository<Divisao> divisaoRepository,
             IPartidaRepository partidaRepository,
@@ -66,7 +64,6 @@
             this.clubeRepository = clubeRepository;
             this.jogadorRepository = jogadorRepository;
             this.controleRepository = controleRepository;
-            this.leilaoRepository = leilaoRepository;
             this.jogadorofertaRepository = jogadorofertaRepository;
             this.divisaoRepository = divisaoRepository;
             this.partidaRepository = partidaRepository;
@@ -93,10 +90,58 @@
         {
             foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null).OrderByDescending(x => x.Dinheiro))
             {
-                foreach (var jogador in clube.Jogadores.Where(x => x.Contrato == 1 && !x.Temporario))
+                var g = 2;
+                var ld = 2;
+                var le = 2;
+                var z = 3;
+                var v = 3;
+                var mo = 3;
+                var a = 3;
+
+                foreach (var jogador in clube.Jogadores.Where(x => x.Contrato == 1 && !x.Temporario).OrderByDescending(x => x.HF))
                 {
-                    jogador.Contrato = 2;
-                    jogadorRepository.SaveOrUpdate(jogador);
+                    bool renova = false;
+                    if (jogador.Posicao == 1 && g > 0)
+                    {
+                        renova = true;
+                        g--;
+                    }
+                    else if (jogador.Posicao == 2 && ld > 0)
+                    {
+                        renova = true;
+                        ld--;
+                    }
+                    else if (jogador.Posicao == 3 && z > 0)
+                    {
+                        renova = true;
+                        z--;
+                    }
+                    else if (jogador.Posicao == 4 && le > 0)
+                    {
+                        renova = true;
+                        le--;
+                    }
+                    else if (jogador.Posicao == 5 && v > 0)
+                    {
+                        renova = true;
+                        v--;
+                    }
+                    else if (jogador.Posicao == 6 && mo > 0)
+                    {
+                        renova = true;
+                        mo--;
+                    }
+                    else if (jogador.Posicao == 7 && a > 0)
+                    {
+                        renova = true;
+                        a--;
+                    }
+
+                    if (renova)
+                    {
+                        jogador.Contrato = 2;
+                        jogadorRepository.SaveOrUpdate(jogador);
+                    }
                 }
             }
             return RedirectToAction("Index", "AI");

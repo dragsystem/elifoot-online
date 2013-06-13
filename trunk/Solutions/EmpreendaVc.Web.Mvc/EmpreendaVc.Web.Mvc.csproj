@@ -174,13 +174,13 @@
     <Compile Include="Controllers\ClubeController.cs" />
     <Compile Include="Controllers\AIController.cs" />
     <Compile Include="Controllers\JogadorController.cs" />
-    <Compile Include="Controllers\LeilaoController.cs" />
     <Compile Include="Controllers\EngineController.cs" />
     <Compile Include="Controllers\ErroController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MensagemController.cs" />
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\SendMailController.cs" />
+    <Compile Include="Controllers\ViewModels\JogadorFiltroView.cs" />
     <Compile Include="Controllers\ViewModels\ErrorDictionary.cs" />
     <Compile Include="Controllers\ViewModels\EscalacaoView.cs" />
     <Compile Include="Global.asax.cs">
@@ -414,16 +414,10 @@
     <Content Include="Views\Clube\Plantel.cshtml" />
     <Content Include="Views\Engine\Index.cshtml" />
     <Content Include="Views\Conta\Index.cshtml" />
-    <Content Include="Views\Clube\JogadorVender.cshtml" />
     <Content Include="Views\Jogador\JogadorRenovar.cshtml" />
     <Content Include="Views\Clube\Classificacao.cshtml" />
     <Content Include="Views\Conta\UsuarioOferta.cshtml" />
-    <Content Include="Views\Clube\JogadorPedido.cshtml" />
-    <Content Include="Views\Leilao\Index.cshtml" />
-    <Content Include="Views\Leilao\Detalhe.cshtml" />
-    <Content Include="Views\Leilao\LeilaoOferta.cshtml" />
-    <Content Include="Views\Leilao\MinhasOfertas.cshtml" />
-    <Content Include="Views\Leilao\MeusJogadores.cshtml" />
+    <Content Include="Views\Jogador\Busca.cshtml" />
     <Content Include="Views\Clube\Calendario.cshtml" />
     <Content Include="Views\Clube\Resultados.cshtml" />
     <Content Include="Views\Shared\MenuTop.cshtml" />
@@ -443,6 +437,8 @@
     <Content Include="Views\Jogador\MinhasPropostas.cshtml" />
     <Content Include="Views\Shared\_MenuJogador.cshtml" />
     <Content Include="Views\Jogador\JogadorDispensar.cshtml" />
+    <Content Include="Views\Clube\Emprego.cshtml" />
+    <Content Include="Views\Clube\Proposta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
