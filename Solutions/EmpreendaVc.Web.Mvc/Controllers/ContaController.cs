@@ -44,11 +44,9 @@
         public ActionResult Index()
         {
             var usuario = authenticationService.GetUserAuthenticated();
+            var controle = controleRepository.GetAll().FirstOrDefault();
 
-            var lstUsuarioOferta = usuarioofertaRepository.GetAll().Where(x => x.Usuario.Id == usuario.Id);
-            if (lstUsuarioOferta.Count() > 0)
-                return RedirectToAction("UsuarioOferta", "Conta");
-
+            ViewBag.Controle = controle;
             return View(usuario);
         }
 

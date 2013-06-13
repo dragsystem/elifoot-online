@@ -2,12 +2,17 @@
 @{
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var controle = (EmpreendaVc.Domain.Controle)ViewBag.Controle;
 }
 
 <h2>Olá @Model.NomeCompleto!</h2>
 
 @{ Html.RenderAction("Index", "Mensagem"); }
 
+<div style="text-align: right; height: 30px;">
+    <a class="submit" href="@Url.Action("Emprego", "Clube")">BUSCAR EMPREGO</a>
+</div>
+<br />
 <div class="caixa">
     <h1>Reputação Global</h1>
     <div class="porcentagem">
@@ -26,3 +31,22 @@
         </div>
     </div>
 }
+<div id="usuario-noticia" class="caixa">
+    <h1>
+        Últimas Notícias</h1>
+    @if (Model.Noticias.Count() > 0)
+    {
+        foreach (var noticia in Model.Noticias.OrderByDescending(x => x.Data))
+	    {
+		    var data = controle.Dia > noticia.Dia ? DateTime.Now.AddDays(controle.Dia - noticia.Dia) : DateTime.Now ;
+            <p>
+                <b>@data.ToShortDateString()</b><br />
+                @Html.Raw(noticia.Texto)
+            </p>
+	    }        
+    }
+    else
+    {
+        <i>Nenhuma notícia.</i>
+    }
+</div>

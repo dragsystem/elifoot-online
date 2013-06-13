@@ -42,6 +42,8 @@ namespace EmpreendaVc.Domain
 
         public virtual int DelayTroca { get; set; }
 
+        public virtual int IdUltimoClube { get; set; }
+
         public virtual IList<Noticia> Noticias { get; set; }        
 
         public Usuario()

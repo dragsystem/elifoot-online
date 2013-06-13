@@ -11,5 +11,6 @@ namespace EmpreendaVc.Infrastructure.Queries.Clubes
     {
         IList<Partida> PartidasClube(int id);
         void ClassificadosTaca();
+        void TirarTreinador(int id);
     }
 }

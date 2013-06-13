@@ -96,8 +96,6 @@
     <Compile Include="Partida.cs" />
     <Compile Include="JogadorPedido.cs" />
     <Compile Include="UsuarioOferta.cs" />
-    <Compile Include="LeilaoOferta.cs" />
-    <Compile Include="Leilao.cs" />
     <Compile Include="Escalacao.cs" />
     <Compile Include="Jogador.cs" />
     <Compile Include="Usuario.cs" />

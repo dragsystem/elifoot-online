@@ -38,5 +38,13 @@ namespace EmpreendaVc.Infrastructure.Queries.Clubes
         {
             return Session.QueryOver<Partida>().Where(x => x.Clube1.Id == id || x.Clube2.Id == id).List();
         }
+
+        public void TirarTreinador(int id)
+        {
+            var clube = Session.Get<Clube>(id);
+            clube.Usuario = null;
+
+            Session.Save(clube);
+        }
     }
 }

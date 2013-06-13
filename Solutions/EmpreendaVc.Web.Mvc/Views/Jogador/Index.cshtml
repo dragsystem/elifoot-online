@@ -36,7 +36,11 @@
 <h2>@Model.Nome @(Model.Clube != null ? "(" + Model.Clube.Nome + ")" : "")</h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
 
-    <div id="left">
+<div id="left">
+    @if (Model.Temporario)
+    {
+        <p>Este jogador pertence as categorias de base e está suprindo a falta de jogadores da posição. Assim que houver jogadores ele retornará as categorias de base.</p>
+    }
     <div id="jogador-tabela">
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
@@ -46,10 +50,14 @@
             </tr>
             <tr>
                 <td>@Util.RetornaPosicaoCompleta(Model.Posicao)</td>
-                @if (Model.Clube != null)
+                @if (Model.Clube != null && !Model.Temporario)
                 {
                     <td>$@Model.Salario.ToString("N2")</td>
                     <td>@Model.Contrato ano(s)</td>
+                }
+                else if (Model.Clube != null && !Model.Temporario)
+                {
+                    <td colspan="2">Categorias de Base</td>
                 }
                 else
                 {
@@ -59,7 +67,7 @@
             </tr>
         </table>
     </div>
-    @if (Model.Clube.Id == clube.Id)
+    @if (Model.Clube.Id == clube.Id && !Model.Temporario)
     {
         <div id="jogador-situacao">
             <p>
@@ -118,3 +126,5 @@
     </div>
     @{ Html.RenderAction("_MenuJogador", "Jogador", new { id = Model.Id }); }
 </div>
+
+<a class="voltar-link" href="javascript:history.back()">VOLTAR</a>

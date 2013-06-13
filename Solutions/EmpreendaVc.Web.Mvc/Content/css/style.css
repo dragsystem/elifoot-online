@@ -36,6 +36,9 @@ h2 .legenda b { font-size: 11px; }
 .classificacao .promove { color: #62AF41; }
 .classificacao .rebaixa { color: #F00000; }
 
+.tr-temporario td { color: #0066CC; }
+.tr-temporario td a { color: #0066CC; }
+
 .botao { display:block; cursor: pointer; width: 260px; height: 18px; text-align: center; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
 
 #right { width: 280px; float: right; }
