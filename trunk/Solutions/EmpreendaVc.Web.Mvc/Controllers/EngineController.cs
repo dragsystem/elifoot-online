@@ -1990,7 +1990,7 @@
             var partida = new Partida();
             var lstGols = new List<Gol>();
 
-            partida.Clube1 = clubeRepository.Get(1);
+            partida.Clube1 = clubeRepository.Get(34);
             partida.Clube2 = clubeRepository.Get(2);
             partida.Mao = 1;
             partida.Rodada = 1;
@@ -2250,19 +2250,19 @@
                 {
                     if ((notaclube1 - notaclube2) > 3)
                     {
-                        dif7 = 2; dif6 = 5; dif5 = 8; dif4 = 15; dif3 = 40; dif2 = 25; //dif1 = 5
+                        dif7 = 2; dif6 = 5; dif5 = 8; dif4 = 15; dif3 = 35; dif2 = 30; //dif1 = 5
                     }
                     else if ((notaclube1 - notaclube2) > 2)
                     {
-                        dif6 = 2; dif5 = 5; dif4 = 10; dif3 = 40; dif2 = 33; //dif1 = 10
+                        dif6 = 2; dif5 = 5; dif4 = 8; dif3 = 30; dif2 = 40; //dif1 = 15
                     }
                     else if ((notaclube1 - notaclube2) > 1)
                     {
-                        dif5 = 2; dif4 = 8; dif3 = 20; dif2 = 40; //dif1 = 30
+                        dif5 = 2; dif4 = 8; dif3 = 10; dif2 = 50; //dif1 = 30
                     }
                     else
                     {
-                        dif4 = 2; dif3 = 8; dif2 = 45; //dif1 = 45
+                        dif4 = 2; dif3 = 8; dif2 = 35; //dif1 = 55
                     }
                 }
                 else
@@ -2758,19 +2758,19 @@
                 {
                     if ((notaclube2 - notaclube1) > 3)
                     {
-                        dif7 = 2; dif6 = 5; dif5 = 8; dif4 = 15; dif3 = 40; dif2 = 25; //dif1 = 5
+                        dif7 = 2; dif6 = 5; dif5 = 8; dif4 = 15; dif3 = 35; dif2 = 30; //dif1 = 5
                     }
                     else if ((notaclube2 - notaclube1) > 2)
                     {
-                        dif6 = 2; dif5 = 5; dif4 = 10; dif3 = 40; dif2 = 33; //dif1 = 10
+                        dif6 = 2; dif5 = 5; dif4 = 8; dif3 = 30; dif2 = 40; //dif1 = 15
                     }
                     else if ((notaclube2 - notaclube1) > 1)
                     {
-                        dif5 = 2; dif4 = 8; dif3 = 20; dif2 = 40; //dif1 = 30
+                        dif5 = 2; dif4 = 8; dif3 = 10; dif2 = 50; //dif1 = 30
                     }
                     else
                     {
-                        dif4 = 2; dif3 = 8; dif2 = 45; //dif1 = 45
+                        dif4 = 2; dif3 = 8; dif2 = 35; //dif1 = 55
                     }
                 }
                 else
