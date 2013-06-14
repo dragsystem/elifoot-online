@@ -11,7 +11,7 @@
 <script type="text/javascript">
     var idelemento = '';
 
-    $(function () {
+    $(function () {        
         $(".select-escalacao").change(function () {
             idelemento = $(this).attr('id');
             var id = idelemento.replace('F', '');
@@ -86,7 +86,7 @@
                 <th width="12%">ÚLT. TREINO</th>
                 <th width="7%">GOLS</th>
             </tr>
-            @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.H))
+            @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.TreinoMedia))
             {
                 var classtemp = "";
                 if (jog.Temporario)
