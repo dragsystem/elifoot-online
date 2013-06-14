@@ -178,7 +178,7 @@
                     {
                         authenticationService.SignIn(usuario, usuario.IsRememberLogin);
 
-                        return RedirectToAction("Plantel", "Clube");
+                        return RedirectToAction("Index", "Conta");
                     }
                     else
                     {

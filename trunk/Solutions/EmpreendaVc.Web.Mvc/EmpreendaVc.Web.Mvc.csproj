@@ -323,6 +323,7 @@
     <Content Include="Content\img\loading.gif" />
     <Content Include="Content\img\logo-footer.png" />
     <Content Include="Content\img\logo.png" />
+    <Content Include="Content\img\lupa.png" />
     <Content Include="Content\img\msg-alerta.png" />
     <Content Include="Content\img\msg-erro.png" />
     <Content Include="Content\img\msg-ok.png" />
@@ -439,6 +440,7 @@
     <Content Include="Views\Jogador\JogadorDispensar.cshtml" />
     <Content Include="Views\Clube\Emprego.cshtml" />
     <Content Include="Views\Clube\Proposta.cshtml" />
+    <Content Include="Views\Jogador\DetalheOferta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

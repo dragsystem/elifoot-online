@@ -1,0 +1,46 @@
+﻿@model EmpreendaVc.Domain.JogadorOferta
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>
+    Proposta por @Model.Jogador.Nome @(Model.Jogador.Clube != null ? "(" + Model.Jogador.Clube.Nome + ")" : "")
+</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<table class="classificacao" cellpadding="0" cellspacing="0">
+    <tr>
+        <th width="33%">Posição</th>
+        <th width="33%">Salário</th>
+        <th width="33%">Contrato</th>
+    </tr>
+    <tr>
+        <td>@Util.RetornaPosicaoCompleta(Model.Jogador.Posicao)</td>
+        <td>$@Model.Jogador.Salario.ToString("N2")</td>
+        <td>@Model.Jogador.Contrato ano(s)</td>
+    </tr>
+</table>
+<h3>Proposta do @Model.Clube.Nome</h3>
+<div id="jogador-valorproposta">
+    <p>
+        @if (Model.Tipo == 1)
+        {
+            @:Tipo de Proposta: Proposta de Compra<br /><br />
+        }
+        Valor: $@Model.Valor.ToString("N2")
+    </p>
+    <br />
+    @if (Model.Estagio == 1)
+    {
+        <a href="@Url.Action("OfertaResposta", "Jogador", new { id = Model.Id, resposta = true })" class="submit">ACEITAR</a>
+        <a href="@Url.Action("OfertaResposta", "Jogador", new { id = Model.Id, resposta = false })" >Rejeitar</a>
+    }
+    else
+    {
+        <p>Você já aceitou esta proposta, está aguardando a resposta do jogador.</p>
+        <a href="@Url.Action("MeusJogadores", "Jogador")" >Voltar</a>
+    }
+</div>

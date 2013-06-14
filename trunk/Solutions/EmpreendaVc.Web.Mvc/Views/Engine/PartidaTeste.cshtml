@@ -1,6 +1,8 @@
 ﻿@model EmpreendaVc.Domain.Partida
 @{
     //var lstGols = (List<EmpreendaVc.Domain.Gol>)ViewBag.Gols;
+    var escalacao1 = (List<EmpreendaVc.Domain.Escalacao>)ViewBag.Escalacao1;
+    var escalacao2 = (List<EmpreendaVc.Domain.Escalacao>)ViewBag.Escalacao2;
 }
 <!DOCTYPE html>
 
@@ -37,5 +39,17 @@
             <td></td>
         </tr>
    </table>
+   <p>TIME 1<br />
+   @foreach (var escalacao in escalacao1.OrderBy(x => x.Posicao))
+   {
+       @: @escalacao.Jogador.Nome - @escalacao.Jogador.NotaUlt<br />
+   }
+   </p>
+   <p>TIME 2<br />
+   @foreach (var escalacao in escalacao2.OrderBy(x => x.Posicao))
+   {
+       @: @escalacao.Jogador.Nome - @escalacao.Jogador.NotaUlt<br />
+   }
+   </p>
 </body>
 </html>
