@@ -58,6 +58,8 @@ h2 .legenda b { font-size: 11px; }
 #plantel-financas { float: right; width: 260px; }
 #plantel-proximo { float: right; width: 260px; }
 
+#Ingresso { background: #FBFBFB; padding: 0px; border: none; font-size: 14px; font-weight: bold; text-align: center; }
+
 #classificacao-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
 #classificacao-lista a { font-weight: normal; margin-left: 15px; }
 #classificacao-tabela { float: left; width: 650px; }
@@ -76,6 +78,7 @@ h2 .legenda b { font-size: 11px; }
 #jogador-historico { float: left; width: 650px; }
 #jogador-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
 #jogador-lista a { font-weight: normal; margin-left: 15px; }
+.jogador-detalheoferta { display: block; width: 25px; height: 20px; background: url('../img/lupa.png') right center no-repeat; float: left; margin-left: 5px;}
 
 #calendario-tabela { float: left; width: 650px; }
 
@@ -83,8 +86,8 @@ h2 .legenda b { font-size: 11px; }
 .plantel-semcontrato { display: block; width: 25px; height: 20px; background: url('../img/semcontrato.png') center center no-repeat; float: left; }
 .plantel-vender { display: block; width: 25px; height: 20px; background: url('../img/vender.png') center center no-repeat; float: left;  }
 
-.leilao-proposta { display: block; width: 25px; height: 20px; background: url('../img/vender.png') center center no-repeat; float: left;  }
-.leilao-cancelarleilao { display: block; width: 25px; height: 20px; background: url('../img/cancelar.png') center center no-repeat; float: left;  }
+.jogador-proposta { display: block; width: 25px; height: 20px; background: url('../img/vender.png') center center no-repeat; float: left;  }
+.jogador-cancelarleilao { display: block; width: 25px; height: 20px; background: url('../img/cancelar.png') center center no-repeat; float: left;  }
 
 .confirmar-link { display: block; width: 50px; height: 32px; background: url('../img/confirmar.png') center center no-repeat; float: right }
 .cancelar-link { display: block; width: 50px; height: 32px; background: url('../img/confirmar.png') center center no-repeat; float: right }
@@ -107,4 +110,4 @@ input[type="text"], input[type="password"], textarea, select { background: #EEF3
 
 #loading { position: absolute; z-index: 10000; text-align: center; background: url('../img/bgtrans.png'); display: none; }
 #loading-image { height: 80px; width: 80px; margin: 0 auto; margin-top: 300px; z-index: 11000; background: #fff; border: 1px solid #CBDBEB; border-radius: 3px; }
-#loading-image img { margin-top: 10px; margin-left: -1px; }
+#loading-image img { margin-top: 10px; margin-left: -3px; }

@@ -265,7 +265,7 @@
                             historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clube.Id).Count();
                             historico.Jogador = jogador;
                             historico.Jogos = jogador.Jogos;
-                            historico.NotaMedia = jogador.NotaMedia;
+                            historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
                             historico.Valor = 0;
                             jogadorhistoricoRepository.SaveOrUpdate(historico);
 

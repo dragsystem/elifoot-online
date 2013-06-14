@@ -30,7 +30,7 @@ namespace EmpreendaVc.Web.Mvc.Util
             else
                 return "A";
         }
-
+        
         public static string RetornaPosicaoCompleta(int pos)
         {
             if (pos == 1)
@@ -47,6 +47,24 @@ namespace EmpreendaVc.Web.Mvc.Util
                 return "MEIO-OFENSIVO";
             else
                 return "ATACANTE";
+        }
+
+        public static string RetornaEstagio(int estagio, int tipo)
+        {
+            if (tipo == 1)
+            {
+                if (estagio == 1)
+                    return "Aguardando resposta do Clube";
+                if (estagio == 2)
+                    return "Proposta aceita. Aguardando resposta do Jogador";
+            }
+            if (tipo == 2)
+            {
+                if (estagio == 2)
+                    return "Aguardando resposta do Jogador";
+            }
+
+            return "";
         }
 
         public static List<SelectListItem> RetornaListaPosicao()

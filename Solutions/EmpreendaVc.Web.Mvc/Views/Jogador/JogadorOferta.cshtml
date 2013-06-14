@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h2>
-    PROPOSTA POR @Model.Jogador.Nome @(Model.Jogador.Clube != null ? "(" + Model.Jogador.Clube.Nome + ")" : "")
+    Proposta por @Model.Jogador.Nome @(Model.Jogador.Clube != null ? "(" + Model.Jogador.Clube.Nome + ")" : "")
 </h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
 

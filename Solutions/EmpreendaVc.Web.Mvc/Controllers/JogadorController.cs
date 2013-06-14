@@ -89,7 +89,7 @@
         }
 
         [Authorize]
-        public ActionResult Busca()
+        public ActionResult Busca(int? p)
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
@@ -105,8 +105,8 @@
                 var lstJogador = jogadorRepository.GetAll()
                             .Where(x => x.Clube.Id != usuario.Clube.Id && !x.Temporario);
 
-                if (jogadorfiltro.Nome != "")
-                    lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome));
+                if (!string.IsNullOrEmpty(jogadorfiltro.Nome))
+                    lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome.ToUpper()));
                 if (jogadorfiltro.Posicao != 0)
                     lstJogador = lstJogador.Where(x => x.Posicao == jogadorfiltro.Posicao);
                 if (jogadorfiltro.Situacao != 0)
@@ -127,7 +127,17 @@
                 else if (jogadorfiltro.Ordenacao == 3)
                     lstJogador = lstJogador.OrderByDescending(x => x.NotaMedia);
 
-                ViewBag.Resultado = lstJogador;
+                var skip = 0;
+
+                if (p.HasValue)
+                {
+                    if (p.Value > 1)
+                        skip = 40 * (p.Value - 1);
+                }
+
+                lstJogador = lstJogador.Skip(skip).Take(40);
+
+                ViewBag.Resultado = lstJogador.ToList();
             }
             else
             {
@@ -135,6 +145,7 @@
             }
 
             ViewBag.Clube = usuario.Clube;
+            ViewBag.Page = p.HasValue ? p.Value : 1;
 
             return View(jogadorfiltro);
         }
@@ -157,8 +168,8 @@
             var lstJogador = jogadorRepository.GetAll()
                             .Where(x => x.Clube.Id != usuario.Clube.Id);
 
-            if (jogadorfiltro.Nome != "")
-                lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome));
+            if (!string.IsNullOrEmpty(jogadorfiltro.Nome))
+                lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome.ToUpper()));
             if (jogadorfiltro.Posicao != 0)
                 lstJogador = lstJogador.Where(x => x.Posicao == jogadorfiltro.Posicao);
             if (jogadorfiltro.Situacao != 0)
@@ -178,9 +189,12 @@
                 lstJogador = lstJogador.OrderByDescending(x => x.Posicao);
             else if (jogadorfiltro.Ordenacao == 3)
                 lstJogador = lstJogador.OrderByDescending(x => x.NotaMedia);
+            
+            lstJogador = lstJogador.Take(40);
 
-            ViewBag.Resultado = lstJogador;
+            ViewBag.Resultado = lstJogador.ToList();
             ViewBag.Clube = usuario.Clube;
+            ViewBag.Page = 1;
             //ViewBag.Controle = controleRepository.GetAll().FirstOrDefault();
 
             return View(jogadorfiltro);
@@ -305,6 +319,69 @@
         }
 
         [Authorize]
+        public ActionResult DetalheOferta(int id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var jogadoroferta = jogadorofertaRepository.Get(id);
+
+            if (jogadoroferta.Jogador.Clube.Id != usuario.Clube.Id)
+                return RedirectToAction("Index", "Conta");
+
+            return View(jogadoroferta);
+        }
+
+        [Authorize]
+        [Transaction]
+        public ActionResult OfertaResposta(int id, bool resposta)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var controle = controleRepository.GetAll().FirstOrDefault();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var jogadoroferta = jogadorofertaRepository.Get(id);
+
+            if (jogadoroferta.Jogador.Clube.Id != usuario.Clube.Id)
+                return RedirectToAction("Index", "Conta");
+
+            if (resposta)
+            {
+                if (jogadoroferta.Clube.Usuario != null)
+                {
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = usuario.Clube.Nome + " aceitou sua proposta por " + jogadoroferta.Jogador.Nome + ".<br />Agora você deve aguardar a resposta do jogador.";
+                    noticia.Usuario = jogadoroferta.Clube.Usuario;
+                    noticiaRepository.SaveOrUpdate(noticia);
+                }
+
+                jogadoroferta.Estagio = 2;
+                jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+            }
+            else
+            {
+                if (jogadoroferta.Clube.Usuario != null)
+                {
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = usuario.Clube.Nome + " rejeitou sua proposta por " + jogadoroferta.Jogador.Nome + ".";
+                    noticia.Usuario = jogadoroferta.Clube.Usuario;
+                    noticiaRepository.SaveOrUpdate(noticia);
+                }
+
+                jogadorofertaRepository.Delete(jogadoroferta);
+            }
+
+            TempData["MsgOk"] = "Proposta respondida com sucesso!";
+            return RedirectToAction("MeusJogadores", "Jogador");
+        }
+
+        [Authorize]
         [Transaction]
         public ActionResult CancelarVenda(int id)
         {
@@ -373,7 +450,7 @@
                     jogadorRepository.SaveOrUpdate(jogador);
 
                     TempData["MsgOk"] = jogador.Nome + " aceitou sua proposta e renovou por " + contrato + " temporada(s)!";
-                    return RedirectToAction("Plantel", "Clube");
+                    return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
                 }
                 else
                 {
