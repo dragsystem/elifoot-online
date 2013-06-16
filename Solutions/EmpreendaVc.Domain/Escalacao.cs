@@ -39,11 +39,11 @@ namespace EmpreendaVc.Domain
                 if (Posicao == 7)
                     return H;
                 else if (Posicao == 6)
-                    return H/2;
+                    return H / 2;
                 else if (Posicao == 1)
-                    return 1;
+                    return 0;
                 else
-                    return H/5;
+                    return H/3;
             }
         }
 
