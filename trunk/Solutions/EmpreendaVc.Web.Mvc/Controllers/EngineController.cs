@@ -1425,7 +1425,7 @@
                         }
                         else if (placar <= (dif7 + dif6 + dif5))
                         {
-                            gol2 = rnd.Next(0, 3);
+                            gol2 = rnd.Next(0, 2);
                             gol1 = gol2 + 5;
                         }
                         else if (placar <= (dif7 + dif6 + dif5 + dif4))
@@ -1536,7 +1536,7 @@
                         }
                         else if (placar <= (dif7 + dif6 + dif5))
                         {
-                            gol1 = rnd.Next(0, 3);
+                            gol1 = rnd.Next(0, 2);
                             gol2 = gol1 + 5;
                         }
                         else if (placar <= (dif7 + dif6 + dif5 + dif4))
@@ -1990,7 +1990,7 @@
             var partida = new Partida();
             var lstGols = new List<Gol>();
 
-            partida.Clube1 = clubeRepository.Get(34);
+            partida.Clube1 = clubeRepository.Get(1);
             partida.Clube2 = clubeRepository.Get(2);
             partida.Mao = 1;
             partida.Rodada = 1;
@@ -2119,7 +2119,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 9.0;
                         else
-                            nota = 6.0;
+                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
                     }
                     else
                     {
@@ -2138,7 +2138,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 1.5;
                         else
-                            nota = 3.0;
+                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
                     }
 
                     notaclube1 = notaclube1 + Convert.ToDecimal(nota);
@@ -2205,7 +2205,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 9.0;
                         else
-                            nota = 6.0;
+                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
                     }
                     else
                     {
@@ -2224,7 +2224,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 1.5;
                         else
-                            nota = 3.0;
+                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
                     }
 
                     notaclube2 = notaclube2 + Convert.ToDecimal(nota);
@@ -2297,7 +2297,7 @@
                 }
                 else if (placar <= (dif7 + dif6 + dif5))
                 {
-                    gol2 = rnd.Next(0, 3);
+                    gol2 = rnd.Next(0, 2);
                     gol1 = gol2 + 5;
                 }
                 else if (placar <= (dif7 + dif6 + dif5 + dif4))
@@ -2398,7 +2398,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 9.0;
                         else
-                            nota = 6.0;
+                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
                     }
                     else
                     {
@@ -2417,7 +2417,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 1.5;
                         else
-                            nota = 3.0;
+                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
                     }
 
                     notaclube1 = notaclube1 + Convert.ToDecimal(nota);
@@ -2486,7 +2486,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 9.0;
                         else
-                            nota = 6.0;
+                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
                     }
                     else
                     {
@@ -2505,7 +2505,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 1.5;
                         else
-                            nota = 3.0;
+                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
                     }
 
                     notaclube2 = notaclube2 + Convert.ToDecimal(nota);
@@ -2627,7 +2627,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 9.0;
                         else
-                            nota = 6.0;
+                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
                     }
                     else
                     {
@@ -2646,7 +2646,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 1.5;
                         else
-                            nota = 3.0;
+                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
                     }
 
                     notaclube1 = notaclube1 + Convert.ToDecimal(nota);
@@ -2713,7 +2713,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 9.0;
                         else
-                            nota = 6.0;
+                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
                     }
                     else
                     {
@@ -2732,7 +2732,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 1.5;
                         else
-                            nota = 3.0;
+                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
                     }
 
                     notaclube2 = notaclube2 + Convert.ToDecimal(nota);
@@ -2805,7 +2805,7 @@
                 }
                 else if (placar <= (dif7 + dif6 + dif5))
                 {
-                    gol1 = rnd.Next(0, 3);
+                    gol1 = rnd.Next(0, 2);
                     gol2 = gol1 + 5;
                 }
                 else if (placar <= (dif7 + dif6 + dif5 + dif4))
@@ -2880,7 +2880,7 @@
 
             if (gol1 > 0)
             {
-                var totalgols = clube1.Escalacao.Sum(x => x.HGol) + 1;
+                var totalgols = clube1.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).Take(5).Sum(x => x.HGol) + 1;
                 for (int i = 1; i <= gol1; i++)
                 {
                     var gol = new Gol();
@@ -2889,7 +2889,7 @@
                     gol.Partida = partida;
                     var contagem = 0;
                     var goleador = rnd.Next(1, totalgols);
-                    foreach (var jog in clube1.Escalacao.OrderByDescending(x => x.Posicao))
+                    foreach (var jog in clube1.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).ThenByDescending(x => x.Posicao).Take(5))
                     {
                         contagem = contagem + jog.HGol;
                         if (goleador <= contagem)
@@ -2898,16 +2898,18 @@
                             break;
                         }
                     }
+                    lstGols.Add(gol); /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR
                     //golRepository.SaveOrUpdate(gol);
                 }
             }
 
             rnd = new Random();
+            rnd.Next(1, 100);
 
             var listgol2 = new List<Gol>();
             if (gol2 > 0)
             {
-                var totalgols = clube2.Escalacao.Sum(x => x.HGol) + 1;
+                var totalgols = clube2.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).Take(5).Sum(x => x.HGol) + 1;
                 for (int i = 1; i <= gol2; i++)
                 {
                     var gol = new Gol();
@@ -2916,7 +2918,7 @@
                     gol.Partida = partida;
                     var contagem = 0;
                     var goleador = rnd.Next(1, totalgols);
-                    foreach (var jog in clube2.Escalacao.OrderByDescending(x => x.Posicao))
+                    foreach (var jog in clube2.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).ThenByDescending(x => x.Posicao).Take(5))
                     {
                         contagem = contagem + jog.HGol;
                         if (goleador <= contagem)
@@ -2925,6 +2927,7 @@
                             break;
                         }
                     }
+                    lstGols.Add(gol); /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR /// RETIRAR
                     //golRepository.SaveOrUpdate(gol);
                 }
             }
@@ -2960,6 +2963,7 @@
 
             ViewBag.Escalacao1 = clube1.Escalacao.ToList();
             ViewBag.Escalacao2 = clube2.Escalacao.ToList();
+            partida.Gols = lstGols;
 
             return View(partida);
         }
