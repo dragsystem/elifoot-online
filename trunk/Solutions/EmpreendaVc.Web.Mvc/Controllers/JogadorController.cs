@@ -37,6 +37,7 @@
         private readonly INHibernateRepository<JogadorPedido> jogadorpedidoRepository;
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Noticia> noticiaRepository;
+        private readonly INHibernateRepository<Escalacao> escalacaoRepository;
 
         public JogadorController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -52,7 +53,8 @@
             INHibernateRepository<DivisaoTabela> divisaotabelaRepository,
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
-            INHibernateRepository<Noticia> noticiaRepository)
+            INHibernateRepository<Noticia> noticiaRepository,
+            INHibernateRepository<Escalacao> escalacaoRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -69,6 +71,7 @@
             this.jogadorpedidoRepository = jogadorpedidoRepository;
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.noticiaRepository = noticiaRepository;
+            this.escalacaoRepository = escalacaoRepository;
         }
 
         [Authorize]
@@ -95,6 +98,14 @@
 
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
+
+            if (usuario.Staffs.Where(x => x.Tipo == 1).Count() == 0)
+            {
+                ViewBag.Olheiro = false;
+                return View();
+            }
+
+            ViewBag.Olheiro = true;
 
             var jogadorfiltro = new JogadorFiltroView();
 
@@ -265,7 +276,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por " + jogador.Nome + ". <br /><br />Entre em Propostas para responder.";
+                    noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogadoroferta.Jogador.Id }) + "'>" + jogadoroferta.Jogador.Nome + "</a>. <br /><br />Entre em Propostas para responder.";
                     noticia.Usuario = jogador.Clube.Usuario;
 
                     noticiaRepository.SaveOrUpdate(noticia);
@@ -355,7 +366,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = usuario.Clube.Nome + " aceitou sua proposta por " + jogadoroferta.Jogador.Nome + ".<br />Agora você deve aguardar a resposta do jogador.";
+                    noticia.Texto = usuario.Clube.Nome + " aceitou sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogadoroferta.Jogador.Id }) + "'>" + jogadoroferta.Jogador.Nome + "</a>.<br />Agora você deve aguardar a resposta do jogador.";
                     noticia.Usuario = jogadoroferta.Clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
@@ -369,7 +380,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = usuario.Clube.Nome + " rejeitou sua proposta por " + jogadoroferta.Jogador.Nome + ".";
+                    noticia.Texto = usuario.Clube.Nome + " rejeitou sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogadoroferta.Jogador.Id }) + "'>" + jogadoroferta.Jogador.Nome + "</a>.";
                     noticia.Usuario = jogadoroferta.Clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
@@ -469,6 +480,48 @@
 
             if (usuario.Clube == null || usuario.Clube.Id != clube.Id)
                 return RedirectToAction("Index", "Conta");
+
+            return View(jogador);
+        }
+
+        [Authorize]
+        public ActionResult JogadorDispensarConfirma(int id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var jogador = jogadorRepository.Get(id);
+            var clube = jogador.Clube;
+
+            if (usuario.Clube == null || usuario.Clube.Id != clube.Id)
+                return RedirectToAction("Index", "Conta");
+
+            if (jogador.JogadorOfertas.Count() > 0)
+            {
+                var controle = controleRepository.GetAll().FirstOrDefault();
+                foreach (var item in jogador.JogadorOfertas)
+	            {
+		            if (item.Clube.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois o mesmo foi dispensado pelo " + clube.Nome + ".";
+                        noticia.Usuario = item.Clube.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadorofertaRepository.Delete(item);
+	            }
+            }
+
+            if (clube.Escalacao.Where(x => x.Jogador != null && x.Jogador.Id == jogador.Id).Count() > 0)
+            {
+                var escalacao = clube.Escalacao.Where(x => x.Jogador != null && x.Jogador.Id == jogador.Id).FirstOrDefault();
+                escalacao.Jogador = null;
+                escalacao.Jogador.H = 0;
+                escalacaoRepository.SaveOrUpdate(escalacao);
+            }
+
+            clube.Dinheiro = clube.Dinheiro - ((jogador.Salario * 3) * jogador.Contrato);
+            clubeRepository.SaveOrUpdate(clube);
 
             return View(jogador);
         }

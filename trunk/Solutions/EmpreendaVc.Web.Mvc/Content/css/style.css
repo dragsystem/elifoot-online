@@ -44,6 +44,9 @@ h2 .legenda b { font-size: 11px; }
 #right { width: 280px; float: right; }
 #left { width: 650px; float: left; }
 
+#usuario-left { width: 465px; float: left; }
+#usuario-right { width: 465px; float: right; }
+
 #plantel-caixa { width: 650px; }
     #plantel-caixa table { width: 100%; }
     #plantel-caixa a { font-weight: normal; margin-left: 15px; }

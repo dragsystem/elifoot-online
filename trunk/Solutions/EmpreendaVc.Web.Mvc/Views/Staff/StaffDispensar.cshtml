@@ -1,0 +1,19 @@
+﻿@model EmpreendaVc.Domain.Staff
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>
+    Dispensar</h2>
+
+@{ Html.RenderAction("Index", "Mensagem"); }
+    <p>
+    Tem certeza que deseja encerrar o contrato de @Model.Nome?
+    </p>
+    <a class="submit" href="@Url.Action("StaffDispensarConfirma", new { id = Model.Id })">CONFIRMAR</a>
+    <a class="voltar-link" href="@Url.Action("Index", "Staff", new { id = Model.Id })">VOLTAR</a>

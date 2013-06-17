@@ -49,6 +49,28 @@ namespace EmpreendaVc.Web.Mvc.Util
                 return "ATACANTE";
         }
 
+        public static string RetornaStaffTipo(int tipo)
+        {
+            if (tipo == 1)
+                return "OLHEIRO";
+            else
+                return "MÉDICO";            
+        }
+
+        public static string RetornaStaffReputacao(int h)
+        {
+            if (h == 5)
+                return "Excelente";
+            else if (h == 4)
+                return "Muito boa";
+            else if (h == 3)
+                return "Boa";
+            else if (h == 2)
+                return "Baixa";
+            else
+                return "Desconhecido";
+        }
+
         public static string RetornaEstagio(int estagio, int tipo)
         {
             if (tipo == 1)
@@ -74,10 +96,20 @@ namespace EmpreendaVc.Web.Mvc.Util
             lst.Add(new SelectListItem { Text = "GOLEIRO", Value = "1" });
             lst.Add(new SelectListItem { Text = "LATERAL-DIREITO", Value = "2" });
             lst.Add(new SelectListItem { Text = "ZAGUEIRO", Value = "3" });
-            lst.Add(new SelectListItem { Text = "LATERA-ESQUERDO", Value = "4" });
+            lst.Add(new SelectListItem { Text = "LATERAL-ESQUERDO", Value = "4" });
             lst.Add(new SelectListItem { Text = "VOLANTE", Value = "5" });
             lst.Add(new SelectListItem { Text = "MEIA-OFENSIVO", Value = "6" });
             lst.Add(new SelectListItem { Text = "ATACANTE", Value = "7" });
+
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaListaStaffTipo()
+        {
+            var lst = new List<SelectListItem>();
+
+            lst.Add(new SelectListItem { Text = "OLHEIRO", Value = "1" });
+            lst.Add(new SelectListItem { Text = "MÉDICO", Value = "2" });
 
             return lst;
         }
@@ -261,6 +293,26 @@ namespace EmpreendaVc.Web.Mvc.Util
                     valor = valor + 25000;
                 else if (valor > 1000000)
                     valor = valor + 50000;
+            }
+
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaValorSalarioStaff()
+        {
+            var lst = new List<SelectListItem>();
+            decimal valor = 0;
+
+            while (valor <= 100000)
+            {
+                lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
+
+                if (valor <= 10000)
+                    valor = valor + 1000;
+                else if (valor <= 50000)
+                    valor = valor + 2500;
+                else if (valor <= 100000)
+                    valor = valor + 5000;
             }
 
             return lst;

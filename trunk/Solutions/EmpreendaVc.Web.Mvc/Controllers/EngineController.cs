@@ -41,8 +41,10 @@
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
         private readonly INHibernateRepository<Historico> historicoRepository;
         private readonly INHibernateRepository<Nome> nomeRepository;
+        private readonly INHibernateRepository<Sobrenome> sobrenomeRepository;
         private readonly INHibernateRepository<Artilheiro> artilheiroRepository;
         private readonly INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository;
+        private readonly INHibernateRepository<Staff> staffRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IClubeRepository clubeQueryRepository,
@@ -61,6 +63,8 @@
             INHibernateRepository<Escalacao> escalacaoRepository,
             INHibernateRepository<Historico> historicoRepository,
             INHibernateRepository<Nome> nomeRepository,
+            INHibernateRepository<Sobrenome> sobrenomeRepository,
+            INHibernateRepository<Staff> staffRepository,
             INHibernateRepository<Artilheiro> artilheiroRepository,
             INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository)
         {
@@ -81,7 +85,9 @@
             this.escalacaoRepository = escalacaoRepository;
             this.historicoRepository = historicoRepository;
             this.nomeRepository = nomeRepository;
+            this.sobrenomeRepository = sobrenomeRepository;
             this.artilheiroRepository = artilheiroRepository;
+            this.staffRepository = staffRepository;
             this.jogadorhistoricoRepository = jogadorhistoricoRepository;
         }
 
@@ -201,10 +207,13 @@
             foreach (var clube in clubeRepository.GetAll())
             {
                 var salarios = clube.Jogadores.Sum(x => x.Salario);
-                //var renda = clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Count() > 0 ? clubeQueryRepository.PartidasClube(clube.Id).Where(x => x.Realizada).Last().Publico * clube.Ingresso : 0;
                 var socios = clube.Socios * 30;
+                decimal staff = 0;
 
-                clube.Dinheiro = clube.Dinheiro + (socios - salarios);
+                if (clube.Usuario != null)
+                    staff = clube.Usuario.Staffs.Sum(x => x.Salario);
+
+                clube.Dinheiro = clube.Dinheiro + (socios - (salarios + staff));
                 clubeRepository.SaveOrUpdate(clube);
             }
 
@@ -366,7 +375,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = jogador.Nome + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -374,7 +383,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = jogador.Nome + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
                         noticia.Usuario = clubevendedor.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -388,7 +397,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = jogador.Nome + " (" + clubevendedor.Nome + ") rejeitou sua proposta.";
+                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") rejeitou sua proposta.";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -401,7 +410,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = jogador.Nome + " (" + clubevendedor.Nome + ") rejeitou sua proposta e foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2");
+                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") rejeitou sua proposta e foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2");
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -414,7 +423,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = clubevendedor.Nome + " cancelou a venda de " + jogador.Nome + " por estar com poucos jogadores no elenco.";
+                        noticia.Texto = clubevendedor.Nome + " cancelou a venda de <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> por estar com poucos jogadores no elenco.";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -427,7 +436,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = "Sua proposta por " + jogador.Nome + " foi cancelada, pois você não possui dinheiro para fechar a compra.";
+                        noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois você não possui dinheiro para fechar a compra.";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -672,7 +681,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = jogador.Nome + " está 100% recuperado da lesão e disponível para jogar.";
+                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> está 100% recuperado da lesão e disponível para jogar.";
                         noticia.Usuario = jogador.Clube.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -700,7 +709,22 @@
 
                 if (jogador.Lesionado == 0)
                 {
-                    jogador.Lesionado = rnd.Next(1, 6);
+                    var tempo = rnd.Next(1, 11);
+
+                    if (jogador.Clube.Usuario != null)
+                    {
+                        var usuario = jogador.Clube.Usuario;
+                        if (usuario.Staffs.Where(x => x.Tipo == 2).Count() > 0)
+                        {
+                            var medico = usuario.Staffs.Where(x => x.Tipo == 2).FirstOrDefault();
+                            if (rnd.Next(1, 101) <= medico.H)
+                                tempo = tempo / 2;
+                        }
+                    }
+                    else
+                        tempo = tempo / 2;
+
+                    jogador.Lesionado = tempo;
                     jogadorRepository.SaveOrUpdate(jogador);
 
                     var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
@@ -715,7 +739,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = jogador.Nome + " se lesionou por " + jogador.Lesionado + " dia(s)";
+                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> se lesionou por " + jogador.Lesionado + " dia(s)";
                         noticia.Usuario = jogador.Clube.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -809,7 +833,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = jog.Nome + " encerrou seu contrato e deixou o clube.";
+                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jog.Id }) + "'>" + jog.Nome + "</a> encerrou seu contrato e deixou o clube.";
                             noticia.Usuario = jog.Clube.Usuario;
                         }
 
@@ -823,7 +847,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = jog.Nome + " teve seu contrato prorrogado por 1 ano com aumento de 20%, pois você não pode ter menos que 14 jogadores.";
+                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jog.Id }) + "'>" + jog.Nome + "</a> teve seu contrato prorrogado por 1 ano com aumento de 20%, pois você não pode ter menos que 14 jogadores.";
                             noticia.Usuario = jog.Clube.Usuario;
                         }
 
@@ -834,6 +858,32 @@
                 
 
                 jogadorRepository.SaveOrUpdate(jog);
+            }
+
+            return RedirectToAction("Index", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult ZerarAnoStaff()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            foreach (var staff in staffRepository.GetAll().Where(x => x.Usuario != null))
+            {
+                staff.Contrato = (staff.Contrato - 1) >= 0 ? staff.Contrato - 1 : 0;
+
+                if (staff.Contrato == 0)
+                {
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = "Seu contrato com o " + Util.Util.RetornaStaffTipo(staff.Tipo) + " <a href='" + Url.Action("Index", "Staff", new { id = staff.Id }) + "'>" + staff.Nome + "</a> terminou. Ele deixou sua comissão técnica.";
+                    noticia.Usuario = staff.Usuario;
+                    noticiaRepository.SaveOrUpdate(noticia);
+
+                    staff.Usuario = null;
+                    staff.Salario = 0;
+                }                
+
+                staffRepository.SaveOrUpdate(staff);
             }
 
             return RedirectToAction("Index", "Engine");
@@ -1983,6 +2033,48 @@
             }
 
             return RedirectToAction("DetalheClube", "Adm", new { id = id });
+        }
+
+        #endregion
+
+        #region GerarStaff
+
+        [Transaction]
+        public ActionResult GerarStaff()
+        {
+            var nomes = nomeRepository.GetAll();
+            var sobrenomes = sobrenomeRepository.GetAll();
+            var rnd = new Random();
+            
+            for (int i = 0; i < 25; i++)
+            {
+                var staff = new Staff();                
+
+                var nome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
+                var sobrenome = sobrenomes.ElementAt(rnd.Next(0, sobrenomes.Count()));
+
+                staff.Nome = nome.NomeJogador.ToUpper() + " " + sobrenome.SobrenomeJogador.ToUpper();
+                staff.Tipo = 1;
+                staff.H = rnd.Next(1, 101);
+
+                staffRepository.SaveOrUpdate(staff);
+            }
+
+            for (int i = 0; i < 25; i++)
+            {
+                var staff = new Staff();
+
+                var nome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
+                var sobrenome = sobrenomes.ElementAt(rnd.Next(0, sobrenomes.Count()));
+
+                staff.Nome = nome.NomeJogador.ToUpper() + " " + sobrenome.SobrenomeJogador.ToUpper();
+
+                staff.H = rnd.Next(1, 101);
+                staff.Tipo = 2;
+                staffRepository.SaveOrUpdate(staff);
+            }
+
+            return RedirectToAction("GridStaff", "Adm");
         }
 
         #endregion

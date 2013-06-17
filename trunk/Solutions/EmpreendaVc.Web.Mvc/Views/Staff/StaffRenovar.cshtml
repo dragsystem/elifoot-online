@@ -1,4 +1,4 @@
-﻿@model EmpreendaVc.Domain.Jogador
+﻿@model EmpreendaVc.Domain.Staff
 @using EmpreendaVc.Web.Mvc.Util
 @using MvcContrib
 @using MvcContrib.FluentHtml
@@ -17,7 +17,7 @@
     if (Model != null)
     {
         Html.AntiForgeryToken();
-        @Html.Hidden("Jogador", Model.Id)
+        @Html.Hidden("Staff", Model.Id)
         @: @Model.Nome ganha atualmente $@Model.Salario.ToString("N2"). <br /><br />Escolha o novo salário que será oferecido: 
         @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model != null ? "$" + Model.Salario.ToString("N2") : "")   <br />
         @: Duração do Contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model != null ? "$" + Model.Contrato.ToString("N2") : "")   <br />
@@ -25,5 +25,5 @@
         <br /><br />
         <input type="submit" class="submit" value="Confirmar" />
     }    
-    <a class="voltar-link" href="@Url.Action("Index", "Jogador", new { id = Model.Id })">VOLTAR</a>
+    <a class="voltar-link" href="@Url.Action("Index", "Staff", new { id = Model.Id })">VOLTAR</a>
 }

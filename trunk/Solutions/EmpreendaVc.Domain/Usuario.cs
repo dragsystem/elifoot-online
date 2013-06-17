@@ -44,7 +44,9 @@ namespace EmpreendaVc.Domain
 
         public virtual int IdUltimoClube { get; set; }
 
-        public virtual IList<Noticia> Noticias { get; set; }        
+        public virtual IList<Noticia> Noticias { get; set; }
+
+        public virtual IList<Staff> Staffs { get; set; }  
 
         public Usuario()
         {

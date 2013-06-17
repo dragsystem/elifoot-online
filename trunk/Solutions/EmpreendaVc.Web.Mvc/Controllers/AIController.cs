@@ -206,7 +206,7 @@
                             {
                                 var noticia = new Noticia();
                                 noticia.Dia = controle.Dia;
-                                noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por " + jogador.Nome + ". <br /><br />Entre em Propostas para responder.";
+                                noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a>. <br /><br />Entre em <a href='" + Url.Action("MeusJogadores", "Jogador") + "'>PROPOSTAS</a> para responder.";
                                 noticia.Usuario = jogador.Clube.Usuario;
 
                                 noticiaRepository.SaveOrUpdate(noticia);
@@ -224,10 +224,10 @@
         [Transaction]
         public ActionResult DefinirSituacaoJogador()
         {
-            foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null).OrderByDescending(x => x.Dinheiro))
+            foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null))
             {
                 var controle = controleRepository.GetAll().FirstOrDefault();
-
+                
                 var g = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Count();
                 var ld = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Count();
                 var z = clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Count();
@@ -238,6 +238,7 @@
 
                 foreach (var jogador in clube.Jogadores)
                 {
+                    bool dispensa = false;
                     if (jogador.Posicao == 1)
                     {
                         if (jogador.H > g)
@@ -246,38 +247,116 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id))
-                            {
-                                if (jogadoroferta.Clube.Usuario != null)
-                                {
-                                    var noticia = new Noticia();
-                                    noticia.Dia = controle.Dia;
-                                    noticia.Texto = "Sua proposta por " + jogador.Nome + " foi cancelada, pois o mesmo foi dispensado pelo " + clube.Nome + ".";
-                                    noticia.Usuario = jogadoroferta.Clube.Usuario;
-                                }
-
-                                jogadorofertaRepository.Delete(jogadoroferta);
-                            }                            
-
-                            var historico = new JogadorHistorico();
-                            historico.Ano = controle.Ano;
-                            historico.Clube = clube;
-                            historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clube.Id).Count();
-                            historico.Jogador = jogador;
-                            historico.Jogos = jogador.Jogos;
-                            historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
-                            historico.Valor = 0;
-                            jogadorhistoricoRepository.SaveOrUpdate(historico);
-
-                            jogador.Clube = null;
-                            jogador.Contrato = 0;
-                            jogador.Salario = 0;
-                            jogador.Jogos = 0;
-                            jogador.NotaTotal = 0;
-                            jogador.NotaUlt = 0;
-                            jogador.Treinos = 0;
-                            jogador.TreinoTotal = 0;
+                            if (clube.Jogadores.Count() > 14)
+                                dispensa = true;
                         }
+                    }
+                    if (jogador.Posicao == 2)
+                    {
+                        if (jogador.H > ld)
+                            jogador.Situacao = 1;
+                        else if (jogador.H > (ld - 10))
+                            jogador.Situacao = 3;
+                        else
+                        {
+                            if (clube.Jogadores.Count() > 14)
+                                dispensa = true;
+                        }
+                    }
+                    if (jogador.Posicao == 3)
+                    {
+                        if (jogador.H > z)
+                            jogador.Situacao = 1;
+                        else if (jogador.H > (z - 10))
+                            jogador.Situacao = 3;
+                        else
+                        {
+                            if (clube.Jogadores.Count() > 14)
+                                dispensa = true;
+                        }
+                    }
+                    if (jogador.Posicao == 4)
+                    {
+                        if (jogador.H > le)
+                            jogador.Situacao = 1;
+                        else if (jogador.H > (le - 10))
+                            jogador.Situacao = 3;
+                        else
+                        {
+                            if (clube.Jogadores.Count() > 14)
+                                dispensa = true;
+                        }
+                    }
+                    if (jogador.Posicao == 5)
+                    {
+                        if (jogador.H > v)
+                            jogador.Situacao = 1;
+                        else if (jogador.H > (v - 10))
+                            jogador.Situacao = 3;
+                        else
+                        {
+                            if (clube.Jogadores.Count() > 14)
+                                dispensa = true;
+                        }
+                    }
+                    if (jogador.Posicao == 6)
+                    {
+                        if (jogador.H > mo)
+                            jogador.Situacao = 1;
+                        else if (jogador.H > (mo - 10))
+                            jogador.Situacao = 3;
+                        else
+                        {
+                            if (clube.Jogadores.Count() > 14)
+                                dispensa = true;
+                        }
+                    }
+                    if (jogador.Posicao == 7)
+                    {
+                        if (jogador.H > a)
+                            jogador.Situacao = 1;
+                        else if (jogador.H > (a - 10))
+                            jogador.Situacao = 3;
+                        else
+                        {
+                            if (clube.Jogadores.Count() > 14)
+                                dispensa = true;
+                        }
+                    }
+
+                    if (dispensa)
+                    {
+                        foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id))
+                        {
+                            if (jogadoroferta.Clube.Usuario != null)
+                            {
+                                var noticia = new Noticia();
+                                noticia.Dia = controle.Dia;
+                                noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois o mesmo foi dispensado pelo " + clube.Nome + ".";
+                                noticia.Usuario = jogadoroferta.Clube.Usuario;
+                            }
+
+                            jogadorofertaRepository.Delete(jogadoroferta);
+                        }
+
+                        var historico = new JogadorHistorico();
+                        historico.Ano = controle.Ano;
+                        historico.Clube = clube;
+                        historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clube.Id).Count();
+                        historico.Jogador = jogador;
+                        historico.Jogos = jogador.Jogos;
+                        historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
+                        historico.Valor = 0;
+                        jogadorhistoricoRepository.SaveOrUpdate(historico);
+
+                        jogador.Clube = null;
+                        jogador.Contrato = 0;
+                        jogador.Salario = 0;
+                        jogador.Jogos = 0;
+                        jogador.NotaTotal = 0;
+                        jogador.NotaUlt = 0;
+                        jogador.Treinos = 0;
+                        jogador.TreinoTotal = 0;
                     }
 
                     jogadorRepository.SaveOrUpdate(jogador);
@@ -313,7 +392,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = "Sua proposta por " + jogador.Nome + " foi aceita pelo " + jogador.Clube.Nome + ", você deve esperar a resposta do contrato do jogador.";
+                            noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi aceita pelo " + jogador.Clube.Nome + ", você deve esperar a resposta do contrato do jogador.";
                             noticia.Usuario = jogadoroferta.Clube.Usuario;
                         }
 
@@ -326,7 +405,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = "Sua proposta por " + jogador.Nome + " foi rejeitada pelo " + jogador.Clube.Nome + ".";
+                            noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi rejeitada pelo " + jogador.Clube.Nome + ".";
                             noticia.Usuario = jogadoroferta.Clube.Usuario;
                         }
 

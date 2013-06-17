@@ -1,0 +1,25 @@
+﻿@model EmpreendaVc.Domain.Staff
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>
+    Proposta por @Model.Nome
+</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<div id="jogador-valorproposta">
+    @using (Html.BeginForm("StaffOferta", "Staff", new { idstaff = Model.Id }))
+    {
+        <p>Cargo: @Util.RetornaStaffTipo(Model.Tipo)</p>
+
+        <h3>Contrato proposto ao profissional</h3>
+        @:Salário ofertado: @this.Select("Salario").Options(Util.RetornaValorSalarioStaff()).FirstOption("Selecione").Selected(Model.Salario != 0 ? Model.Salario.ToString() : "")
+        @:Duração do contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br /><br />
+        <input type="submit" class="submit" value="Confirmar" />
+        <a href="@Url.Action("Index", "Staff", new { id = Model.Id })" >Voltar</a>
+    }
+</div>

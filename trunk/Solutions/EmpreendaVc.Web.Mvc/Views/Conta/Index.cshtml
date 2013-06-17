@@ -10,40 +10,61 @@
 @{ Html.RenderAction("Index", "Mensagem"); }
 
 <div style="text-align: right; height: 30px;">
+    <a class="submit" href="@Url.Action("Plantel", "Clube")">PLANTEL</a>
     <a class="submit" href="@Url.Action("Emprego", "Clube")">BUSCAR EMPREGO</a>
 </div>
 <br />
-<div class="caixa">
-    <h1>Reputação Global</h1>
-    <div class="porcentagem">
-        <div class="porcentagem-valor">@Model.ReputacaoGeral %</div>
-        <div class="porcentagem-interior" style="width: @(Model.ReputacaoGeral)%;"></div>
+<div id="usuario-left">
+    <div id="usuario-reputacao" class="caixa">
+        <h1>Reputação</h1>
+        <p>Reputação Global: <b>@Model.ReputacaoGeral pontos</b></p>
+        @if (Model.Clube != null)
+        {
+            <p>Reputação no Clube (@Model.Clube.Nome): <b>@Model.Reputacao %</b></p>
+        }
     </div>
 </div>
-
-@if (Model.Clube != null)
-{
-    <div class="caixa">
-        <h1>Reputação no @Model.Clube.Nome</h1>
-        <div class="porcentagem">
-            <div class="porcentagem-valor">@Model.Reputacao %</div>
-            <div class="porcentagem-interior" style="width: @(Model.Reputacao)%;"></div>
-        </div>
+<div id="usuario-right">
+    <div id="usuario-comissao" class="caixa">
+        <h1>Comissão Técnica</h1>
+        <p>Médico:
+            @if (Model.Staffs.Where(x => x.Tipo == 2).Count() > 0)
+            {
+                var medico = Model.Staffs.Where(x => x.Tipo == 2).FirstOrDefault();
+                <a href="@Url.Action("Index", "Staff", new { id = medico.Id })">@medico.Nome</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Busca", "Staff")">CONTRATAR...</a>
+            }
+        </p>
+        <p>Olheiro:
+            @if (Model.Staffs.Where(x => x.Tipo == 1).Count() > 0)
+            {
+                var olheiro = Model.Staffs.Where(x => x.Tipo == 1).FirstOrDefault();
+                <a href="@Url.Action("Index", "Staff", new { id = olheiro.Id })">@olheiro.Nome</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Busca", "Staff")">CONTRATAR...</a>
+            }
+        </p>
     </div>
-}
+</div>
+<div class="clear"></div>
 <div id="usuario-noticia" class="caixa">
     <h1>
         Últimas Notícias</h1>
     @if (Model.Noticias.Count() > 0)
     {
         foreach (var noticia in Model.Noticias.OrderByDescending(x => x.Data))
-	    {
-		    var data = controle.Dia > noticia.Dia ? DateTime.Now.AddDays(controle.Dia - noticia.Dia) : DateTime.Now ;
+        {
+            var data = controle.Dia > noticia.Dia ? DateTime.Now.AddDays(controle.Dia - noticia.Dia) : DateTime.Now;
             <p>
                 <b>@data.ToShortDateString()</b><br />
                 @Html.Raw(noticia.Texto)
             </p>
-	    }        
+        }
     }
     else
     {
