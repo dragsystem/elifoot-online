@@ -601,23 +601,25 @@
 
                 if (jogador.Lesionado == 0)
                 {
-                    var prob = 50 + (jogador.H - hmediotime);
-                    prob = prob > 90 ? 90 : prob < 10 ? 10 : prob;
+                    var probjogarbem = 50 + (jogador.H - hmediotime);
+                    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
                     double nota = 0;
                     var rndnota = rnd.Next(1, 101);
-                    var nota1 = Convert.ToInt32(((double)prob / 100) * 25);
-                    var nota2 = Convert.ToInt32(((double)prob / 100) * 20);
-                    var nota3 = Convert.ToInt32(((double)prob / 100) * 15);
-                    var nota4 = Convert.ToInt32(((double)prob / 100) * 15);
-                    var nota5 = Convert.ToInt32(((double)prob / 100) * 10);
-                    var nota6 = Convert.ToInt32(((double)prob / 100) * 10);
-                    var nota7 = Convert.ToInt32(((double)prob / 100) * 5);
+                    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                    if (rnd.Next(1, 101) <= prob)
+                    if (rnd.Next(1, 101) <= probjogarbem)
                     {
+
+
                         if (rndnota < nota1)
-                            nota = 6.0;
+                            nota = 5.5;
                         else if (rndnota < (nota1 + nota2))
                             nota = 6.5;
                         else if (rndnota < (nota1 + nota2 + nota3))
@@ -631,18 +633,18 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 9.0;
                         else
-                            nota = 5.5;
+                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
                     }
                     else
                     {
                         if (rndnota < nota1)
                             nota = 5.0;
                         else if (rndnota < (nota1 + nota2))
-                            nota = 4.0;
+                            nota = 4.5;
                         else if (rndnota < (nota1 + nota2 + nota3))
-                            nota = 3.5;
+                            nota = 4.0;
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                            nota = 3.0;
+                            nota = 3.5;
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
                             nota = 2.5;
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
@@ -650,7 +652,7 @@
                         else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
                             nota = 1.5;
                         else
-                            nota = 4.5;
+                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
                     }
 
                     jogador.Treinos = jogador.Treinos + 1;
@@ -2698,6 +2700,8 @@
 
                     if (rnd.Next(1, 101) <= probjogarbem)
                     {
+
+
                         if (rndnota < nota1)
                             nota = 5.5;
                         else if (rndnota < (nota1 + nota2))
