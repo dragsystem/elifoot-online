@@ -8,22 +8,28 @@
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
     var lst = (IList<EmpreendaVc.Domain.Jogador>)ViewBag.Resultado;
     var page = (int)ViewBag.Page;
+    var olheiro = (bool)ViewBag.Olheiro;
 }
 <h2>
     Buscar</h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
-@using (Html.BeginForm())
+
+@if (olheiro)
 {
-    Html.AntiForgeryToken();
-    <div id="busca-filtro">
-        Nome: @Html.TextBoxFor(x => x.Nome, new { size = 50 })
-        Posição: @this.Select("Posicao").Options(Util.RetornaListaPosicao()).FirstOption("TODAS").Selected(Model.Posicao != 0 ? Model.Posicao.ToString() : "")
-        Contrato: @this.Select("Contrato").Options(Util.RetornaListaContrato()).FirstOption("TODOS").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br />
-        Situação: @this.Select("Situacao").Options(Util.RetornaSituacao()).FirstOption("TODAS").Selected(Model.Situacao != 0 ? Model.Situacao.ToString() : "") 
-        Ordenar por: @this.Select("Ordenacao").Options(Util.RetornaListaOrdenacao()).Selected(Model.Ordenacao != 0 ? Model.Ordenacao.ToString() : "1")<br /><br />
-        <input type="submit" class="submit" value="Buscar" />
-    </div>
+    using (Html.BeginForm())
+    {
+        Html.AntiForgeryToken();
+        <div id="busca-filtro">
+            Nome: @Html.TextBoxFor(x => x.Nome, new { size = 50 })
+            Posição: @this.Select("Posicao").Options(Util.RetornaListaPosicao()).FirstOption("TODAS").Selected(Model.Posicao != 0 ? Model.Posicao.ToString() : "")
+            Contrato: @this.Select("Contrato").Options(Util.RetornaListaContrato()).FirstOption("TODOS").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br />
+            Situação: @this.Select("Situacao").Options(Util.RetornaSituacao()).FirstOption("TODAS").Selected(Model.Situacao != 0 ? Model.Situacao.ToString() : "") 
+            Ordenar por: @this.Select("Ordenacao").Options(Util.RetornaListaOrdenacao()).Selected(Model.Ordenacao != 0 ? Model.Ordenacao.ToString() : "1")<br /><br />
+            <input type="submit" class="submit" value="Buscar" />
+        </div>
+    }
 }
+
 <div id="left">
     <div id="jogador-tabela">
         <table class="classificacao" cellpadding="0" cellspacing="0">
@@ -35,32 +41,41 @@
                 <th width="10%">JOGOS</th>
                 <th width="10%">GOLS</th>
             </tr>
-            @if (lst.Count() > 0)
+            @if (olheiro)
             {
-                foreach (var item in lst)
+                if (lst.Count() > 0)
+                {
+                    foreach (var item in lst)
+                    {
+                        <tr>
+                            <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Nome.ToUpper()</a></td>
+                            <td>@item.Clube.Nome
+                            </td>
+                            <td>@Util.RetornaPosicao(item.Posicao)
+                            </td>
+                            <td>@(item.NotaMedia > 0 ? item.NotaMedia.ToString("N2") : "0,00")</td>
+                            <td>@item.Jogos</td>
+                            <td>@item.Gols.Where(x => x.Clube.Id == item.Clube.Id).Count()</td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Nome.ToUpper()</a></td>
-                        <td>@item.Clube.Nome
-                        </td>
-                        <td>@Util.RetornaPosicao(item.Posicao)
-                        </td>
-                        <td>@(item.NotaMedia > 0 ? item.NotaMedia.ToString("N2") : "0,00")</td>
-                        <td>@item.Jogos</td>
-                        <td>@item.Gols.Where(x => x.Clube.Id == item.Clube.Id).Count()</td>
+                        <td colspan="6"><i>Nenhum jogador listado.</i></td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="6"><i>Nenhum jogador listado.</i></td>
+                    <td colspan="6"><i>Você precisa <a href="@Url.Action("Busca", "Staff")">CONTRATAR</a> um olheiro para buscar jogadores.</i></td>
                 </tr>
             }
         </table>
         @if (page > 1)
         {
-            <a href="@Url.Action("Busca", "Jogador", new { p = (page - 1) } )">Página anterior</a> 
+            <a href="@Url.Action("Busca", "Jogador", new { p = (page - 1) })">Página anterior</a> 
             @:-
         }
         @if (lst.Count() == 40)
@@ -69,6 +84,7 @@
         }
     </div>
 </div>
+
 <div id="right">
     <div id="jogador-lista" class="caixa">
         <h1>

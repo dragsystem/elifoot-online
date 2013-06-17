@@ -149,6 +149,7 @@
         <h1>FINANÇAS</h1>
         @{ var salarios = Model.Jogadores.Sum(x => x.Salario);
            var socios = Model.Socios * 30;
+           var comissao = Model.Usuario != null ? Model.Usuario.Staffs.Sum(x => x.Salario) : 0;
            decimal renda = 0;
 
            if (Model.Partidas.Where(x => x.Realizada).Count() > 0)
@@ -160,7 +161,7 @@
                }
            }
 
-           var previsto = Model.Dinheiro + (socios - salarios);
+           var previsto = Model.Dinheiro + (socios - (salarios + comissao));
         }
         <p>
             Dinheiro em caixa: $@Model.Dinheiro.ToString("N2")
@@ -168,6 +169,7 @@
         <p>
             Salários: $@salarios.ToString("N2")<br />
             Sócios: $@socios.ToString("N2")
+            Comissão Técnica: $@comissao.ToString("N2")
         </p>
         <p>
             Renda última partida: $@renda.ToString("N2")

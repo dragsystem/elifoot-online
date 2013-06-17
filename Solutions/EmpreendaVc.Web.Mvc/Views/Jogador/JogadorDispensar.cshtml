@@ -16,5 +16,5 @@
     Para encerrar o contrato com @Model.Nome, você terá que pagar uma multa de $@(((Model.Salario * 3) * Model.Contrato).ToString("N2")).<br />
     Deseja continuar?
     </p>
-    <a class="submit" href="@Url.Action("JogadorDispensarConfirma", new { id = @Model.Id })">CONFIRMAR</a>
-    <a class="voltar-link" href="@Url.Action("Index", "Jogador", new { id = @Model.Id })">VOLTAR</a>
+    <a class="submit" href="@Url.Action("JogadorDispensarConfirma", new { id = Model.Id })">CONFIRMAR</a>
+    <a class="voltar-link" href="@Url.Action("Index", "Jogador", new { id = Model.Id })">VOLTAR</a>

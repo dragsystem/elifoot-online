@@ -31,6 +31,7 @@ namespace EmpreendaVc.Web.Mvc.Controllers
         private readonly INHibernateRepository<Noticia> noticiaRepository;
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
         private readonly INHibernateRepository<Historico> historicoRepository;
+        private readonly INHibernateRepository<Staff> staffRepository;
 
         public AdmController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -45,7 +46,8 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
             INHibernateRepository<Noticia> noticiaRepository,
             INHibernateRepository<Escalacao> escalacaoRepository,
-            INHibernateRepository<Historico> historicoRepository)
+            INHibernateRepository<Historico> historicoRepository,
+            INHibernateRepository<Staff> staffRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -61,6 +63,7 @@ namespace EmpreendaVc.Web.Mvc.Controllers
             this.noticiaRepository = noticiaRepository;
             this.escalacaoRepository = escalacaoRepository;
             this.historicoRepository = historicoRepository;
+            this.staffRepository = staffRepository;
         }
 
         [HttpGet]
@@ -219,6 +222,23 @@ namespace EmpreendaVc.Web.Mvc.Controllers
 
                 DataBind();
                 return View(clube);
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        #endregion
+
+        #region Staff
+
+        public ActionResult GridStaff()
+        {
+            if ((bool)Session["ADM"])
+            {
+                var lst = staffRepository.GetAll();
+                return View(lst);
             }
             else
             {
