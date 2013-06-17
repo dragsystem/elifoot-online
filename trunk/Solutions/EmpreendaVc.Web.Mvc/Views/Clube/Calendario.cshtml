@@ -4,6 +4,7 @@
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+    var id = (int)ViewBag.ClubeId;
     var dia = (int)ViewBag.Dia;
 }
 <h2>
@@ -34,7 +35,7 @@
             {
                 <tr>
                     <td>
-                        @if (item.Clube1.Id == clube.Id)
+                        @if ((item.Clube1.Id == clube.Id && id == 0) || (item.Clube1.Id == id))
                         { @item.Clube2.Nome }
                         else
                         { @item.Clube1.Nome }
@@ -71,7 +72,7 @@
                         }
                     </td>
                     <td>
-                        @if (item.Clube1.Id == clube.Id)
+                        @if ((item.Clube1.Id == clube.Id && id == 0) || (item.Clube1.Id == id))
                         {
                             @: C
                     }
@@ -83,7 +84,7 @@
                     <td>
                         @if (item.Realizada)
                         {
-                            if (item.Clube1.Id == clube.Id)
+                            if ((item.Clube1.Id == clube.Id && id == 0) || (item.Clube1.Id == id))
                             {
                             @: @item.Gol1 x @item.Gol2
                         }

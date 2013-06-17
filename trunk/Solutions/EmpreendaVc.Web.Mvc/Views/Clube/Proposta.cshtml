@@ -8,12 +8,14 @@
 <h2>
     CARGO DE TREINADOR</h2>
 
+
 @if ((bool)ViewBag.Aceita)
 {
     <p>
         O @Model.Nome ficaria muito feliz em poder contar com o seus serviços.<br /> Deseja continuar?
     </p>
-    <input type="submit" class="submit" value="Confirmar" />
+    
+    <a href="@Url.Action("PropostaAceitar", "Clube", new { id = Model.Id })" class="submit">CONFIRMAR</a>
 }
 else
 {

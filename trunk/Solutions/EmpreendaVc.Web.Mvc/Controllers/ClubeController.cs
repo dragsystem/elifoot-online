@@ -189,6 +189,28 @@
             return View(clube);
         }
 
+        [Authorize]
+        [Transaction]
+        public ActionResult PropostaAceitar(int id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+            var clube = clubeRepository.Get(id);
+
+            if ((usuario.Clube != null && usuario.Clube.Id == id) || usuario.IdUltimoClube == id || clube.Usuario != null)
+                return RedirectToAction("Index", "Conta");
+
+            clube.Usuario = usuario;
+            clube.ReputacaoAI = 30;
+            clubeRepository.SaveOrUpdate(clube);
+
+            usuario.Clube = clube;
+            usuario.DelayTroca = 5;
+            usuario.Reputacao = 30;
+            usuarioRepository.SaveOrUpdate(usuario);
+
+            return View(clube);
+        }
+
         //[Authorize]
         //public ActionResult JogadorPedido()
         //{
@@ -256,11 +278,13 @@
             if (id.HasValue)
             {
                 var lstPartidas = clubeQueryRepository.PartidasClube(id.Value).OrderBy(x => x.Dia);
+                ViewBag.ClubeId = id;
                 return View(lstPartidas);
             }
             else
             {
                 var lstPartidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id).OrderBy(x => x.Dia);
+                ViewBag.ClubeId = 0;
                 return View(lstPartidas);
             }            
         }
