@@ -333,7 +333,7 @@ namespace EmpreendaVc.Web.Mvc.Util
             return lst;
         }
 
-        public static List<SelectListItem> RetornaSituacao()
+        public static List<SelectListItem> RetornaListaSituacao()
         {
             var lst = new List<SelectListItem>();
             
@@ -342,6 +342,16 @@ namespace EmpreendaVc.Web.Mvc.Util
             lst.Add(new SelectListItem { Text = "Este jogador está disponível para venda", Value = "3" });
 
             return lst;
+        }
+
+        public static string RetornaSituacao(int sit)
+        {
+            if (sit == 1)
+                return "Este jogador é muito imporante para o clube";
+            else if (sit == 2)
+                return "Este jogador é considerado reserva no clube";
+            else
+                return "Este jogador está disponível para venda";
         }
 
         public static List<SelectListItem> RetornaListaIngresso()

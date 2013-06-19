@@ -49,13 +49,11 @@
                     {
                         <tr>
                             <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Nome.ToUpper()</a></td>
-                            <td>@item.Clube.Nome
-                            </td>
-                            <td>@Util.RetornaPosicao(item.Posicao)
-                            </td>
+                            <td>@(item.Clube != null ? item.Clube.Nome : "-")</td>
+                            <td>@Util.RetornaPosicao(item.Posicao)</td>
                             <td>@(item.NotaMedia > 0 ? item.NotaMedia.ToString("N2") : "0,00")</td>
-                            <td>@item.Jogos</td>
-                            <td>@item.Gols.Where(x => x.Clube.Id == item.Clube.Id).Count()</td>
+                            <td>@(item.Clube != null ? item.Jogos.ToString() : "-")</td>
+                            <td>@(item.Clube != null ? item.Gols.Where(x => x.Clube.Id == item.Clube.Id).Count().ToString() : "-")</td>
                         </tr>
                     }
                 }

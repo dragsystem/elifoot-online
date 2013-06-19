@@ -67,12 +67,19 @@
             </tr>
         </table>
     </div>
-    @if (Model.Clube.Id == clube.Id && !Model.Temporario)
+    @if (Model.Clube != null)
     {
         <div id="jogador-situacao">
             <p>
                 Situação do jogador no plantel:
-                @this.Select("Situacao").Options(Util.RetornaSituacao()).Selected(Model.Situacao > 0 ? Model.Situacao.ToString() : "").Styles(@width => "477px;")
+                @if (Model.Clube.Id == clube.Id && !Model.Temporario)
+                {
+                    @this.Select("Situacao").Options(Util.RetornaListaSituacao()).Selected(Model.Situacao > 0 ? Model.Situacao.ToString() : "").Styles(@width => "477px;")
+                }
+                else
+                {
+                    @: @Util.RetornaSituacao(Model.Situacao);
+                }
             </p>
         </div>
     }

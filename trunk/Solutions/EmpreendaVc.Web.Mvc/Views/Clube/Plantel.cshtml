@@ -43,9 +43,11 @@
             success: function (json) {
                 $.each(eval(json), function () {
                     if (this.JogadorId != "0") {
+                        $('#e' + this.Id).attr('class', 'posicao-preenchido');
                         $('#F' + this.JogadorId).append("<option value='" + this.Id + "' selected='true'>" + this.Posicao + "</option>");
                     }
                     else {
+                        $('#e' + this.Id).attr('class', 'posicao-vazio');
                         $('.select-escalacao').append("<option value='" + this.Id + "'>" + this.Posicao + "</option>");
                     }
                 });
@@ -72,6 +74,24 @@
 
 <h2>Plantel</h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
+
+<div id="plantel-posicao">
+    @foreach (var escalacao in Model.Escalacao)
+    {
+        var id = "e" + escalacao.Id;
+        var classe = "posicao-vazio";
+        if (escalacao.Jogador != null)
+        {
+            classe = "posicao-preenchido";
+        }
+        var style = "";
+        if (escalacao.Id == Model.Escalacao.Last().Id)
+        {
+            style = "margin-right:0px;";
+        }
+        <div id="@id" class="@classe" title="@(escalacao.Jogador != null ? escalacao.Jogador.Nome : "")" style="@style">@Util.RetornaPosicao(escalacao.Posicao)</div>
+    }    
+</div>
 
 <div id="left">
     <div id="plantel-caixa">

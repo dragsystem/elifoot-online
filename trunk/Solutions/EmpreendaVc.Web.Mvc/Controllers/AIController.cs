@@ -152,70 +152,430 @@
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
 
-            foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null).OrderByDescending(x => x.Dinheiro))
+            foreach (var clube in clubeRepository.GetAll().Take(5))//.GetAll()
             {
-                if (clube.Dinheiro > 300000)
+                var dinheiro = clube.Dinheiro - 300000;
+                var gtotal = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Count();
+                var g = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Sum(x => x.H) / gtotal;
+                var ldtotal = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Count();
+                var ld = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Sum(x => x.H) / ldtotal;
+                var ztotal = clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Count();
+                var z = clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Sum(x => x.H) / ztotal;
+                var letotal = clube.Jogadores.Where(x => x.Posicao == 4 && !x.Temporario).Count();
+                var le = clube.Jogadores.Where(x => x.Posicao == 4 && !x.Temporario).Sum(x => x.H) / letotal;
+                var vtotal = clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Count();
+                var v = clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Sum(x => x.H) / vtotal;
+                var mototal = clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Count();
+                var mo = clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Sum(x => x.H) / mototal;
+                var atotal = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Count();
+                var a = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Sum(x => x.H) / atotal;
+
+                var lstjogadores = jogadorRepository.GetAll().Where(x => !x.Temporario);                                                             
+
+                var lstcompra = new List<Jogador>();
+
+                /////////////////////////////////////////Atacante
+                /////////////////////////////////////////
+                /////////////////////////////////////////
+                var atacantes = lstjogadores.Where(x => x.Posicao == 7);
+                if (dinheiro > 4000000)
                 {
-                    var dinheiro = clube.Dinheiro - 300000;
-                    var jogadores = clube.Jogadores.Where(x => !x.Temporario);
-                    //var g = clube.Jogadores.Where(x => x.Posicao == 1).OrderBy(x => x.H);
-                    //var ld = clube.Jogadores.Where(x => x.Posicao == 2).OrderBy(x => x.H);
-                    //var z = clube.Jogadores.Where(x => x.Posicao == 3).OrderBy(x => x.H);
-                    //var le = clube.Jogadores.Where(x => x.Posicao == 4).OrderBy(x => x.H);
-                    //var v = clube.Jogadores.Where(x => x.Posicao == 5).OrderBy(x => x.H);
-                    //var mo = clube.Jogadores.Where(x => x.Posicao == 6).OrderBy(x => x.H);
-                    //var a = clube.Jogadores.Where(x => x.Posicao == 7).OrderBy(x => x.H);
+                    if (atotal < 3)
+                        atacantes = atacantes.Where(x => x.H > a).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        atacantes = atacantes.Where(x => x.H > (a + 15)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro >= 1000000)
+                {
+                    if (atotal < 3)
+                        atacantes = atacantes.Where(x => x.H > (a - 10)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        atacantes = atacantes.Where(x => x.H > (a + 20)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro < 1000000)
+                {
+                    if (atotal < 3)
+                        atacantes = atacantes.Where(x => x.H > (a - 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        atacantes = atacantes.Where(x => x.H > (a + 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
 
-                    var lstjogadores = jogadorRepository.GetAll().Where(x => x.Clube != null && !x.Temporario && (x.Clube.Divisao.Numero <= clube.Divisao.Numero ||
-                                                                        x.Clube.Divisao.Numero > clube.Divisao.Numero && x.Situacao > 1) &&
-                                                                        (x.H > ((jogadores.Where(y => y.Posicao == x.Posicao).Sum(y => y.H) / jogadores.Where(y => y.Posicao == x.Posicao).Count()) + 10) ||
-                                                                        jogadores.Where(y => y.Posicao == x.Posicao).Count() < 2)).OrderByDescending(x => x.NotaMedia).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
-
-                    foreach (var jogador in lstjogadores)
+                foreach (var jog in atacantes)
+                {
+                    decimal valor = 0;
+                    if (jog.Clube != null)
                     {
-                        if (dinheiro <= 0)
-                            break;
+                        if (jog.Situacao == 1)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 1000 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 2)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 800 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 3)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 500 + (jog.Posicao * 200000);
+                    }
+                    else
+                        valor = 0;
 
-                        decimal oferta = 0;
+                    if (dinheiro > valor)
+                    {
+                        dinheiro = dinheiro - valor;
+                        lstcompra.Add(jog);
+                        break;
+                    }
+                }
 
+                /////////////////////////////////////////Goleiro
+                /////////////////////////////////////////
+                /////////////////////////////////////////
+                var goleiro = lstjogadores.Where(x => x.Posicao == 1);
+                if (dinheiro > 4000000)
+                {
+                    if (gtotal < 2)
+                        goleiro = goleiro.Where(x => x.H > g).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        goleiro = goleiro.Where(x => x.H > (g + 15)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro >= 1000000)
+                {
+                    if (gtotal < 2)
+                        goleiro = goleiro.Where(x => x.H > (g - 10)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        goleiro = goleiro.Where(x => x.H > (g + 20)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro < 1000000)
+                {
+                    if (gtotal < 2)
+                        goleiro = goleiro.Where(x => x.H > (g - 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        goleiro = goleiro.Where(x => x.H > (g + 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+
+                foreach (var jog in goleiro)
+                {
+                    decimal valor = 0;
+                    if (jog.Clube != null)
+                    {
+                        if (jog.Situacao == 1)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 1000 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 2)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 800 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 3)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 500 + (jog.Posicao * 200000);
+                    }
+                    else
+                        valor = 0;
+
+                    if (dinheiro > valor)
+                    {
+                        dinheiro = dinheiro - valor;
+                        lstcompra.Add(jog);
+                        break;
+                    }
+                }
+
+                /////////////////////////////////////////Meia Ofensivo
+                /////////////////////////////////////////
+                /////////////////////////////////////////
+                var meias = lstjogadores.Where(x => x.Posicao == 6);
+                if (dinheiro > 4000000)
+                {
+                    if (mototal < 3)
+                        meias = meias.Where(x => x.H > mo).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        meias = meias.Where(x => x.H > (mo + 15)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro >= 1000000)
+                {
+                    if (mototal < 3)
+                        meias = meias.Where(x => x.H > (mo - 10)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        meias = meias.Where(x => x.H > (mo + 20)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro < 1000000)
+                {
+                    if (mototal < 3)
+                        meias = meias.Where(x => x.H > (mo - 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        meias = meias.Where(x => x.H > (mo + 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+
+                foreach (var jog in meias)
+                {
+                    decimal valor = 0;
+                    if (jog.Clube != null)
+                    {
+                        if (jog.Situacao == 1)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 1000 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 2)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 800 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 3)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 500 + (jog.Posicao * 200000);
+                    }
+                    else
+                        valor = 0;
+
+                    if (dinheiro > valor)
+                    {
+                        dinheiro = dinheiro - valor;
+                        lstcompra.Add(jog);
+                        break;
+                    }
+                }
+
+                /////////////////////////////////////////Volante
+                /////////////////////////////////////////
+                /////////////////////////////////////////
+                var vol = lstjogadores.Where(x => x.Posicao == 5);
+                if (dinheiro > 4000000)
+                {
+                    if (vtotal < 3)
+                        vol = vol.Where(x => x.H > v).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        vol = vol.Where(x => x.H > (v + 15)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro >= 1000000)
+                {
+                    if (vtotal < 3)
+                        vol = vol.Where(x => x.H > (v - 10)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        vol = vol.Where(x => x.H > (v + 20)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro < 1000000)
+                {
+                    if (vtotal < 3)
+                        vol = vol.Where(x => x.H > (v - 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        vol = vol.Where(x => x.H > (v + 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+
+                foreach (var jog in vol)
+                {
+                    decimal valor = 0;
+                    if (jog.Clube != null)
+                    {
+                        if (jog.Situacao == 1)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 1000 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 2)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 800 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 3)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 500 + (jog.Posicao * 200000);
+                    }
+                    else
+                        valor = 0;
+
+                    if (dinheiro > valor)
+                    {
+                        dinheiro = dinheiro - valor;
+                        lstcompra.Add(jog);
+                        break;
+                    }
+                }
+
+                /////////////////////////////////////////LateralEsquerdo
+                /////////////////////////////////////////
+                /////////////////////////////////////////
+                var lateralE = lstjogadores.Where(x => x.Posicao == 4);
+                if (dinheiro > 4000000)
+                {
+                    if (letotal < 2)
+                        lateralE = lateralE.Where(x => x.H > le).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        lateralE = lateralE.Where(x => x.H > (le + 15)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro >= 1000000)
+                {
+                    if (letotal < 2)
+                        lateralE = lateralE.Where(x => x.H > (le - 10)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        lateralE = lateralE.Where(x => x.H > (le + 20)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro < 1000000)
+                {
+                    if (letotal < 2)
+                        lateralE = lateralE.Where(x => x.H > (le - 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        lateralE = lateralE.Where(x => x.H > (le + 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+
+                foreach (var jog in lateralE)
+                {
+                    decimal valor = 0;
+                    if (jog.Clube != null)
+                    {
+                        if (jog.Situacao == 1)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 1000 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 2)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 800 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 3)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 500 + (jog.Posicao * 200000);
+                    }
+                    else
+                        valor = 0;
+
+                    if (dinheiro > valor)
+                    {
+                        dinheiro = dinheiro - valor;
+                        lstcompra.Add(jog);
+                        break;
+                    }
+                }
+
+                /////////////////////////////////////////Zagueiro
+                /////////////////////////////////////////
+                /////////////////////////////////////////
+                var zag = lstjogadores.Where(x => x.Posicao == 3);
+                if (dinheiro > 4000000)
+                {
+                    if (ztotal < 3)
+                        zag = zag.Where(x => x.H > z).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        zag = zag.Where(x => x.H > (z + 15)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro >= 1000000)
+                {
+                    if (ztotal < 3)
+                        zag = zag.Where(x => x.H > (z - 10)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        zag = zag.Where(x => x.H > (z + 20)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro < 1000000)
+                {
+                    if (ztotal < 3)
+                        zag = zag.Where(x => x.H > (z - 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        zag = zag.Where(x => x.H > (z + 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+
+                foreach (var jog in zag)
+                {
+                    decimal valor = 0;
+                    if (jog.Clube != null)
+                    {
+                        if (jog.Situacao == 1)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 1000 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 2)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 800 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 3)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 500 + (jog.Posicao * 200000);
+                    }
+                    else
+                        valor = 0;
+
+                    if (dinheiro > valor)
+                    {
+                        dinheiro = dinheiro - valor;
+                        lstcompra.Add(jog);
+                        break;
+                    }
+                }
+
+                /////////////////////////////////////////LateralDireito
+                /////////////////////////////////////////
+                /////////////////////////////////////////
+                var lateralD = lstjogadores.Where(x => x.Posicao == 2);
+                if (dinheiro > 4000000)
+                {
+                    if (ldtotal < 2)
+                        lateralD = lateralD.Where(x => x.H > ld).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        lateralD = lateralD.Where(x => x.H > (ld + 15)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro >= 1000000)
+                {
+                    if (ldtotal < 2)
+                        lateralD = lateralD.Where(x => x.H > (ld - 10)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        lateralD = lateralD.Where(x => x.H > (ld + 20)).OrderByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+                else if (dinheiro < 1000000)
+                {
+                    if (ldtotal < 2)
+                        lateralD = lateralD.Where(x => x.H > (ld - 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                    else
+                        lateralD = lateralD.Where(x => x.H > (ld + 30)).OrderBy(x => x.Contrato).ThenByDescending(x => x.H).ThenByDescending(x => x.Situacao);
+                }
+
+                foreach (var jog in lateralD)
+                {
+                    decimal valor = 0;
+                    if (jog.Clube != null)
+                    {
+                        if (jog.Situacao == 1)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 1000 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 2)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 800 + (jog.Posicao * 200000);
+                        else if (jog.Situacao == 3)
+                            valor = (jog.H * (jog.H - 20 > 1 ? jog.H - 20 : 1)) * 500 + (jog.Posicao * 200000);
+                    }
+                    else
+                        valor = 0;
+
+                    if (dinheiro > valor)
+                    {
+                        dinheiro = dinheiro - valor;
+                        lstcompra.Add(jog);
+                        break;
+                    }
+                }
+
+                dinheiro = clube.Dinheiro - 300000;
+
+                foreach (var jogador in lstcompra)
+                {
+                    decimal oferta = 0;
+
+                    if (jogador.Clube != null)
+                    {
                         if (jogador.Situacao == 1)
                             oferta = (jogador.H * (jogador.H - 20 > 1 ? jogador.H - 20 : 1)) * 1000 + (jogador.Posicao * 200000);
                         else if (jogador.Situacao == 2)
                             oferta = (jogador.H * (jogador.H - 20 > 1 ? jogador.H - 20 : 1)) * 800 + (jogador.Posicao * 200000);
                         else if (jogador.Situacao == 3)
                             oferta = (jogador.H * (jogador.H - 20 > 1 ? jogador.H - 20 : 1)) * 500 + (jogador.Posicao * 200000);
+                    }
+                    else
+                    {
+                        oferta = 0;
+                    }
 
-                        if (dinheiro > oferta)
-                        {
-                            var jogadoroferta = new JogadorOferta();
-                            jogadoroferta.Clube = clube;
-                            jogadoroferta.Dia = controle.Dia;
-                            jogadoroferta.Jogador = jogador;
+                    var naofez = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id && x.Clube.Id == clube.Id).Count() == 0;
+
+                    if (dinheiro >= oferta && naofez)
+                    {
+                        dinheiro = (dinheiro - oferta) > 0 ? (dinheiro - oferta) : 0;
+
+                        var jogadoroferta = new JogadorOferta();
+                        jogadoroferta.Clube = clube;
+                        jogadoroferta.Dia = controle.Dia;
+                        jogadoroferta.Jogador = jogador;
+                        if (jogador.Clube != null)
                             jogadoroferta.Tipo = 1;
-                            jogadoroferta.Valor = oferta;
-                            jogadoroferta.Salario = (jogador.Salario / 100) * 120;
-                            
-                            var pontos = Convert.ToInt32((jogadoroferta.Salario - jogador.Salario) / 10000);
+                        else
+                            jogadoroferta.Tipo = 2;
+                        jogadoroferta.Valor = oferta;
+                        jogadoroferta.Salario = jogador.Salario > 0 ? (jogador.Salario / 100) * 120 : ((jogador.H / 4) * 3) * 1000;
+
+                        var pontos = jogador.Salario > 0 ? Convert.ToInt32((jogadoroferta.Salario - jogador.Salario) / 10000) : 1;
+
+                        if (jogador.Clube != null)
                             pontos = pontos + (jogador.Clube.Divisao.Numero - jogadoroferta.Clube.Divisao.Numero);
+                        else
+                            pontos = pontos + (jogadoroferta.Clube.Socios / 1000);
 
-                            jogadoroferta.Pontos = pontos;
-                            jogadoroferta.Contrato = 3;
-                            jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+                        jogadoroferta.Pontos = pontos;
+                        jogadoroferta.Contrato = 3;
+                        jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
 
-                            if (jogador.Clube.Usuario != null)
-                            {
-                                var noticia = new Noticia();
-                                noticia.Dia = controle.Dia;
-                                noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a>. <br /><br />Entre em <a href='" + Url.Action("MeusJogadores", "Jogador") + "'>PROPOSTAS</a> para responder.";
-                                noticia.Usuario = jogador.Clube.Usuario;
+                        if (jogador.Clube != null && jogador.Clube.Usuario != null)
+                        {
+                            var noticia = new Noticia();
+                            noticia.Dia = controle.Dia;
+                            noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a>. <br /><br />Entre em <a href='" + Url.Action("MeusJogadores", "Jogador") + "'>PROPOSTAS</a> para responder.";
+                            noticia.Usuario = jogador.Clube.Usuario;
 
-                                noticiaRepository.SaveOrUpdate(noticia);
-                            }
-
-                            dinheiro = dinheiro - oferta;
+                            noticiaRepository.SaveOrUpdate(noticia);
                         }
                     }
-                }                      
+                }
             }
 
             return RedirectToAction("Index", "AI");
@@ -227,14 +587,21 @@
             foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null))
             {
                 var controle = controleRepository.GetAll().FirstOrDefault();
-                
-                var g = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Count();
-                var ld = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Count();
-                var z = clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Count();
-                var le = clube.Jogadores.Where(x => x.Posicao == 4 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 4 && !x.Temporario).Count();
-                var v = clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Count();
-                var mo = clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Count();
-                var a = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Sum(x => x.H) / clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Count();
+
+                var gtotal = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Count();
+                var g = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Sum(x => x.H) / gtotal;     
+                var ldtotal = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Count();
+                var ld = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Sum(x => x.H) / ldtotal;
+                var ztotal = clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Count();
+                var z = clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Sum(x => x.H) / ztotal;
+                var letotal = clube.Jogadores.Where(x => x.Posicao == 4 && !x.Temporario).Count();
+                var le = clube.Jogadores.Where(x => x.Posicao == 4 && !x.Temporario).Sum(x => x.H) / letotal;
+                var vtotal = clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Count();
+                var v = clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Sum(x => x.H) / vtotal;
+                var mototal =clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Count();
+                var mo = clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Sum(x => x.H) / mototal;
+                var atotal = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Count();
+                var a = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Sum(x => x.H) / atotal;
 
                 foreach (var jogador in clube.Jogadores)
                 {
@@ -247,7 +614,7 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            if (clube.Jogadores.Count() > 14)
+                            if (clube.Jogadores.Count() > 14 && gtotal > 2)
                                 dispensa = true;
                         }
                     }
@@ -259,7 +626,7 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            if (clube.Jogadores.Count() > 14)
+                            if (clube.Jogadores.Count() > 14 && ldtotal > 2)
                                 dispensa = true;
                         }
                     }
@@ -271,7 +638,7 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            if (clube.Jogadores.Count() > 14)
+                            if (clube.Jogadores.Count() > 14 && ztotal > 3)
                                 dispensa = true;
                         }
                     }
@@ -283,7 +650,7 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            if (clube.Jogadores.Count() > 14)
+                            if (clube.Jogadores.Count() > 14 && letotal > 2)
                                 dispensa = true;
                         }
                     }
@@ -295,7 +662,7 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            if (clube.Jogadores.Count() > 14)
+                            if (clube.Jogadores.Count() > 14 && vtotal > 3)
                                 dispensa = true;
                         }
                     }
@@ -307,7 +674,7 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            if (clube.Jogadores.Count() > 14)
+                            if (clube.Jogadores.Count() > 14 && mototal > 3)
                                 dispensa = true;
                         }
                     }
@@ -319,7 +686,7 @@
                             jogador.Situacao = 3;
                         else
                         {
-                            if (clube.Jogadores.Count() > 14)
+                            if (clube.Jogadores.Count() > 14 && atotal > 3)
                                 dispensa = true;
                         }
                     }
