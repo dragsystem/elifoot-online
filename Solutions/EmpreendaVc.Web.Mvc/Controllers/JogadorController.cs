@@ -311,7 +311,7 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Clube.Id == usuario.Clube.Id);
+            var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Clube.Id == usuario.Clube.Id && x.Estagio > 0 && x.Estagio < 3);
 
             return View(lstjogadoroferta);
         }
@@ -324,7 +324,7 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
+            var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id && x.Estagio > 0 && x.Estagio < 3);
 
             return View(lstjogadoroferta);
         }
@@ -385,7 +385,8 @@
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
 
-                jogadorofertaRepository.Delete(jogadoroferta);
+                jogadoroferta.Estagio = 0;
+                jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
             }
 
             TempData["MsgOk"] = "Proposta respondida com sucesso!";

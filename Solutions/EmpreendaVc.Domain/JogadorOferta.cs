@@ -23,6 +23,9 @@ namespace EmpreendaVc.Domain
         public virtual int Estagio { get; set; }
         //COMPRA: Estagio: 1 - AGUARDANDO CLUBE RESPONDER / 2 - Aguardando resposta do jogador
         //2 - Aguardando resposta do jogador
+        //3 - FINALIZADA
+
+        // 0 - recusada
 
         public virtual decimal Valor { get; set; }
 

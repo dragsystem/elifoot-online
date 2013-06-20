@@ -48,6 +48,24 @@ namespace EmpreendaVc.Domain
         //2 - Reserva
         //3 - Disponível para Transferência
 
+        public virtual decimal Valor
+        {
+            get
+            {
+                if (Clube != null)
+                {
+                    if (Situacao == 1)
+                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 1500 + (Posicao * 200000);
+                    else if (Situacao == 2)
+                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 1300 + (Posicao * 200000);
+                    else
+                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 1000 + (Posicao * 200000);
+                }
+                else
+                    return 0;
+            }
+        }
+
         public virtual int Lesionado { get; set; }
 
         public virtual IList<Gol> Gols { get; set; }

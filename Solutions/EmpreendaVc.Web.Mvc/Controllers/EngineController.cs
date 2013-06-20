@@ -171,7 +171,7 @@
                     else if (pos == 3 || pos == 5 || pos == 6 || pos == 7)
                         min = 2;
 
-                    if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() < min)
+                    if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario && x.Lesionado == 0).Count() < min)
                     {
                         var jogador = new Jogador();
                         jogador.Clube = clube;
@@ -333,7 +333,7 @@
         public ActionResult AtualizarTransferencias()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
-            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Dia < controle.Dia && x.Estagio == 2).OrderByDescending(x => x.Pontos))
+            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Dia < controle.Dia && x.Estagio == 2).OrderByDescending(x => x.Pontos).ThenByDescending(x => x.Salario))
             {
                 var jogador = jogadoroferta.Jogador;
                 var clubecomprador = clubeRepository.Get(jogadoroferta.Clube.Id);
@@ -389,7 +389,8 @@
                     }
 
                     vendido = clubecomprador.Nome;
-                    jogadorofertaRepository.Delete(jogadoroferta);
+                    jogadoroferta.Estagio = 3;
+                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
                 }
                 else if (jogadoroferta.Pontos < 1)
                 {
@@ -608,7 +609,7 @@
 
                 var hmediotime = clubejogadores.Sum(x => x.H) / clubejogadores.Count();
 
-                if (jogador.Lesionado == 0)
+                if (jogador.Lesionado == 0 && jogador.Clube != null)
                 {
                     var probjogarbem = 50 + (jogador.H - hmediotime);
                     probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
@@ -672,7 +673,7 @@
                     if (escalacao == null)
                         jogador.NotaUlt = 0;
                 }
-                else
+                else if (jogador.Lesionado > 0)
                 {
                     jogador.Lesionado = jogador.Lesionado - 1;
                     jogador.TreinoUlt = 0;
@@ -860,6 +861,17 @@
                 jogadorRepository.SaveOrUpdate(jog);
             }
 
+            return RedirectToAction("Index", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult ZerarTransferencias()
+        {
+            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Estagio == 0 || x.Estagio == 3))
+            {
+                jogadorofertaRepository.Delete(jogadoroferta);
+            }
+            
             return RedirectToAction("Index", "Engine");
         }
 
