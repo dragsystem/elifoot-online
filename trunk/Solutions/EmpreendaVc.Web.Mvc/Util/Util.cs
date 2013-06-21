@@ -337,7 +337,7 @@ namespace EmpreendaVc.Web.Mvc.Util
         {
             var lst = new List<SelectListItem>();
             
-            lst.Add(new SelectListItem { Text = "Este jogador é muito imporante para o clube", Value = "1" });
+            lst.Add(new SelectListItem { Text = "Este jogador é muito importante para o clube", Value = "1" });
             lst.Add(new SelectListItem { Text = "Este jogador é considerado reserva no clube", Value = "2" });
             lst.Add(new SelectListItem { Text = "Este jogador está disponível para venda", Value = "3" });
 

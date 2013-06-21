@@ -15,5 +15,6 @@
     <p>
     Tem certeza que deseja encerrar o contrato de @Model.Nome?
     </p>
+    <br />
     <a class="submit" href="@Url.Action("StaffDispensarConfirma", new { id = Model.Id })">CONFIRMAR</a>
     <a class="voltar-link" href="@Url.Action("Index", "Staff", new { id = Model.Id })">VOLTAR</a>

@@ -127,7 +127,7 @@
 
             var divisao = divisaoRepository.Get(iddivisao);
 
-            ViewBag.lstArtilheiros = artilheiroRepository.GetAll().Where(x => x.Clube.Divisao.Id == divisao.Id).OrderByDescending(x => x.Divisao).Take(10).ToList();
+            ViewBag.lstArtilheiros = artilheiroRepository.GetAll().Where(x => x.Clube != null && x.Clube.Divisao.Id == divisao.Id).OrderByDescending(x => x.Divisao).Take(10).ToList();
 
             ViewBag.lstDivisao = divisaoRepository.GetAll();
 

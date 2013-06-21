@@ -1,30 +1,47 @@
 REVER CONTA PUBLICO
 RESULTADOS TAÇA BOTAR PARA APARECER SOMENTE A ULTIMA MÃO
 BOTAR O P DOS PENALTIS NOS RESULTADOS E CLASS DA TAÇA
-QUANDO DEMITIR TIRAR DO CLUBE TB.
-ATUALIZAR AS TRANSFERENCIAS E ZERAR ANTES DE GERAR VENDER JOGADOR AI
+DISPENSAR STYLE
+RESULTADOS VAZIO STYLE
+ZERAR NOTICIAS < 2 ANOS
+LESIONAR DEPOIS DA PARTIDA
+LIMITAR OFERTA AO DINHEIRO MÁXIMO
 
+SCRIPTS PARA ZERAR BANCO
 
-zerar TRANSFERENCIA DEPOIS DE MUDAR O DIA
+  
+UPDATE [dbElifoot].[elifoot].[Clubes]
+  SET ReputacaoAI = 30,
+  Dinheiro = (6000000 / DivisaoId),
+  Estadio = ((5 - DivisaoId) * 20000),
+  Formacao = '4222',
+  Taca = 0,
+  Ingresso = 20;
 
-proposta para os com DELAY
+UPDATE [dbElifoot].[elifoot].[Jogadors]
+  SET Contrato = 2,
+  Jogos = 0,
+  NotaUlt = 0,
+  NotaTotal = 0,
+  Treinos = 0,
+  TreinoUlt = 0,
+  TreinoTotal = 0,
+  Temporario = 0,
+  Situacao = 1,
+  Lesionado = 0
 
-
-ORDEM:
-zERAR DELAY USUARIO
-ATUALIZAR TRANSFERENCIAS
--AI-VENDERJOGADOR
--AI-VENDERJOGADORDINHEIRO
-ALTERARFINANCAS
-VARIARJOGADORH
-ATUALIZARDATADIA
--AI-COMPRAR JOGADOR
-ZERAR TRANSFERENCIAS
-
-ESCALATIMES
-RODAPARTIDA
-ATUALIZATABELA
-
-
-style propostas (XX) zuandop
-duplicando propostas
+UPDATE Jogadors
+  SET Salario = (40000 + (Posicao * 3000))
+  WHERE H > 69
+  
+  UPDATE Jogadors
+  SET Salario = (20000 + (Posicao * 3000))
+  WHERE H > 39 AND H < 70
+  
+  UPDATE Jogadors
+  SET Salario = (10000 + (Posicao * 3000))
+  WHERE H > 19 AND H < 40
+  
+  UPDATE Jogadors
+  SET Salario = (5000 + (Posicao * 3000))
+  WHERE H > 0 AND H < 20

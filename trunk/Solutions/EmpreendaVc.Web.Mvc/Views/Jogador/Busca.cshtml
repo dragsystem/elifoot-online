@@ -23,7 +23,7 @@
             Nome: @Html.TextBoxFor(x => x.Nome, new { size = 50 })
             Posição: @this.Select("Posicao").Options(Util.RetornaListaPosicao()).FirstOption("TODAS").Selected(Model.Posicao != 0 ? Model.Posicao.ToString() : "")
             Contrato: @this.Select("Contrato").Options(Util.RetornaListaContrato()).FirstOption("TODOS").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br />
-            Situação: @this.Select("Situacao").Options(Util.RetornaSituacao()).FirstOption("TODAS").Selected(Model.Situacao != 0 ? Model.Situacao.ToString() : "") 
+            Situação: @this.Select("Situacao").Options(Util.RetornaListaSituacao()).FirstOption("TODAS").Selected(Model.Situacao != 0 ? Model.Situacao.ToString() : "") 
             Ordenar por: @this.Select("Ordenacao").Options(Util.RetornaListaOrdenacao()).Selected(Model.Ordenacao != 0 ? Model.Ordenacao.ToString() : "1")<br /><br />
             <input type="submit" class="submit" value="Buscar" />
         </div>
@@ -71,14 +71,17 @@
                 </tr>
             }
         </table>
-        @if (page > 1)
+        @if (olheiro)
         {
-            <a href="@Url.Action("Busca", "Jogador", new { p = (page - 1) })">Página anterior</a> 
-            @:-
-        }
-        @if (lst.Count() == 40)
-        {
-            <a href="@Url.Action("Busca", "Jogador", new { p = (page + 1) })">Próxima página</a>
+            if (page > 1)
+            {
+                <a href="@Url.Action("Busca", "Jogador", new { p = (page - 1) })">Página anterior</a> 
+                @:-
+            }
+            if (lst.Count() == 40)
+            {
+                <a href="@Url.Action("Busca", "Jogador", new { p = (page + 1) })">Próxima página</a>
+            }
         }
     </div>
 </div>

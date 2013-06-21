@@ -8,40 +8,41 @@
 </head>
 <body>
     <div>
-        @if (!string.IsNullOrEmpty(Model))
-        {
-            @Model
-        }
+        <a href="@Url.Action("MudarDia", "Engine")">MudarDia</a><br />
+        <a href="@Url.Action("MudarDia2", "Engine")">MudarDia2</a><br />
     </div>
     <div>
         <h3>Mudar Dia</h3>
         <a href="@Url.Action("AtualizarDataDia", "Engine")">OK - AtualizarDataDia</a><br />
-        <a href="@Url.Action("ZerarDelayUsuario", "Engine")">ZerarDelayUsuario</a><br />
-        <a href="@Url.Action("CriarJogadoresTemporarios", "Engine")">CriarJogadoresTemporarios</a><br />
-        <a href="@Url.Action("UpdateFinancas", "Engine")">UpdateFinancas</a><br />
+        <a href="@Url.Action("ZerarDelayUsuario", "Engine")">OK - ZerarDelayUsuario</a><br />
+        <a href="@Url.Action("CriarJogadoresTemporarios", "Engine")">OK - CriarJogadoresTemporarios</a><br />
+        <a href="@Url.Action("UpdateFinancas", "Engine")">OK - UpdateFinancas</a><br />
         <a href="@Url.Action("VerificaTecnicos", "Engine")">OK - VerificaTecnicos</a><br />
         <a href="@Url.Action("AtualizarTransferencias", "Engine")">OK - AtualizarTransferencias</a><br />
-        <a href="@Url.Action("VariarJogador", "Engine")">VariarJogador</a><br />
-        <a href="@Url.Action("LesionarJogador", "Engine")">LesionarJogador</a><br />
+        <a href="@Url.Action("VariarJogador", "Engine")">OK - VariarJogador</a><br />
+        <a href="@Url.Action("LesionarJogador", "Engine")">OK - LesionarJogador</a><br />
+        <a href="@Url.Action("EscalaTimes", "Engine")">OK - EscalaTimes</a><br />
+        <a href="@Url.Action("RodaPartida", "Engine")">OK - RodaPartida</a><br />
+        <a href="@Url.Action("AtualizaTabela", "Engine")">OK - AtualizaTabela</a><br />
     </div>
     <div>
         <h3>Mudar Ano</h3>
         <a href="@Url.Action("ClassificadosTaca", "Engine")">OK - ClassificadosTaca</a><br />
         <a href="@Url.Action("GerarHistoricoTaca", "Engine")">OK - GerarHistoricoTaca</a><br />
         <a href="@Url.Action("AlterarDivisaoTimes", "Engine")">OK - AlterarDivisaoTimes</a><br />
-        <a href="@Url.Action("ZerarOfertaTecnico", "Engine")">ZerarOfertaTecnico</a><br />
+        <a href="@Url.Action("ZerarTransferencias", "Engine")">OK - ZerarTransferencias</a><br />
+        <a href="@Url.Action("ZerarAnoStaff", "Engine")">OK - ZerarAnoStaff</a><br />
         <a href="@Url.Action("ZerarContratos", "Engine")">OK - ZerarContratos</a><br />
         <a href="@Url.Action("ZerarCampeonato", "Engine")">OK - ZerarCampeonato</a><br />
         <a href="@Url.Action("GerarCampeonato", "Engine")">OK - GerarCampeonato</a><br />        
         <a href="@Url.Action("GerarTacaAno", "Engine")">OK - GerarTacaAno</a><br />
         <a href="@Url.Action("AtualizarDataAno", "Engine")">OK - AtualizarDataAno</a><br />
+        <a href="@Url.Action("AtualizarDataAno", "Engine")">OK - IniciarAno</a><br />
     </div>
     <div>
         <h3>Outros</h3>
-        <a href="@Url.Action("RodaPartida", "Engine")">OK - RodaPartida</a><br />
-        <a href="@Url.Action("AtualizaTabela", "Engine")">OK - AtualizaTabela</a><br />
-        <a href="@Url.Action("EscalaTimes", "Engine")">OK - EscalaTimes</a><br />
         <a href="@Url.Action("GerarTaca", "Engine")">OK - GerarTaca</a><br />
+        <a href="@Url.Action("GerarPrimeiroEscalacao", "Engine")">OK - GerarPrimeiroEscalacao</a><br />
     </div>
 </body>
 </html>
