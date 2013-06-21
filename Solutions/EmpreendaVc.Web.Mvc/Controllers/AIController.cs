@@ -197,7 +197,7 @@
                         {
                             var lsta = lstjogadores.Where(x => x.Posicao == pos && x.H <= posmedia);
 
-                            if (lsta.Where(x => x.Clube == null && (x.H > (posmedia - 30) && dinheiro > 1000000)  ).Count() > 0)
+                            if (lsta.Where(x => x.Clube == null && (x.H > (posmedia >= 70 ? posmedia - 20 : posmedia - 30) && dinheiro > 1000000)  ).Count() > 0)
                             {
                                 var jogador = lsta.Where(x => x.Clube == null).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia).FirstOrDefault();
                                 dinheiro = dinheiro - jogador.Valor;
@@ -205,7 +205,7 @@
                             }
                             else
                             {
-                                foreach (var jogador in lsta.OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
+                                foreach (var jogador in lsta.Where(x => x.H > (posmedia >= 70 ? posmedia - 20 : posmedia - 30)).OrderBy(x => x.Valor).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
                                 {
                                     if (lstjogadoroferta.Where(x => x.Jogador.Id == jogador.Id && x.Estagio == 3).Count() == 0)
                                     {
@@ -278,7 +278,7 @@
 
                         if (lsta.Where(x => x.Clube == null).Count() > 0)
                         {
-                            var jogador = lsta.Where(x => x.Clube == null).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia).FirstOrDefault();
+                            var jogador = lsta.Where(x => x.Clube == null).OrderByDescending(x => x.Valor).ThenByDescending(x => x.NotaMedia).FirstOrDefault();
                             dinheiro = dinheiro - jogador.Valor;
                             lstcompra.Add(jogador);                        
                         }
@@ -323,6 +323,7 @@
                     {
                         decimal valor = 0;
                         var ofertas = lstjogadoroferta.Where(x => x.Clube.Id == clube.Id && x.Jogador.Id == jogador.Id).Count();
+                        var salarioplus = 0;
 
                         if (jogador.Clube != null)
                             valor = jogador.Valor;
@@ -330,7 +331,10 @@
                             valor = 0;
 
                         if (ofertas > 0 && valor > 0)
+                        {
                             valor = valor + (valor / 2);
+                            salarioplus = 15000;
+                        }
 
                         var naofez = lstjogadoroferta.Where(x => x.Clube.Id == clube.Id && x.Jogador.Id == jogador.Id && x.Estagio > 0 && x.Estagio < 3).Count() == 0;
 
@@ -353,6 +357,9 @@
                             }
                             jogadoroferta.Valor = valor;
                             jogadoroferta.Salario = jogador.Salario > 0 ? (jogador.Salario / 100) * (rnd.Next(12, 16) * 10) : ((jogador.H / 4) * 3) * (rnd.Next(9, 13) * 100);
+
+                            if (salarioplus > 0)
+                                jogadoroferta.Salario = jogadoroferta.Salario + salarioplus;
 
                             var pontos = jogador.Salario > 0 ? Convert.ToInt32((jogadoroferta.Salario - jogador.Salario) / 10000) : 1;
 
@@ -403,129 +410,162 @@
                 var atotal = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Count();
                 var a = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Sum(x => x.H) / atotal;
 
-                foreach (var jogador in clube.Jogadores)
+                var lstdispensa = new List<Jogador>();
+                var i = 1;
+
+                var lstjogadores = jogadorRepository.GetAll().Where(x => x.Clube != null && x.Clube.Id == clube.Id && !x.Temporario);
+                //goleiro
+                foreach (var jogador in lstjogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
                 {
-                    bool dispensa = false;
-                    if (jogador.Posicao == 1)
+                    if (i < 2)
+                        jogador.Situacao = 1;
+                    else if (i < 3)
+                        jogador.Situacao = 2;
+                    else if (i > 2)
+                        jogador.Situacao = 3;
+
+                    if ((i > 2 && jogador.NotaMedia < 6.0 && jogador.H <= (g - 20)) || (i > 3 && jogador.H <= (g - 10)))
+                        lstdispensa.Add(jogador);
+
+                    i++;
+                }
+
+                //lateral-direito
+                i = 1;
+                foreach (var jogador in lstjogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
+                {
+                    if (i < 2)
+                        jogador.Situacao = 1;
+                    else if (i < 3)
+                        jogador.Situacao = 2;
+                    else if (i > 2)
+                        jogador.Situacao = 3;
+
+                    if ((i > 2 && jogador.NotaMedia < 6.0 && jogador.H <= (ld - 20)) || (i > 3 && jogador.H <= (ld - 10)))
+                        lstdispensa.Add(jogador);
+
+                    i++;
+                }
+
+                //zagueiro
+                i = 1;
+                foreach (var jogador in lstjogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
+                {
+                    if (i < 3)
+                        jogador.Situacao = 1;
+                    else if (i < 4)
+                        jogador.Situacao = 2;
+                    else if (i > 3)
+                        jogador.Situacao = 3;
+
+                    if ((i > 3 && jogador.NotaMedia < 6.0 && jogador.H <= (z - 20)) || (i > 4 && jogador.H <= (z - 10)))
+                        lstdispensa.Add(jogador);
+
+                    i++;
+                }
+
+                //lateral-esquerdo
+                i = 1;
+                foreach (var jogador in lstjogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
+                {
+                    if (i < 2)
+                        jogador.Situacao = 1;
+                    else if (i < 3)
+                        jogador.Situacao = 2;
+                    else if (i > 2)
+                        jogador.Situacao = 3;
+
+                    if ((i > 2 && jogador.NotaMedia < 6.0 && jogador.H <= (le - 20)) || (i > 3 && jogador.H <= (le - 10)))
+                        lstdispensa.Add(jogador);
+
+                    i++;
+                }
+
+                //volante
+                i = 1;
+                foreach (var jogador in lstjogadores.Where(x => x.Posicao == 5).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
+                {
+                    if (i < 3)
+                        jogador.Situacao = 1;
+                    else if (i < 4)
+                        jogador.Situacao = 2;
+                    else if (i > 3)
+                        jogador.Situacao = 3;
+
+                    if ((i > 3 && jogador.NotaMedia < 6.0 && jogador.H <= (v - 20)) || (i > 4 && jogador.H <= (v - 10)))
+                        lstdispensa.Add(jogador);
+
+                    i++;
+                }
+
+                //meia
+                i = 1;
+                foreach (var jogador in lstjogadores.Where(x => x.Posicao == 6).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
+                {
+                    if (i < 3)
+                        jogador.Situacao = 1;
+                    else if (i < 4)
+                        jogador.Situacao = 2;
+                    else if (i > 3)
+                        jogador.Situacao = 3;
+
+                    if ((i > 3 && jogador.NotaMedia < 6.0 && jogador.H <= (mo - 20)) || (i > 4 && jogador.H <= (mo - 10)))
+                        lstdispensa.Add(jogador);
+
+                    i++;
+                }
+
+                //atacante
+                i = 1;
+                foreach (var jogador in lstjogadores.Where(x => x.Posicao == 7).OrderByDescending(x => x.H).ThenByDescending(x => x.NotaMedia))
+                {
+                    if (i < 3)
+                        jogador.Situacao = 1;
+                    else if (i < 4)
+                        jogador.Situacao = 2;
+                    else if (i > 3)
+                        jogador.Situacao = 3;
+
+                    if ((i > 3 && jogador.NotaMedia < 6.0 && jogador.H <= (a - 20)) || (i > 4 && jogador.H <= (a - 10)))
+                        lstdispensa.Add(jogador);
+
+                    i++;
+                }
+
+                foreach (var jogador in lstdispensa)
+                {
+                    foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id))
                     {
-                        if (jogador.H > g)
-                            jogador.Situacao = 1;
-                        else if (jogador.H > (g - 10))
-                            jogador.Situacao = 3;
-                        else
+                        if (jogadoroferta.Clube.Usuario != null)
                         {
-                            if (clube.Jogadores.Count() > 14 && gtotal > 2)
-                                dispensa = true;
+                            var noticia = new Noticia();
+                            noticia.Dia = controle.Dia;
+                            noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois o mesmo foi dispensado pelo " + clube.Nome + ".";
+                            noticia.Usuario = jogadoroferta.Clube.Usuario;
                         }
-                    }
-                    if (jogador.Posicao == 2)
-                    {
-                        if (jogador.H > ld)
-                            jogador.Situacao = 1;
-                        else if (jogador.H > (ld - 10))
-                            jogador.Situacao = 3;
-                        else
-                        {
-                            if (clube.Jogadores.Count() > 14 && ldtotal > 2)
-                                dispensa = true;
-                        }
-                    }
-                    if (jogador.Posicao == 3)
-                    {
-                        if (jogador.H > z)
-                            jogador.Situacao = 1;
-                        else if (jogador.H > (z - 10))
-                            jogador.Situacao = 3;
-                        else
-                        {
-                            if (clube.Jogadores.Count() > 14 && ztotal > 3)
-                                dispensa = true;
-                        }
-                    }
-                    if (jogador.Posicao == 4)
-                    {
-                        if (jogador.H > le)
-                            jogador.Situacao = 1;
-                        else if (jogador.H > (le - 10))
-                            jogador.Situacao = 3;
-                        else
-                        {
-                            if (clube.Jogadores.Count() > 14 && letotal > 2)
-                                dispensa = true;
-                        }
-                    }
-                    if (jogador.Posicao == 5)
-                    {
-                        if (jogador.H > v)
-                            jogador.Situacao = 1;
-                        else if (jogador.H > (v - 10))
-                            jogador.Situacao = 3;
-                        else
-                        {
-                            if (clube.Jogadores.Count() > 14 && vtotal > 3)
-                                dispensa = true;
-                        }
-                    }
-                    if (jogador.Posicao == 6)
-                    {
-                        if (jogador.H > mo)
-                            jogador.Situacao = 1;
-                        else if (jogador.H > (mo - 10))
-                            jogador.Situacao = 3;
-                        else
-                        {
-                            if (clube.Jogadores.Count() > 14 && mototal > 3)
-                                dispensa = true;
-                        }
-                    }
-                    if (jogador.Posicao == 7)
-                    {
-                        if (jogador.H > a)
-                            jogador.Situacao = 1;
-                        else if (jogador.H > (a - 10))
-                            jogador.Situacao = 3;
-                        else
-                        {
-                            if (clube.Jogadores.Count() > 14 && atotal > 3)
-                                dispensa = true;
-                        }
+
+                        jogadorofertaRepository.Delete(jogadoroferta);
                     }
 
-                    if (dispensa)
-                    {
-                        foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id))
-                        {
-                            if (jogadoroferta.Clube.Usuario != null)
-                            {
-                                var noticia = new Noticia();
-                                noticia.Dia = controle.Dia;
-                                noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois o mesmo foi dispensado pelo " + clube.Nome + ".";
-                                noticia.Usuario = jogadoroferta.Clube.Usuario;
-                            }
+                    var historico = new JogadorHistorico();
+                    historico.Ano = controle.Ano;
+                    historico.Clube = clube;
+                    historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clube.Id).Count();
+                    historico.Jogador = jogador;
+                    historico.Jogos = jogador.Jogos;
+                    historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
+                    historico.Valor = 0;
+                    jogadorhistoricoRepository.SaveOrUpdate(historico);
 
-                            jogadorofertaRepository.Delete(jogadoroferta);
-                        }
-
-                        var historico = new JogadorHistorico();
-                        historico.Ano = controle.Ano;
-                        historico.Clube = clube;
-                        historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clube.Id).Count();
-                        historico.Jogador = jogador;
-                        historico.Jogos = jogador.Jogos;
-                        historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
-                        historico.Valor = 0;
-                        jogadorhistoricoRepository.SaveOrUpdate(historico);
-
-                        jogador.Clube = null;
-                        jogador.Contrato = 0;
-                        jogador.Salario = 0;
-                        jogador.Jogos = 0;
-                        jogador.NotaTotal = 0;
-                        jogador.NotaUlt = 0;
-                        jogador.Treinos = 0;
-                        jogador.TreinoTotal = 0;
-                    }
-
+                    jogador.Clube = null;
+                    jogador.Contrato = 0;
+                    jogador.Salario = 0;
+                    jogador.Jogos = 0;
+                    jogador.NotaTotal = 0;
+                    jogador.NotaUlt = 0;
+                    jogador.Treinos = 0;
+                    jogador.TreinoTotal = 0;
+                    jogador.Situacao = 0;
                     jogadorRepository.SaveOrUpdate(jogador);
                 }
             }
@@ -536,18 +576,34 @@
         public ActionResult ResponderPropostas()
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
-            var lstjogadoroferta = jogadorofertaRepository.GetAll();
+            var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Clube != null && x.Jogador.Clube.Usuario == null);
 
             foreach (var jogadoroferta in lstjogadoroferta.Where(x => x.Jogador.Clube != null && x.Estagio > 0 && x.Estagio < 3))
             {
                 var jogador = jogadoroferta.Jogador;
-                var clube = jogador.Clube;
+                var clube = clubeRepository.Get(jogador.Clube.Id);
+
+                var mediaclube = clube.Jogadores.Where(x => !x.Temporario && x.Id != jogador.Id).Sum(x => x.H) / clube.Jogadores.Where(x => !x.Temporario && x.Id != jogador.Id).Count();
+                var gtotal = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Count();
+                var ldtotal = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Count();
+                var ztotal = clube.Jogadores.Where(x => x.Posicao == 3 && !x.Temporario).Count();
+                var letotal = clube.Jogadores.Where(x => x.Posicao == 4 && !x.Temporario).Count();
+                var vtotal = clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Count();
+                var mototal = clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Count();
+                var atotal = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Count();
+
                 decimal valormin = jogador.Valor;                 
 
                 if (lstjogadoroferta.Where(x => x.Jogador.Id == jogador.Id && x.Estagio == 3).Count() > 0)
                     valormin = valormin * 2;
                 else if (clube.Dinheiro < 300000)
                     valormin = (valormin / 100) * 80;
+
+                if (jogador.H >= (mediaclube + 20))
+                    valormin = valormin + (valormin / 2);
+
+                if ((jogador.Posicao == 1 && gtotal < 2) || (jogador.Posicao == 2 && ldtotal < 2) || (jogador.Posicao == 3 && ztotal < 3) || (jogador.Posicao == 4 && letotal < 2) || (jogador.Posicao == 5 && vtotal < 3) || (jogador.Posicao == 6 && mototal < 3) || (jogador.Posicao == 7 && atotal < 3))
+                    valormin = (valormin * 2) + (valormin / 2);
 
                 if (jogadoroferta.Valor >= valormin)
                 {

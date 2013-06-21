@@ -20,7 +20,11 @@
             </tr>
             @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.Nome))
             {
-                <tr>
+                var classtemp = "";
+                if (jog.Temporario)
+                { classtemp = "class=tr-temporario"; }
+                
+                <tr @classtemp>
                     <td>
                         @if (jog.Lesionado == 0)
                         {

@@ -274,6 +274,7 @@
         }        
         
         [Authorize]
+        [Transaction]
         public ActionResult StaffDispensarConfirma(int id)
         {
             var usuario = authenticationService.GetUserAuthenticated();
@@ -285,9 +286,10 @@
             staff.Usuario = null;
             staff.Salario = 0;
             staff.Contrato = 0;
-            staffRepository.Save(staff);
+            staffRepository.SaveOrUpdate(staff);
 
-            return View(staff);
+            TempData["MsgOk"] = staff.Nome + " foi dispensado com sucesso!";
+            return RedirectToAction("Index", "Staff", new { id = id });
         }          
     }
 }

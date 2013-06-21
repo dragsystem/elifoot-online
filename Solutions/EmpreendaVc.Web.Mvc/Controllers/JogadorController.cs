@@ -38,6 +38,7 @@
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Noticia> noticiaRepository;
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
+        private readonly INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository;
 
         public JogadorController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -54,7 +55,8 @@
             INHibernateRepository<JogadorPedido> jogadorpedidoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
             INHibernateRepository<Noticia> noticiaRepository,
-            INHibernateRepository<Escalacao> escalacaoRepository)
+            INHibernateRepository<Escalacao> escalacaoRepository,
+            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -72,6 +74,7 @@
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.noticiaRepository = noticiaRepository;
             this.escalacaoRepository = escalacaoRepository;
+            this.jogadorhistoricoRepository = jogadorhistoricoRepository;
         }
 
         [Authorize]
@@ -99,6 +102,9 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
+            ViewBag.Clube = usuario.Clube;
+            ViewBag.Page = p.HasValue ? p.Value : 1;
+
             if (usuario.Staffs.Where(x => x.Tipo == 1).Count() == 0)
             {
                 ViewBag.Olheiro = false;
@@ -114,7 +120,7 @@
                 jogadorfiltro = (JogadorFiltroView)Session["JogadorFiltroView"];
 
                 var lstJogador = jogadorRepository.GetAll()
-                            .Where(x => x.Clube.Id != usuario.Clube.Id && !x.Temporario);
+                            .Where(x => x.Clube == null || (x.Clube != null && x.Clube.Id != usuario.Clube.Id));
 
                 if (!string.IsNullOrEmpty(jogadorfiltro.Nome))
                     lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome.ToUpper()));
@@ -155,9 +161,6 @@
                 ViewBag.Resultado = new List<Jogador>();
             }
 
-            ViewBag.Clube = usuario.Clube;
-            ViewBag.Page = p.HasValue ? p.Value : 1;
-
             return View(jogadorfiltro);
         }
 
@@ -177,7 +180,7 @@
             Session["JogadorFiltroView"] = jogadorfiltro;
 
             var lstJogador = jogadorRepository.GetAll()
-                            .Where(x => x.Clube.Id != usuario.Clube.Id);
+                            .Where(x => x.Clube == null || (x.Clube != null && x.Clube.Id != usuario.Clube.Id));
 
             if (!string.IsNullOrEmpty(jogadorfiltro.Nome))
                 lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome.ToUpper()));
@@ -206,6 +209,7 @@
             ViewBag.Resultado = lstJogador.ToList();
             ViewBag.Clube = usuario.Clube;
             ViewBag.Page = 1;
+            ViewBag.Olheiro = true;
             //ViewBag.Controle = controleRepository.GetAll().FirstOrDefault();
 
             return View(jogadorfiltro);
@@ -324,7 +328,7 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id && x.Estagio > 0 && x.Estagio < 3);
+            var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Clube != null && x.Jogador.Clube.Id == usuario.Clube.Id && x.Estagio > 0 && x.Estagio < 3);
 
             return View(lstjogadoroferta);
         }
@@ -488,6 +492,7 @@
         [Authorize]
         public ActionResult JogadorDispensarConfirma(int id)
         {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             var usuario = authenticationService.GetUserAuthenticated();
             var jogador = jogadorRepository.Get(id);
             var clube = jogador.Clube;
@@ -497,7 +502,6 @@
 
             if (jogador.JogadorOfertas.Count() > 0)
             {
-                var controle = controleRepository.GetAll().FirstOrDefault();
                 foreach (var item in jogador.JogadorOfertas)
 	            {
 		            if (item.Clube.Usuario != null)
@@ -521,10 +525,32 @@
                 escalacaoRepository.SaveOrUpdate(escalacao);
             }
 
+            var historico = new JogadorHistorico();
+            historico.Ano = controle.Ano;
+            historico.Clube = clube;
+            historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clube.Id).Count();
+            historico.Jogador = jogador;
+            historico.Jogos = jogador.Jogos;
+            historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
+            historico.Valor = 0;
+            jogadorhistoricoRepository.SaveOrUpdate(historico);
+
             clube.Dinheiro = clube.Dinheiro - ((jogador.Salario * 3) * jogador.Contrato);
             clubeRepository.SaveOrUpdate(clube);
 
-            return View(jogador);
+            jogador.Clube = null;
+            jogador.Contrato = 0;
+            jogador.Salario = 0;
+            jogador.Jogos = 0;
+            jogador.NotaTotal = 0;
+            jogador.NotaUlt = 0;
+            jogador.Treinos = 0;
+            jogador.TreinoTotal = 0;
+            jogador.Situacao = 0;
+            jogadorRepository.SaveOrUpdate(jogador);
+
+            TempData["MsgOk"] = jogador.Nome + " dispensado com sucesso!";
+            return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
         }
 
         [HttpGet]
