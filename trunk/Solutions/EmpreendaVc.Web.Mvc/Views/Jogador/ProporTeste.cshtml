@@ -9,13 +9,13 @@
 
 
 <h2>
-    DISPENSAR</h2>
+    PROPOR TESTE</h2>
 
 @{ Html.RenderAction("Index", "Mensagem"); }
     <p>
-    Para encerrar o contrato com @Model.Nome, você terá que pagar uma multa de $@(((Model.Salario * 3) * Model.Contrato).ToString("N2")).<br />
+    Você está propondo um dia de teste para @Model.Nome, amanhã o desempenho dele no treino será relatado nas suas notícias.<br />
     Deseja continuar?
     </p>
     <br />
-    <a class="submit" href="@Url.Action("JogadorDispensarConfirma", new { id = Model.Id })">CONFIRMAR</a>
+    <a class="submit" href="@Url.Action("ProporTesteConfirma", new { id = Model.Id })">CONFIRMAR</a>
     <a class="voltar-link" href="@Url.Action("Index", "Jogador", new { id = Model.Id })">VOLTAR</a>

@@ -66,6 +66,8 @@ namespace EmpreendaVc.Domain
             }
         }
 
+        public virtual int Condicao { get; set; }
+
         public virtual int Lesionado { get; set; }
 
         public virtual IList<Gol> Gols { get; set; }
@@ -76,6 +78,7 @@ namespace EmpreendaVc.Domain
 
         public Jogador()
         {
+            Condicao = 100;
             Lesionado = 0;
             Situacao = 1;
             Jogos = 0;

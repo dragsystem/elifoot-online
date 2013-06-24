@@ -454,6 +454,7 @@
     <Content Include="Views\Staff\StaffOferta.cshtml" />
     <Content Include="Views\Staff\StaffRenovar.cshtml" />
     <Content Include="Views\Adm\GridStaff.cshtml" />
+    <Content Include="Views\Jogador\ProporTeste.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

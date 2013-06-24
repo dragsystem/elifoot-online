@@ -25,13 +25,15 @@
         private readonly INHibernateRepository<Divisao> divisaoRepository;
         private readonly INHibernateRepository<UsuarioOferta> usuarioofertaRepository;
         private readonly INHibernateRepository<Controle> controleRepository;
+        private readonly INHibernateRepository<Noticia> noticiaRepository;
 
         public ContaController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
             INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Divisao> divisaoRepository,
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
-            INHibernateRepository<Controle> controleRepository)
+            INHibernateRepository<Controle> controleRepository,
+            INHibernateRepository<Noticia> noticiaRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -39,12 +41,20 @@
             this.divisaoRepository = divisaoRepository;
             this.usuarioofertaRepository = usuarioofertaRepository;
             this.controleRepository = controleRepository;
+            this.noticiaRepository = noticiaRepository;
         }
 
         public ActionResult Index()
         {
             var usuario = authenticationService.GetUserAuthenticated();
             var controle = controleRepository.GetAll().FirstOrDefault();
+
+            var lstnoticias = noticiaRepository.GetAll().Where(x => !x.Lida && x.Usuario.Id == usuario.Id);
+            foreach (var item in lstnoticias)
+            {
+                item.Lida = true;
+                noticiaRepository.SaveOrUpdate(item);
+            }
 
             ViewBag.Controle = controle;
             return View(usuario);

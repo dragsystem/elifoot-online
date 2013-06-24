@@ -39,6 +39,8 @@
         private readonly INHibernateRepository<Noticia> noticiaRepository;
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
         private readonly INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository;
+        private readonly INHibernateRepository<JogadorTeste> jogadortesteRepository;
+        private readonly INHibernateRepository<Staff> staffRepository;
 
         public JogadorController(IUsuarioRepository usuarioRepository,
             IAuthenticationService authenticationService,
@@ -56,7 +58,9 @@
             INHibernateRepository<UsuarioOferta> usuarioofertaRepository,
             INHibernateRepository<Noticia> noticiaRepository,
             INHibernateRepository<Escalacao> escalacaoRepository,
-            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository)
+            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository,
+            INHibernateRepository<JogadorTeste> jogadortesteRepository,
+            INHibernateRepository<Staff> staffRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.authenticationService = authenticationService;
@@ -75,6 +79,8 @@
             this.noticiaRepository = noticiaRepository;
             this.escalacaoRepository = escalacaoRepository;
             this.jogadorhistoricoRepository = jogadorhistoricoRepository;
+            this.jogadortesteRepository = jogadortesteRepository;
+            this.staffRepository = staffRepository;
         }
 
         [Authorize]
@@ -280,7 +286,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogadoroferta.Jogador.Id }) + "'>" + jogadoroferta.Jogador.Nome + "</a>. <br /><br />Entre em Propostas para responder.";
+                    noticia.Texto = LinkaClube(jogadoroferta.Clube) + " apresentou uma proposta por " + LinkaJogador(jogadoroferta.Jogador) + ". <br /><br />Entre em Propostas para responder.";
                     noticia.Usuario = jogador.Clube.Usuario;
 
                     noticiaRepository.SaveOrUpdate(noticia);
@@ -370,7 +376,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = usuario.Clube.Nome + " aceitou sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogadoroferta.Jogador.Id }) + "'>" + jogadoroferta.Jogador.Nome + "</a>.<br />Agora você deve aguardar a resposta do jogador.";
+                    noticia.Texto = LinkaClube(usuario.Clube) + " aceitou sua proposta por " + LinkaJogador(jogadoroferta.Jogador) + ".<br />Agora você deve aguardar a resposta do jogador.";
                     noticia.Usuario = jogadoroferta.Clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
@@ -384,7 +390,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = usuario.Clube.Nome + " rejeitou sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogadoroferta.Jogador.Id }) + "'>" + jogadoroferta.Jogador.Nome + "</a>.";
+                    noticia.Texto = LinkaClube(usuario.Clube) + " rejeitou sua proposta por " + LinkaJogador(jogadoroferta.Jogador) + ".";
                     noticia.Usuario = jogadoroferta.Clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
@@ -508,7 +514,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois o mesmo foi dispensado pelo " + clube.Nome + ".";
+                        noticia.Texto = "Sua proposta por " + LinkaJogador(jogador) + " foi cancelada, pois o mesmo foi dispensado pelo " + LinkaClube(clube) + ".";
                         noticia.Usuario = item.Clube.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -553,6 +559,89 @@
             return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
         }
 
+        [Authorize]
+        public ActionResult ProporTeste(int id)
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var usuario = authenticationService.GetUserAuthenticated();
+            var jogador = jogadorRepository.Get(id);
+
+            if (usuario.Clube == null || jogador.Clube != null)
+                return RedirectToAction("Index", "Conta");
+
+            if (jogadortesteRepository.GetAll().Where(x => x.Jogador.Id == id).Count() > 0)
+            {
+                TempData["MsgErro"] = "Este jogador já estará participando de um teste em outro clube. Tente novamente amanhã.";
+                return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
+            }
+
+            return View(jogador);
+        }
+
+        [Authorize]
+        public ActionResult ProporTesteConfirma(int id)
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var usuario = authenticationService.GetUserAuthenticated();
+            var jogador = jogadorRepository.Get(id);
+            var clube = jogador.Clube;
+
+            if (usuario.Clube == null || jogador.Clube != null)
+                return RedirectToAction("Index", "Conta");
+
+            if (jogadortesteRepository.GetAll().Where(x => x.Jogador.Id == id).Count() > 0)
+            {
+                TempData["MsgErro"] = "Este jogador já estará participando de um teste em outro clube. Tente novamente amanhã.";
+                return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
+            }
+
+            var teste = new JogadorTeste();
+            teste.Jogador = jogador;
+            teste.Clube = usuario.Clube;
+            teste.Dia = controle.Dia;
+
+            TempData["MsgOk"] = jogador.Nome + " participará do teste no treino de hoje!";
+            return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
+        }
+
+        [Authorize]
+        public ActionResult PedirRelatorio(int id)
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var usuario = authenticationService.GetUserAuthenticated();
+            var jogador = jogadorRepository.Get(id);
+
+            if (usuario.Clube == null || jogador.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            if (usuario.Staffs.Where(x => x.Tipo == 1).Count() == 0)
+            {
+                TempData["MsgErro"] = "Você não possui um Olheiro para pedir relatório.";
+                return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
+            }
+
+            var olheiro = staffRepository.Get(usuario.Staffs.FirstOrDefault(x => x.Tipo == 1).Id);
+            if (olheiro.Consultas < 1)
+            {
+                TempData["MsgErro"] = "Seu olheiro já fez o máximo de consultas para hoje. Tente novamente amanhã.";
+                return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
+            }
+            else
+            {
+                var noticia = new Noticia();
+                noticia.Dia = controle.Dia;
+                noticia.Texto = olheiro.Nome + " relatou que " + LinkaJogador(jogador) + " tem uma média de " + jogador.TreinoMedia + " nos treinos pelo " + LinkaClube(jogador.Clube) + " e no último treino teve a nota " + jogador.TreinoUlt + ".";
+                noticia.Usuario = usuario;
+                noticiaRepository.SaveOrUpdate(noticia);
+
+                olheiro.Consultas = olheiro.Consultas - 1;
+                staffRepository.SaveOrUpdate(olheiro);
+            }
+
+            TempData["MsgOk"] = olheiro.Nome + " te enviou o relatório. Leia em notícias.";
+            return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
+        }
+
         [HttpGet]
         [Transaction]
         public JsonResult AlteraSituacao(int id, int situacao)
@@ -584,6 +673,20 @@
 
             return View(jogador);
         }
-            
+
+        private string LinkaClube(Clube clube)
+        {
+            return "<a href=\"" + Url.Action("Index", "Clube", new { id = clube.Id }) + "\" >" + clube.Nome + "</a>";
+        }
+
+        private string LinkaJogador(Jogador jogador)
+        {
+            return "<a href=\"" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "\" >" + jogador.Nome + "</a>";
+        }
+
+        private string LinkaStaff(Staff staff)
+        {
+            return "<a href=\"" + Url.Action("Index", "Staff", new { id = staff.Id }) + "\" >" + staff.Nome + "</a>";
+        }
     }
 }

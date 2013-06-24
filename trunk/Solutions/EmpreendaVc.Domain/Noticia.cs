@@ -17,6 +17,8 @@ namespace EmpreendaVc.Domain
 
         public virtual string Texto { get; set; }
 
+        public virtual bool Lida { get; set; }
+
         public virtual DateTime Data { get; set; }
 
         public Noticia()
