@@ -23,12 +23,15 @@ namespace EmpreendaVc.Domain
 
         public virtual int Contrato { get; set; }
 
+        public virtual int Consultas { get; set; }
+
         public virtual decimal Salario { get; set; }
         
         public Staff()
         {
             Contrato = 0;
             Salario = 0;
+            Consultas = 0;
         }
     }
 }

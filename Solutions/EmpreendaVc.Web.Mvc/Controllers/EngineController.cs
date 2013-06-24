@@ -45,6 +45,7 @@
         private readonly INHibernateRepository<Artilheiro> artilheiroRepository;
         private readonly INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository;
         private readonly INHibernateRepository<Staff> staffRepository;
+        private readonly INHibernateRepository<JogadorTeste> jogadortesteRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IClubeRepository clubeQueryRepository,
@@ -66,7 +67,8 @@
             INHibernateRepository<Sobrenome> sobrenomeRepository,
             INHibernateRepository<Staff> staffRepository,
             INHibernateRepository<Artilheiro> artilheiroRepository,
-            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository)
+            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository,
+            INHibernateRepository<JogadorTeste> jogadortesteRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.clubeQueryRepository = clubeQueryRepository;
@@ -89,6 +91,7 @@
             this.artilheiroRepository = artilheiroRepository;
             this.staffRepository = staffRepository;
             this.jogadorhistoricoRepository = jogadorhistoricoRepository;
+            this.jogadortesteRepository = jogadortesteRepository;
         }
 
         //OK - GerarCampeonato(); 
@@ -119,15 +122,15 @@
 
             return View();
         }
-
+        
         public ActionResult MudarDia()
         {
-            return RedirectToAction("AtualizarDataDia", "Engine");
+            return RedirectToAction("EscalaTimes", "Engine");
         }
-
+        
         public ActionResult MudarDia2()
         {
-            return RedirectToAction("EscalaTimes", "Engine");
+            return RedirectToAction("AtualizarDataDia", "Engine");
         }
 
         #region MudarDia
@@ -145,461 +148,10 @@
         }
 
         [Transaction]
-        public ActionResult ZerarDelayUsuario()
-        {
-            foreach (var usuario in usuarioRepository.UsuarioDelay())
-            {
-                usuario.DelayTroca = usuario.DelayTroca - 1;
-                if (usuario.DelayTroca < 0)
-                    usuario.DelayTroca = 0;
-
-                usuarioRepository.SaveOrUpdate(usuario);
-            }
-
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("CriarJogadoresTemporarios", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult CriarJogadoresTemporarios()
-        {
-            foreach (var clube in clubeRepository.GetAll())
-            {
-                var nomes = nomeRepository.GetAll();
-                var rnd = new Random();
-
-                rnd.Next(0, clube.Id);
-
-                for (int pos = 1; pos < 8; pos++)
-                {
-                    var min = 0;
-
-                    if (pos == 1 || pos == 2 || pos == 4)
-                        min = 1;
-                    else if (pos == 3 || pos == 5 || pos == 6 || pos == 7)
-                        min = 2;
-
-                    if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario && x.Lesionado == 0).Count() < min)
-                    {
-                        var jogador = new Jogador();
-                        jogador.Clube = clube;
-                        jogador.Posicao = pos;
-                        jogador.Temporario = true;
-                        jogador.H = 1;
-                        jogador.HF = 1;
-
-                        var objnome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
-                        if (!objnome.Comum) { objnome = nomes.ElementAt(rnd.Next(0, nomes.Count())); }
-
-                        jogador.Nome = objnome.NomeJogador.ToUpper();
-                        jogadorRepository.SaveOrUpdate(jogador);
-                    }
-                    else if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() > min)
-                    {
-                        foreach (var jog in clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario))
-                        {
-                            jog.Clube = null;
-                            jogadorRepository.SaveOrUpdate(jog);
-                        }
-                    }
-                }
-            }
-
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("UpdateFinancas", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult UpdateFinancas()
-        {
-            foreach (var clube in clubeRepository.GetAll())
-            {
-                var salarios = clube.Jogadores.Sum(x => x.Salario);
-                var socios = clube.Socios * 30;
-                decimal staff = 0;
-
-                if (clube.Usuario != null)
-                    staff = clube.Usuario.Staffs.Sum(x => x.Salario);
-
-                clube.Dinheiro = clube.Dinheiro + (socios - (salarios + staff));
-                clubeRepository.SaveOrUpdate(clube);
-            }
-
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("VerificaTecnicos", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult VerificaTecnicos()
-        {
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
-            foreach (var clube in clubeRepository.GetAll())
-            {
-                if (clube.Usuario != null && clube.Usuario.Reputacao == 0)
-                {
-                    var tecnicoatual = usuarioRepository.Get(clube.Usuario.Id);
-
-                    tecnicoatual.Clube = null;
-                    tecnicoatual.Reputacao = 30;
-                    tecnicoatual.DelayTroca = 0;
-                    tecnicoatual.ReputacaoGeral = tecnicoatual.ReputacaoGeral - 10 < 0 ? 0 : tecnicoatual.ReputacaoGeral - 10;
-                    tecnicoatual.IdUltimoClube = clube.Id;
-                    usuarioRepository.SaveOrUpdate(tecnicoatual);
-
-                    var noticia = new Noticia();
-                    noticia.Dia = controle.Dia;
-                    noticia.Texto = "Você foi despedido do " + clube.Nome + ", pois a diretoria não estava satisfeita com seu trabalho.<br /><br />Procure outro clube para dirigir.";
-                    noticia.Usuario = tecnicoatual;
-                    noticiaRepository.SaveOrUpdate(noticia);
-
-                    clubeQueryRepository.TirarTreinador(clube.Id);
-
-                    var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
-                    foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.ReputacaoGeral >= repgeral && x.DelayTroca == 0 && x.IdUltimoClube != clube.Id))
-                    {
-                        noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        noticia.Texto = clube.Nome + " despediu o técnico e está a procura de um novo técnico.";
-                        noticia.Usuario = tecniconovo;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-                }
-                else if (clube.Usuario == null && clube.ReputacaoAI < 5)
-                {
-                    var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
-                    foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.ReputacaoGeral >= repgeral && x.DelayTroca == 0 && x.IdUltimoClube != clube.Id))
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        noticia.Texto = clube.Nome + " despediu o técnico e está a procura de um novo técnico.";
-                        noticia.Usuario = tecniconovo;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-
-                    clube.ReputacaoAI = 30;
-                    clubeRepository.SaveOrUpdate(clube);
-                }                
-            }
-
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("AtualizarTransferencias", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult AtualizarTransferencias()
-        {
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            var lstvendidos = new List<Jogador>();
-
-            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Dia < controle.Dia && x.Estagio == 2).OrderByDescending(x => x.Pontos).ThenByDescending(x => x.Salario))
-            {
-                var jogador = jogadoroferta.Jogador;
-                var clubecomprador = clubeRepository.Get(jogadoroferta.Clube.Id);
-                var clubevendedor = jogador.Clube != null ? clubeRepository.Get(jogador.Clube.Id) : null;
-                
-
-                if (((clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14) || clubevendedor == null) && lstvendidos.Where(x => x.Id == jogador.Id).Count() == 0 && clubecomprador.Dinheiro >= jogadoroferta.Valor && jogadoroferta.Pontos > 0)
-                {
-                    clubecomprador.Dinheiro = clubecomprador.Dinheiro - jogadoroferta.Valor;
-                    clubeRepository.SaveOrUpdate(clubecomprador);
-
-                    jogador.Clube = clubecomprador;
-                    jogador.Contrato = jogadoroferta.Contrato;
-                    jogador.Salario = jogadoroferta.Salario;
-                    jogador.Situacao = 1;
-                    jogadorRepository.SaveOrUpdate(jogador);
-
-                    if (clubevendedor != null)
-                    {
-                        clubevendedor.Dinheiro = clubecomprador.Dinheiro + jogadoroferta.Valor;
-                        clubeRepository.SaveOrUpdate(clubevendedor);
-
-                        var historico = new JogadorHistorico();
-                        historico.Ano = controle.Ano;
-                        historico.Clube = clubevendedor;
-                        historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clubevendedor.Id).Count();
-                        historico.Jogador = jogador;
-                        historico.Jogos = jogador.Jogos;
-                        historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
-                        historico.Valor = jogadoroferta.Valor;
-                        jogadorhistoricoRepository.SaveOrUpdate(historico);
-                    }
-
-                    if (clubecomprador.Usuario != null)
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        if (clubevendedor != null)
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
-                        else
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a>, que estava sem clube, assinou contrato com o " + clubecomprador.Nome + "."; 
-                        noticia.Usuario = clubecomprador.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-                    if (clubevendedor != null && clubevendedor.Usuario != null)
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
-                        noticia.Usuario = clubevendedor.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-
-                    lstvendidos.Add(jogador);
-
-                    jogadoroferta.Estagio = 3;
-                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
-
-                    if (clubevendedor != null)
-                    {
-                        var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
-                        if (escalacao != null)
-                        {
-                            escalacao.Jogador = null;
-                            escalacao.H = 0;
-                            escalacaoRepository.SaveOrUpdate(escalacao);
-                        }
-                    }
-                }
-                else if (jogadoroferta.Pontos < 1)
-                {
-                    if (clubecomprador.Usuario != null)
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        if (clubevendedor != null)
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") rejeitou sua proposta.";
-                        else
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> rejeitou sua proposta.";
-                        
-                        noticia.Usuario = clubecomprador.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-
-                    jogadoroferta.Estagio = 0;
-                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
-                }
-                else if (lstvendidos.Where(x => x.Id == jogador.Id).Count() > 0)
-                {
-                    if (clubecomprador.Usuario != null)
-                    {
-                        var clubequecomprou = lstvendidos.FirstOrDefault(x => x.Id == jogador.Id).Clube.Nome;
-
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        if (clubevendedor != null)
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") rejeitou sua proposta e foi vendido para o " + clubequecomprou + ".";
-                        else
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> (" + clubevendedor.Nome + ") rejeitou sua proposta e foi assinou contrato com " + clubequecomprou + ".";
-                        noticia.Usuario = clubecomprador.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-
-                    jogadoroferta.Estagio = 3;
-                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
-                }
-                else if (clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14)
-                {
-                    if (clubecomprador.Usuario != null)
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        noticia.Texto = clubevendedor.Nome + " cancelou a venda de <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> por estar com poucos jogadores no elenco.";
-                        noticia.Usuario = clubecomprador.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-
-                    jogadorofertaRepository.Delete(jogadoroferta);
-                }
-                else if (clubecomprador.Dinheiro < jogadoroferta.Valor)
-                {
-                    if (clubecomprador.Usuario != null)
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois você não possui dinheiro para fechar a compra.";
-                        noticia.Usuario = clubecomprador.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-
-                    jogadorofertaRepository.Delete(jogadoroferta);
-                }
-            }
-
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("VariarJogador", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult VariarJogador()
-        {
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            var rnd = new Random();
-            foreach (var jogador in jogadorRepository.GetAll().Where(x => !x.Temporario))
-            {
-                var variavel = rnd.Next(-2, 3);
-
-                jogador.H = jogador.H + (variavel);
-
-                if (jogador.H > (jogador.HF + 10))
-                    jogador.H = jogador.HF + 10;
-                else if (jogador.H < (jogador.HF - 10))
-                    jogador.H = jogador.HF - 10;
-
-                
-
-                if (jogador.Lesionado == 0 && jogador.Clube != null)
-                {
-                    var clubejogadores = jogador.Clube.Jogadores.Where(x => !x.Temporario);
-
-                    var hmediotime = clubejogadores.Sum(x => x.H) / clubejogadores.Count();
-
-                    var probjogarbem = 50 + (jogador.H - hmediotime);
-                    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
-
-                    double nota = 0;
-                    var rndnota = rnd.Next(1, 101);
-                    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
-
-                    if (rnd.Next(1, 101) <= probjogarbem)
-                    {
-
-
-                        if (rndnota < nota1)
-                            nota = 5.5;
-                        else if (rndnota < (nota1 + nota2))
-                            nota = 6.5;
-                        else if (rndnota < (nota1 + nota2 + nota3))
-                            nota = 7.0;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                            nota = 7.5;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                            nota = 8.0;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                            nota = 8.5;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                            nota = 9.0;
-                        else
-                            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                    }
-                    else
-                    {
-                        if (rndnota < nota1)
-                            nota = 5.0;
-                        else if (rndnota < (nota1 + nota2))
-                            nota = 4.5;
-                        else if (rndnota < (nota1 + nota2 + nota3))
-                            nota = 4.0;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                            nota = 3.5;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                            nota = 2.5;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                            nota = 2.0;
-                        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                            nota = 1.5;
-                        else
-                            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                    }
-
-                    jogador.Treinos = jogador.Treinos + 1;
-                    jogador.TreinoTotal = jogador.TreinoTotal + Convert.ToDecimal(nota);
-                    jogador.TreinoUlt = Convert.ToDecimal(nota);
-
-                    var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
-                    if (escalacao == null)
-                        jogador.NotaUlt = 0;
-                }
-                else if (jogador.Lesionado > 0)
-                {
-                    jogador.Lesionado = jogador.Lesionado - 1;
-                    jogador.TreinoUlt = 0;
-
-                    if (jogador.Lesionado == 0 && jogador.Clube != null && jogador.Clube.Usuario != null)
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> está 100% recuperado da lesão e disponível para jogar.";
-                        noticia.Usuario = jogador.Clube.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-                }                
-
-                jogadorRepository.SaveOrUpdate(jogador);
-            }
-
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("LesionarJogador", "Engine");
-        }
-
-        [Transaction]
-        public ActionResult LesionarJogador()
-        {
-            var controle = controleRepository.GetAll().FirstOrDefault();
-            var rnd = new Random();
-            var lstjogador = jogadorRepository.GetAll().Where(x => !x.Temporario);
-
-            var qnt = Convert.ToInt32(lstjogador.Count() / 100);
-
-            for (int i = 0; i < qnt; i++)
-            {
-                var jogador = lstjogador.ElementAt(rnd.Next(0, lstjogador.Count()));
-
-                if (jogador.Lesionado == 0)
-                {
-                    var tempo = rnd.Next(1, 11);
-
-                    if (jogador.Clube.Usuario != null)
-                    {
-                        var usuario = jogador.Clube.Usuario;
-                        if (usuario.Staffs.Where(x => x.Tipo == 2).Count() > 0)
-                        {
-                            var medico = usuario.Staffs.Where(x => x.Tipo == 2).FirstOrDefault();
-                            if (rnd.Next(1, 101) <= medico.H)
-                                tempo = tempo / 2;
-                        }
-                    }
-                    else
-                        tempo = tempo / 2;
-
-                    jogador.Lesionado = tempo;
-                    jogadorRepository.SaveOrUpdate(jogador);
-
-                    var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
-                    if (escalacao != null)
-                    {
-                        escalacao.Jogador = null;
-                        escalacao.H = 0;
-                        escalacaoRepository.SaveOrUpdate(escalacao);
-                    }
-
-                    if (jogador.Clube.Usuario != null)
-                    {
-                        var noticia = new Noticia();
-                        noticia.Dia = controle.Dia;
-                        noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> se lesionou por " + jogador.Lesionado + " dia(s)";
-                        noticia.Usuario = jogador.Clube.Usuario;
-                        noticiaRepository.SaveOrUpdate(noticia);
-                    }
-                }
-            }
-
-            return RedirectToAction("Index", "Engine");
-            //return RedirectToAction("EscalaTimes", "Engine");
-        }
-
-        [Transaction]
         public ActionResult EscalaTimes()
         {
             try
-            {            
+            {
                 foreach (var clube in clubeRepository.GetAll())
                 {
                     var lstnova = new List<Escalacao>();
@@ -617,7 +169,7 @@
                         escalacao.H = escalacao.Jogador.H + 5;
                     else
                         escalacao.H = escalacao.Jogador.H;
-                    
+
                     //escalacao.HGol = 1;
                     lstnova.Add(escalacao);
 
@@ -935,6 +487,9 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
+                            if (jogador.Posicao != 1)
+                                jogador.Condicao = jogador.Condicao - 15;
+
                             jogadorRepository.SaveOrUpdate(jogador);
                         }
 
@@ -1020,6 +575,9 @@
                             jogador.Jogos = jogador.Jogos + 1;
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
+
+                            if (jogador.Posicao != 1)
+                                jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
                         }
@@ -1214,6 +772,9 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
+                            if (jogador.Posicao != 1)
+                                jogador.Condicao = jogador.Condicao - 15;
+
                             jogadorRepository.SaveOrUpdate(jogador);
                         }
 
@@ -1301,6 +862,9 @@
                             jogador.Jogos = jogador.Jogos + 1;
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
+
+                            if (jogador.Posicao != 1)
+                                jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
                         }
@@ -1443,6 +1007,9 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
+                            if (jogador.Posicao != 1)
+                                jogador.Condicao = jogador.Condicao - 15;
+
                             jogadorRepository.SaveOrUpdate(jogador);
                         }
 
@@ -1530,6 +1097,9 @@
                             jogador.Jogos = jogador.Jogos + 1;
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
+
+                            if (jogador.Posicao != 1)
+                                jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
                         }
@@ -1892,6 +1462,550 @@
             return RedirectToAction("Index", "Engine");
         }
 
+        [Transaction]
+        public ActionResult ZerarDelayUsuario()
+        {
+            foreach (var usuario in usuarioRepository.UsuarioDelay())
+            {
+                usuario.DelayTroca = usuario.DelayTroca - 1;
+                if (usuario.DelayTroca < 0)
+                    usuario.DelayTroca = 0;
+
+                usuarioRepository.SaveOrUpdate(usuario);
+            }
+
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("CriarJogadoresTemporarios", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult CriarJogadoresTemporarios()
+        {
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                var nomes = nomeRepository.GetAll();
+                var rnd = new Random();
+
+                rnd.Next(0, clube.Id);
+
+                for (int pos = 1; pos < 8; pos++)
+                {
+                    var min = 0;
+
+                    if (pos == 1 || pos == 2 || pos == 4)
+                        min = 1;
+                    else if (pos == 3 || pos == 5 || pos == 6 || pos == 7)
+                        min = 2;
+
+                    if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario && x.Lesionado == 0).Count() < min)
+                    {
+                        var temporarios = clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario).Count();
+                        if (min == 2 && temporarios == 1 || min == 1 && temporarios == 0)
+                        {
+                            var jogador = new Jogador();
+                            jogador.Clube = clube;
+                            jogador.Posicao = pos;
+                            jogador.Temporario = true;
+                            jogador.H = 1;
+                            jogador.HF = 1;
+
+                            var objnome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
+                            if (!objnome.Comum) { objnome = nomes.ElementAt(rnd.Next(0, nomes.Count())); }
+
+                            jogador.Nome = objnome.NomeJogador.ToUpper();
+                            jogadorRepository.SaveOrUpdate(jogador);
+                        }
+                    }
+                    else if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() > min)
+                    {
+                        foreach (var jog in clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario))
+                        {
+                            jog.Clube = null;
+                            jogadorRepository.SaveOrUpdate(jog);
+                        }
+                    }
+                }
+            }
+
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("UpdateFinancas", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult UpdateFinancas()
+        {
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                var salarios = clube.Jogadores.Sum(x => x.Salario);
+                var socios = clube.Socios * 30;
+                decimal staff = 0;
+
+                if (clube.Usuario != null)
+                    staff = clube.Usuario.Staffs.Sum(x => x.Salario);
+
+                clube.Dinheiro = clube.Dinheiro + (socios - (salarios + staff));
+                clubeRepository.SaveOrUpdate(clube);
+            }
+
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("VerificaTecnicos", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult VerificaTecnicos()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var ultdivisao = divisaoRepository.GetAll().OrderByDescending(x => x.Numero).FirstOrDefault().Numero;
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                if (clube.Usuario != null && clube.Usuario.Reputacao == 0)
+                {
+                    var tecnicoatual = usuarioRepository.Get(clube.Usuario.Id);
+
+                    tecnicoatual.Clube = null;
+                    tecnicoatual.Reputacao = 30;
+                    tecnicoatual.DelayTroca = 0;
+                    tecnicoatual.ReputacaoGeral = tecnicoatual.ReputacaoGeral - 10 < 0 ? 0 : tecnicoatual.ReputacaoGeral - 10;
+                    tecnicoatual.IdUltimoClube = clube.Id;
+                    usuarioRepository.SaveOrUpdate(tecnicoatual);
+
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = "Você foi despedido do " + LinkaClube(clube) + ", pois a diretoria não estava satisfeita com seu trabalho.<br /><br />Procure outro clube para dirigir.";
+                    noticia.Usuario = tecnicoatual;
+                    noticiaRepository.SaveOrUpdate(noticia);
+
+                    clubeQueryRepository.TirarTreinador(clube.Id);
+
+                    var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
+                    foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.ReputacaoGeral >= repgeral && x.DelayTroca == 0 && x.IdUltimoClube != clube.Id))
+                    {
+                        noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = LinkaClube(clube) + " despediu o técnico e está a procura de um novo técnico.";
+                        noticia.Usuario = tecniconovo;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+                }
+                else if (clube.Usuario == null && clube.ReputacaoAI < 5)
+                {
+                    var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
+                    foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.ReputacaoGeral >= repgeral && x.DelayTroca == 0 && x.IdUltimoClube != clube.Id))
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = LinkaClube(clube) + " despediu o técnico e está a procura de um novo técnico.";
+                        noticia.Usuario = tecniconovo;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    clube.ReputacaoAI = 30;
+                    clubeRepository.SaveOrUpdate(clube);
+                }                
+            }
+
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("AtualizarTransferencias", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult AtualizarTransferencias()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var lstvendidos = new List<Jogador>();
+
+            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Dia < controle.Dia && x.Estagio == 2).OrderByDescending(x => x.Pontos).ThenByDescending(x => x.Salario))
+            {
+                var jogador = jogadoroferta.Jogador;
+                var clubecomprador = clubeRepository.Get(jogadoroferta.Clube.Id);
+                var clubevendedor = jogador.Clube != null ? clubeRepository.Get(jogador.Clube.Id) : null;
+                
+
+                if (((clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14) || clubevendedor == null) && lstvendidos.Where(x => x.Id == jogador.Id).Count() == 0 && clubecomprador.Dinheiro >= jogadoroferta.Valor && jogadoroferta.Pontos > 0)
+                {
+                    clubecomprador.Dinheiro = clubecomprador.Dinheiro - jogadoroferta.Valor;
+                    clubeRepository.SaveOrUpdate(clubecomprador);
+
+                    jogador.Clube = clubecomprador;
+                    jogador.Contrato = jogadoroferta.Contrato;
+                    jogador.Salario = jogadoroferta.Salario;
+                    jogador.Situacao = 1;
+                    jogadorRepository.SaveOrUpdate(jogador);
+
+                    if (clubevendedor != null)
+                    {
+                        clubevendedor.Dinheiro = clubecomprador.Dinheiro + jogadoroferta.Valor;
+                        clubeRepository.SaveOrUpdate(clubevendedor);
+
+                        var historico = new JogadorHistorico();
+                        historico.Ano = controle.Ano;
+                        historico.Clube = clubevendedor;
+                        historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clubevendedor.Id).Count();
+                        historico.Jogador = jogador;
+                        historico.Jogos = jogador.Jogos;
+                        historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
+                        historico.Valor = jogadoroferta.Valor;
+                        jogadorhistoricoRepository.SaveOrUpdate(historico);
+                    }
+
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        if (clubevendedor != null)
+                            noticia.Texto =  LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") foi vendido para o " + LinkaClube(clubecomprador) + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                        else
+                            noticia.Texto =  LinkaJogador(jogador) + ", que estava sem clube, assinou contrato com o " + LinkaClube(clubecomprador) + "."; 
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+                    if (clubevendedor != null && clubevendedor.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = LinkaJogador(jogador) + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                        noticia.Usuario = clubevendedor.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    lstvendidos.Add(jogador);
+
+                    jogadoroferta.Estagio = 3;
+                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+
+                    if (clubevendedor != null)
+                    {
+                        var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
+                        if (escalacao != null)
+                        {
+                            escalacao.Jogador = null;
+                            escalacao.H = 0;
+                            escalacaoRepository.SaveOrUpdate(escalacao);
+                        }
+                    }
+                }
+                else if (jogadoroferta.Pontos < 1)
+                {
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        if (clubevendedor != null)
+                            noticia.Texto = LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") rejeitou sua proposta.";
+                        else
+                            noticia.Texto = LinkaJogador(jogador) + " rejeitou sua proposta.";
+                        
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadoroferta.Estagio = 0;
+                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+                }
+                else if (lstvendidos.Where(x => x.Id == jogador.Id).Count() > 0)
+                {
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var clubequecomprou = lstvendidos.FirstOrDefault(x => x.Id == jogador.Id).Clube.Nome;
+
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        if (clubevendedor != null)
+                            noticia.Texto = LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi vendido para o " + clubequecomprou + ".";
+                        else
+                            noticia.Texto = LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi assinou contrato com " + clubequecomprou + ".";
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadoroferta.Estagio = 3;
+                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+                }
+                else if (clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14)
+                {
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = LinkaClube(clubevendedor) + " cancelou a venda de " + LinkaJogador(jogador) + " por estar com poucos jogadores no elenco.";
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadorofertaRepository.Delete(jogadoroferta);
+                }
+                else if (clubecomprador.Dinheiro < jogadoroferta.Valor)
+                {
+                    if (clubecomprador.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Sua proposta por " + LinkaJogador(jogador) + " foi cancelada, pois você não possui dinheiro para fechar a compra.";
+                        noticia.Usuario = clubecomprador.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    jogadorofertaRepository.Delete(jogadoroferta);
+                }
+            }
+
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("VariarJogador", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult VariarJogador()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var rnd = new Random();
+            foreach (var jogador in jogadorRepository.GetAll().Where(x => !x.Temporario))
+            {
+                var variavel = rnd.Next(-2, 3);
+
+                jogador.H = jogador.H + (variavel);
+
+                if (jogador.H > (jogador.HF + 10))
+                    jogador.H = jogador.HF + 10;
+                else if (jogador.H < (jogador.HF - 10))
+                    jogador.H = jogador.HF - 10;
+
+                
+
+                if (jogador.Lesionado == 0 && jogador.Clube != null)
+                {
+                    var chancelesionar = 5;
+
+                    if (jogador.Condicao < 70)
+                        chancelesionar = 20;
+                    else if (jogador.Condicao < 80)
+                        chancelesionar = 10;
+
+                    if (rnd.Next(1, 101) > chancelesionar)
+                    {
+                        var clubejogadores = jogador.Clube.Jogadores.Where(x => !x.Temporario);
+
+                        var hmediotime = clubejogadores.Sum(x => x.H) / clubejogadores.Count();
+
+                        var probjogarbem = 50 + (jogador.H - hmediotime);
+                        probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+
+                        double nota = 0;
+                        var rndnota = rnd.Next(1, 101);
+                        var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+
+                        if (rnd.Next(1, 101) <= probjogarbem)
+                        {
+                            if (rndnota < nota1)
+                                nota = 5.5;
+                            else if (rndnota < (nota1 + nota2))
+                                nota = 6.5;
+                            else if (rndnota < (nota1 + nota2 + nota3))
+                                nota = 7.0;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                                nota = 7.5;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                                nota = 8.0;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                                nota = 8.5;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                                nota = 9.0;
+                            else
+                                nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        }
+                        else
+                        {
+                            if (rndnota < nota1)
+                                nota = 5.0;
+                            else if (rndnota < (nota1 + nota2))
+                                nota = 4.5;
+                            else if (rndnota < (nota1 + nota2 + nota3))
+                                nota = 4.0;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                                nota = 3.5;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                                nota = 2.5;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                                nota = 2.0;
+                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                                nota = 1.5;
+                            else
+                                nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        }
+
+                        jogador.Treinos = jogador.Treinos + 1;
+                        jogador.TreinoTotal = jogador.TreinoTotal + Convert.ToDecimal(nota);
+                        jogador.TreinoUlt = Convert.ToDecimal(nota);
+
+                        if (jogador.Condicao < 90)
+                            jogador.Condicao = jogador.Condicao + 10;
+                        else
+                            jogador.Condicao = 100;
+
+                        var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
+                        if (escalacao == null)
+                            jogador.NotaUlt = 0;
+                    }
+                    else
+                    {
+                        var tempo = rnd.Next(1, 11);
+
+                        if (jogador.Clube.Usuario != null)
+                        {
+                            var usuario = jogador.Clube.Usuario;
+                            if (usuario.Staffs.Where(x => x.Tipo == 2).Count() > 0)
+                            {
+                                var medico = usuario.Staffs.Where(x => x.Tipo == 2).FirstOrDefault();
+                                if (rnd.Next(1, 101) <= medico.H)
+                                    tempo = tempo / 2;
+                            }
+                        }
+                        else
+                            tempo = tempo / 2;
+
+                        jogador.Lesionado = tempo;
+                        jogadorRepository.SaveOrUpdate(jogador);
+
+                        var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
+                        if (escalacao != null)
+                        {
+                            escalacao.Jogador = null;
+                            escalacao.H = 0;
+                            escalacaoRepository.SaveOrUpdate(escalacao);
+                        }
+
+                        if (jogador.Clube.Usuario != null)
+                        {
+                            var noticia = new Noticia();
+                            noticia.Dia = controle.Dia;
+                            noticia.Texto =  LinkaJogador(jogador) + " se lesionou por " + jogador.Lesionado + " dia(s)";
+                            noticia.Usuario = jogador.Clube.Usuario;
+                            noticiaRepository.SaveOrUpdate(noticia);
+                        }
+                    }
+                }
+                else if (jogador.Lesionado > 0)
+                {
+                    jogador.Lesionado = jogador.Lesionado - 1;
+                    jogador.TreinoUlt = 0;
+                    jogador.Condicao = 90;
+
+                    if (jogador.Lesionado == 0 && jogador.Clube != null && jogador.Clube.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto =  LinkaJogador(jogador) + " está recuperado da lesão e disponível para jogar.";
+                        noticia.Usuario = jogador.Clube.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+                }                
+
+                jogadorRepository.SaveOrUpdate(jogador);
+            }
+
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("ZeraStaffConsultas", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult ZeraStaffConsultas()
+        {
+            foreach (var staff in staffRepository.GetAll().Where(x => x.Tipo == 1 && x.Consultas < (x.H / 10)))
+            {
+                staff.Consultas = staff.H / 10;
+                staffRepository.SaveOrUpdate(staff);
+            }
+
+            //return RedirectToAction("Index", "Engine");
+            return RedirectToAction("GerarTesteJogador", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult GerarTesteJogador()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var rnd = new Random();
+            foreach (var teste in jogadortesteRepository.GetAll().Where(x => x.Dia < controle.Dia))
+            {
+                var jogador = teste.Jogador;
+
+                var clubejogadores = teste.Clube.Jogadores.Where(x => !x.Temporario);
+
+                var hmediotime = clubejogadores.Sum(x => x.H) / clubejogadores.Count();
+
+                var probjogarbem = 50 + (jogador.H - hmediotime);
+                probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+
+                double nota = 0;
+                var rndnota = rnd.Next(1, 101);
+                var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+
+                if (rnd.Next(1, 101) <= probjogarbem)
+                {
+                    if (rndnota < nota1)
+                        nota = 5.5;
+                    else if (rndnota < (nota1 + nota2))
+                        nota = 6.5;
+                    else if (rndnota < (nota1 + nota2 + nota3))
+                        nota = 7.0;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        nota = 7.5;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        nota = 8.0;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        nota = 8.5;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        nota = 9.0;
+                    else
+                        nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                }
+                else
+                {
+                    if (rndnota < nota1)
+                        nota = 5.0;
+                    else if (rndnota < (nota1 + nota2))
+                        nota = 4.5;
+                    else if (rndnota < (nota1 + nota2 + nota3))
+                        nota = 4.0;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        nota = 3.5;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        nota = 2.5;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        nota = 2.0;
+                    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        nota = 1.5;
+                    else
+                        nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                }
+
+                if (teste.Clube.Usuario != null)
+                {
+                    var noticia = new Noticia();
+                    noticia.Dia = controle.Dia;
+                    noticia.Texto = LinkaJogador(jogador) + " foi testado e participou do treino com seus jogadores. Ele foi avaliado com uma nota <b>" + nota + "</b>.";
+                    noticia.Usuario = teste.Clube.Usuario;
+                    noticiaRepository.SaveOrUpdate(noticia);
+                }
+
+                jogadortesteRepository.Delete(teste);
+            }
+
+            return RedirectToAction("Index", "Engine");
+            //return RedirectToAction("ZeraStaffConsultas", "Engine");
+        }
+
         #endregion
 
         #region MudarAno
@@ -1956,7 +2070,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = "Seu contrato com o " + Util.Util.RetornaStaffTipo(staff.Tipo) + " <a href='" + Url.Action("Index", "Staff", new { id = staff.Id }) + "'>" + staff.Nome + "</a> terminou. Ele deixou sua comissão técnica.";
+                    noticia.Texto = "Seu contrato com o " + Util.Util.RetornaStaffTipo(staff.Tipo) + " " + LinkaStaff(staff) + " terminou. Ele deixou sua comissão técnica.";
                     noticia.Usuario = staff.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
 
@@ -2184,7 +2298,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jog.Id }) + "'>" + jog.Nome + "</a> encerrou seu contrato e deixou o clube.";
+                            noticia.Texto = LinkaJogador(jog) + " encerrou seu contrato e deixou o clube.";
                             noticia.Usuario = jog.Clube.Usuario;
                         }
 
@@ -2198,7 +2312,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = "<a href='" + Url.Action("Index", "Jogador", new { id = jog.Id }) + "'>" + jog.Nome + "</a> teve seu contrato prorrogado por 1 ano com aumento de 20%, pois você não pode ter menos que 14 jogadores.";
+                            noticia.Texto = LinkaJogador(jog) + " teve seu contrato prorrogado por 1 ano com aumento de 20%, pois você não pode ter menos que 14 jogadores.";
                             noticia.Usuario = jog.Clube.Usuario;
                         }
 
@@ -3557,6 +3671,21 @@
             partida.Gols = lstGols;
 
             return View(partida);
+        }
+
+        private string LinkaClube(Clube clube)
+        {
+            return "<a href=\"" + Url.Action("Index", "Clube", new { id = clube.Id }) + "\" >" + clube.Nome + "</a>";
+        }
+
+        private string LinkaJogador(Jogador jogador)
+        {
+            return "<a href=\"" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "\" >" + jogador.Nome + "</a>";
+        }
+
+        private string LinkaStaff(Staff staff)
+        {
+            return "<a href=\"" + Url.Action("Index", "Staff", new { id = staff.Id }) + "\" >" + staff.Nome + "</a>";
         }
     }
 }
