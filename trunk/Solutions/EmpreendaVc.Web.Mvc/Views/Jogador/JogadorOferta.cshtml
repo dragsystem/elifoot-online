@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
 }
 <h2>
     Proposta por @Model.Jogador.Nome @(Model.Jogador.Clube != null ? "(" + Model.Jogador.Clube.Nome + ")" : "")
@@ -47,7 +48,7 @@
         if (Model.Tipo == 1)
         {
             @:Tipo de Proposta: Proposta de Compra<br /><br />
-            @:Valor: @this.Select("Valor").Options(Util.RetornaValorVenda()).FirstOption("Selecione").Selected(Model.Valor != 0 ? Model.Valor.ToString("N2") : "")
+            @:Valor: @this.Select("Valor").Options(Util.RetornaValorVenda(clube.Dinheiro)).FirstOption("Selecione").Selected(Model.Valor != 0 ? Model.Valor.ToString("N2") : "")
         }
         else if (Model.Tipo == 2)
         {

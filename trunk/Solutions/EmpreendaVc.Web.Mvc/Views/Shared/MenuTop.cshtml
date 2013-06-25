@@ -10,7 +10,15 @@
     <li> <a href="@Url.Action("Contato", "Home")">Contato</a></li>
     @if (Model != null)
     {
-        <li><a href="@Url.Action("Index", "Conta")">INÍCIO</a></li>
+        <li>
+            <a href="@Url.Action("Index", "Conta")">
+            NOTÍCIAS 
+            @if (Model.Noticias.Where(x => !x.Lida).Count() > 0)
+            {
+                @: (<span style="color: Red" >@Model.Noticias.Where(x => !x.Lida).Count()</span>)
+            }
+            </a>
+        </li>
         <li><a href="@Url.Action("Plantel", "Clube")">PLANTEL</a></li>
         <li><a href="@Url.Action("Sair", "Conta")">Sair</a></li>
     }

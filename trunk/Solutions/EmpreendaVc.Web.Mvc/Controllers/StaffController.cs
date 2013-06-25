@@ -270,6 +270,11 @@
             if (staff.Usuario == null || staff.Usuario.Id != usuario.Id)
                 return RedirectToAction("Index", "Conta");
 
+            if (usuario.Clube != null)
+                ViewBag.Clube = true;
+            else
+                ViewBag.Clube = false;
+
             return View(staff);
         }        
         
@@ -287,6 +292,13 @@
             staff.Salario = 0;
             staff.Contrato = 0;
             staffRepository.SaveOrUpdate(staff);
+
+            if (usuario.Clube != null)
+            {
+                var clube = usuario.Clube;
+                clube.Dinheiro = clube.Dinheiro - ((staff.Salario * 2) * staff.Contrato);
+                clubeRepository.SaveOrUpdate(clube);
+            }
 
             TempData["MsgOk"] = staff.Nome + " foi dispensado com sucesso!";
             return RedirectToAction("Index", "Staff", new { id = id });

@@ -125,12 +125,21 @@
         
         public ActionResult MudarDia()
         {
-            return RedirectToAction("EscalaTimes", "Engine");
-        }
-        
-        public ActionResult MudarDia2()
-        {
-            return RedirectToAction("AtualizarDataDia", "Engine");
+            ViewBag.AtualizarDataDia = false;
+            ViewBag.EscalaTimes = false;
+            ViewBag.RodaPartida = false;
+            ViewBag.AtualizaTabela = false;
+            ViewBag.GerarTaca = false;
+            ViewBag.ZerarDelayUsuario = false;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         #region MudarDia
@@ -143,8 +152,21 @@
             controle.Dia = controle.Dia + 1 <= controle.DiaMax ? controle.Dia + 1 : 1;
             controleRepository.SaveOrUpdate(controle);
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("ZerarDelayUsuario", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = false;
+            ViewBag.RodaPartida = false;
+            ViewBag.AtualizaTabela = false;
+            ViewBag.GerarTaca = false;
+            ViewBag.ZerarDelayUsuario = false;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -160,7 +182,11 @@
                     var escalacao = new Escalacao();
                     escalacao.Clube = clube;
                     escalacao.Posicao = 1;
-                    escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
+                    if (clube.Usuario != null)
+                        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
+                    else
+                        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
+
                     if (escalacao.Jogador.H >= 90)
                         escalacao.H = escalacao.Jogador.H + 20;
                     else if (escalacao.Jogador.H >= 80)
@@ -179,7 +205,11 @@
                         escalacao = new Escalacao();
                         escalacao.Clube = clube;
                         escalacao.Posicao = 2;
-                        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
+                        if (clube.Usuario != null)
+                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
+                        else
+                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
+
                         if (escalacao.Jogador.H >= 90)
                             escalacao.H = escalacao.Jogador.H + 20;
                         else if (escalacao.Jogador.H >= 80)
@@ -194,7 +224,12 @@
                     }
 
                     //ZAGUEIROS
-                    var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(3);
+                    var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3);
+                    if (clube.Usuario != null)
+                        zagueiros = zagueiros.OrderByDescending(x => x.TreinoMedia).Take(3);
+                    else
+                        zagueiros = zagueiros.OrderByDescending(x => x.H).Take(3);
+
                     if (clube.Formacao.Substring(0, 1) == "4")
                         zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
 
@@ -223,7 +258,10 @@
                         escalacao = new Escalacao();
                         escalacao.Clube = clube;
                         escalacao.Posicao = 4;
-                        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
+                        if (clube.Usuario != null)
+                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
+                        else
+                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
                         if (escalacao.Jogador.H >= 90)
                             escalacao.H = escalacao.Jogador.H + 20;
                         else if (escalacao.Jogador.H >= 80)
@@ -238,7 +276,17 @@
                     }
 
                     //VOLANTE
-                    var volantes = clube.Jogadores.Where(x => x.Posicao == 5).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(1, 1)));
+                    var volantes = clube.Jogadores.Where(x => x.Posicao == 5);
+                    if (clube.Usuario != null)
+                        volantes = volantes.OrderByDescending(x => x.TreinoMedia);
+                    else
+                        volantes = volantes.OrderByDescending(x => x.H);
+
+                    volantes = volantes.Take(Convert.ToInt32(clube.Formacao.Substring(1, 1)));
+
+                    if (clube.Formacao.Substring(0, 1) == "4")
+                        zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
+                    
                     foreach (var vol in volantes)
                     {
                         escalacao = new Escalacao();
@@ -259,7 +307,14 @@
                     }
 
                     //MEIA OFENSIVO
-                    var meias = clube.Jogadores.Where(x => x.Posicao == 6).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(2, 1)));
+                    var meias = clube.Jogadores.Where(x => x.Posicao == 6);
+                    if (clube.Usuario != null)
+                        meias = meias.OrderByDescending(x => x.TreinoMedia);
+                    else
+                        meias = meias.OrderByDescending(x => x.H);
+
+                    meias = meias.Take(Convert.ToInt32(clube.Formacao.Substring(2, 1)));
+
                     foreach (var mei in meias)
                     {
                         escalacao = new Escalacao();
@@ -280,7 +335,14 @@
                     }
 
                     //ATACANTES
-                    var atacantes = clube.Jogadores.Where(x => x.Posicao == 7).OrderByDescending(x => x.H).Take(Convert.ToInt32(clube.Formacao.Substring(3, 1)));
+                    var atacantes = clube.Jogadores.Where(x => x.Posicao == 7);
+                    if (clube.Usuario != null)
+                        atacantes = atacantes.OrderByDescending(x => x.TreinoMedia);
+                    else
+                        atacantes = atacantes.OrderByDescending(x => x.H);
+
+                    atacantes = atacantes.Take(Convert.ToInt32(clube.Formacao.Substring(3, 1)));
+
                     foreach (var ata in atacantes)
                     {
                         escalacao = new Escalacao();
@@ -326,8 +388,21 @@
                 var teste = ex.ToString();
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("RodaPartida", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = false;
+            ViewBag.AtualizaTabela = false;
+            ViewBag.GerarTaca = false;
+            ViewBag.ZerarDelayUsuario = false;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1297,9 +1372,9 @@
                     publico = clube1.Socios * 5;
                     publico = publico - ((publico / 12) * (divisaotabelaRepository.GetAll().Where(x => x.Clube.Id == clube1.Id).FirstOrDefault().Posicao - 1));
                     if (clube1.Ingresso > 35)
-                        publico = (publico / 100) * 30;
+                        publico = publico / 2;
                     else if (clube1.Ingresso > 25)
-                        publico = (publico / 100) * 50;
+                        publico = (publico / 4) * 3;
 
                     publico = rnd.Next((publico - 3000), publico);
                     if (publico > clube1.Estadio)
@@ -1327,8 +1402,21 @@
                 var teste = ex.ToString();
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("AtualizaTabela", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = false;
+            ViewBag.GerarTaca = false;
+            ViewBag.ZerarDelayUsuario = false;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1371,8 +1459,21 @@
                 }
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("GerarTaca", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = false;
+            ViewBag.ZerarDelayUsuario = false;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1459,7 +1560,22 @@
                     lstTaca.Remove(clube2);
                 }
             }
-            return RedirectToAction("Index", "Engine");
+
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = false;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1474,8 +1590,21 @@
                 usuarioRepository.SaveOrUpdate(usuario);
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("CriarJogadoresTemporarios", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1527,8 +1656,21 @@
                 }
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("UpdateFinancas", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.UpdateFinancas = false;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1547,8 +1689,21 @@
                 clubeRepository.SaveOrUpdate(clube);
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("VerificaTecnicos", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = false;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1571,7 +1726,7 @@
 
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = "Você foi despedido do " + LinkaClube(clube) + ", pois a diretoria não estava satisfeita com seu trabalho.<br /><br />Procure outro clube para dirigir.";
+                    noticia.Texto = "Você foi despedido do " + Util.Util.LinkaClube(clube) + ", pois a diretoria não estava satisfeita com seu trabalho.<br /><br />Procure outro clube para dirigir.";
                     noticia.Usuario = tecnicoatual;
                     noticiaRepository.SaveOrUpdate(noticia);
 
@@ -1582,7 +1737,7 @@
                     {
                         noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = LinkaClube(clube) + " despediu o técnico e está a procura de um novo técnico.";
+                        noticia.Texto = Util.Util.LinkaClube(clube) + " despediu o técnico e está a procura de um novo técnico.";
                         noticia.Usuario = tecniconovo;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1594,18 +1749,32 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = LinkaClube(clube) + " despediu o técnico e está a procura de um novo técnico.";
+                        noticia.Texto = Util.Util.LinkaClube(clube) + " despediu o técnico e está a procura de um novo técnico.";
                         noticia.Usuario = tecniconovo;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
 
                     clube.ReputacaoAI = 30;
+                    clube.Formacao = "4222";
                     clubeRepository.SaveOrUpdate(clube);
                 }                
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("AtualizarTransferencias", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = true;
+            ViewBag.AtualizarTransferencias = false;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1626,12 +1795,6 @@
                     clubecomprador.Dinheiro = clubecomprador.Dinheiro - jogadoroferta.Valor;
                     clubeRepository.SaveOrUpdate(clubecomprador);
 
-                    jogador.Clube = clubecomprador;
-                    jogador.Contrato = jogadoroferta.Contrato;
-                    jogador.Salario = jogadoroferta.Salario;
-                    jogador.Situacao = 1;
-                    jogadorRepository.SaveOrUpdate(jogador);
-
                     if (clubevendedor != null)
                     {
                         clubevendedor.Dinheiro = clubecomprador.Dinheiro + jogadoroferta.Valor;
@@ -1648,14 +1811,26 @@
                         jogadorhistoricoRepository.SaveOrUpdate(historico);
                     }
 
+                    jogador.Clube = clubecomprador;
+                    jogador.Contrato = jogadoroferta.Contrato;
+                    jogador.Salario = jogadoroferta.Salario;
+                    jogador.Situacao = 1;
+                    jogador.Jogos = 0;
+                    jogador.NotaTotal = 0;
+                    jogador.NotaUlt = 0;
+                    jogador.Treinos = 0;
+                    jogador.TreinoUlt = 0;
+                    jogador.TreinoTotal = 0;
+                    jogadorRepository.SaveOrUpdate(jogador);                    
+
                     if (clubecomprador.Usuario != null)
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
                         if (clubevendedor != null)
-                            noticia.Texto =  LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") foi vendido para o " + LinkaClube(clubecomprador) + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                            noticia.Texto =  Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") foi vendido para o " + Util.Util.LinkaClube(clubecomprador) + " por $" + jogadoroferta.Valor.ToString("N2"); 
                         else
-                            noticia.Texto =  LinkaJogador(jogador) + ", que estava sem clube, assinou contrato com o " + LinkaClube(clubecomprador) + "."; 
+                            noticia.Texto =  Util.Util.LinkaJogador(jogador) + ", que estava sem clube, assinou contrato com o " + Util.Util.LinkaClube(clubecomprador) + "."; 
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1663,7 +1838,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = LinkaJogador(jogador) + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                        noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
                         noticia.Usuario = clubevendedor.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1691,9 +1866,9 @@
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
                         if (clubevendedor != null)
-                            noticia.Texto = LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") rejeitou sua proposta.";
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta.";
                         else
-                            noticia.Texto = LinkaJogador(jogador) + " rejeitou sua proposta.";
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " rejeitou sua proposta.";
                         
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
@@ -1711,9 +1886,9 @@
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
                         if (clubevendedor != null)
-                            noticia.Texto = LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi vendido para o " + clubequecomprou + ".";
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi vendido para o " + clubequecomprou + ".";
                         else
-                            noticia.Texto = LinkaJogador(jogador) + " (" + LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi assinou contrato com " + clubequecomprou + ".";
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi assinou contrato com " + clubequecomprou + ".";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1727,7 +1902,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = LinkaClube(clubevendedor) + " cancelou a venda de " + LinkaJogador(jogador) + " por estar com poucos jogadores no elenco.";
+                        noticia.Texto = Util.Util.LinkaClube(clubevendedor) + " cancelou a venda de " + Util.Util.LinkaJogador(jogador) + " por estar com poucos jogadores no elenco.";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1740,7 +1915,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = "Sua proposta por " + LinkaJogador(jogador) + " foi cancelada, pois você não possui dinheiro para fechar a compra.";
+                        noticia.Texto = "Sua proposta por " + Util.Util.LinkaJogador(jogador) + " foi cancelada, pois você não possui dinheiro para fechar a compra.";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1749,8 +1924,21 @@
                 }
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("VariarJogador", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = true;
+            ViewBag.AtualizarTransferencias = true;
+            ViewBag.VariarJogador = false;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1773,7 +1961,7 @@
 
                 if (jogador.Lesionado == 0 && jogador.Clube != null)
                 {
-                    var chancelesionar = 5;
+                    var chancelesionar = 4;
 
                     if (jogador.Condicao < 70)
                         chancelesionar = 20;
@@ -1883,7 +2071,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto =  LinkaJogador(jogador) + " se lesionou por " + jogador.Lesionado + " dia(s)";
+                            noticia.Texto =  Util.Util.LinkaJogador(jogador) + " se lesionou por " + jogador.Lesionado + " dia(s)";
                             noticia.Usuario = jogador.Clube.Usuario;
                             noticiaRepository.SaveOrUpdate(noticia);
                         }
@@ -1899,7 +2087,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto =  LinkaJogador(jogador) + " está recuperado da lesão e disponível para jogar.";
+                        noticia.Texto =  Util.Util.LinkaJogador(jogador) + " está recuperado da lesão e disponível para jogar.";
                         noticia.Usuario = jogador.Clube.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1908,8 +2096,21 @@
                 jogadorRepository.SaveOrUpdate(jogador);
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("ZeraStaffConsultas", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = true;
+            ViewBag.AtualizarTransferencias = true;
+            ViewBag.VariarJogador = true;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1921,8 +2122,21 @@
                 staffRepository.SaveOrUpdate(staff);
             }
 
-            //return RedirectToAction("Index", "Engine");
-            return RedirectToAction("GerarTesteJogador", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = true;
+            ViewBag.AtualizarTransferencias = true;
+            ViewBag.VariarJogador = true;
+            ViewBag.ZeraStaffConsultas = true;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
         }
 
         [Transaction]
@@ -1994,7 +2208,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = LinkaJogador(jogador) + " foi testado e participou do treino com seus jogadores. Ele foi avaliado com uma nota <b>" + nota + "</b>.";
+                    noticia.Texto = Util.Util.LinkaJogador(jogador) + " foi testado e participou do treino com seus jogadores. Ele foi avaliado com uma nota <b>" + nota + "</b>.";
                     noticia.Usuario = teste.Clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
@@ -2002,8 +2216,21 @@
                 jogadortesteRepository.Delete(teste);
             }
 
-            return RedirectToAction("Index", "Engine");
-            //return RedirectToAction("ZeraStaffConsultas", "Engine");
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = true;
+            ViewBag.AtualizarTransferencias = true;
+            ViewBag.VariarJogador = true;
+            ViewBag.ZeraStaffConsultas = true;
+            ViewBag.GerarTesteJogador = true;
+
+            return View("Rodando");
         }
 
         #endregion
@@ -2070,7 +2297,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = "Seu contrato com o " + Util.Util.RetornaStaffTipo(staff.Tipo) + " " + LinkaStaff(staff) + " terminou. Ele deixou sua comissão técnica.";
+                    noticia.Texto = "Seu contrato com o " + Util.Util.RetornaStaffTipo(staff.Tipo) + " " + Util.Util.LinkaStaff(staff) + " terminou. Ele deixou sua comissão técnica.";
                     noticia.Usuario = staff.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
 
@@ -2103,6 +2330,7 @@
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
                     noticia.Texto = "Devido sua colocação você foi classificado para participar da TAÇA.";
+                    noticia.Usuario = clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
 
@@ -2298,7 +2526,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = LinkaJogador(jog) + " encerrou seu contrato e deixou o clube.";
+                            noticia.Texto = Util.Util.LinkaJogador(jog) + " encerrou seu contrato e deixou o clube.";
                             noticia.Usuario = jog.Clube.Usuario;
                         }
 
@@ -2312,7 +2540,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto = LinkaJogador(jog) + " teve seu contrato prorrogado por 1 ano com aumento de 20%, pois você não pode ter menos que 14 jogadores.";
+                            noticia.Texto = Util.Util.LinkaJogador(jog) + " teve seu contrato prorrogado por 1 ano com aumento de 20%, pois você não pode ter menos que 14 jogadores.";
                             noticia.Usuario = jog.Clube.Usuario;
                         }
 
@@ -2577,10 +2805,16 @@
         #region GerarJogador
 
         [Transaction]
-        public ActionResult GerarJogador(int id)
+        public ActionResult GerarJogador(int? id)
         {
-            var clube = clubeRepository.Get(id);
-            var divisao = clube.Divisao.Numero;
+            Clube clube = null;
+            int? divisao = null;
+
+            if (id.HasValue)
+            {
+                clube = clubeRepository.Get(id.Value);
+                divisao = clube.Divisao.Numero;
+            }
             var nomes = nomeRepository.GetAll();
             var rnd = new Random();
 
@@ -2594,8 +2828,7 @@
 
             for (int i = 0; i < 18; i++)
             {
-                var jogador = new Jogador();
-                jogador.Clube = clube;
+                var jogador = new Jogador();               
 
                 if (g > 0) {   jogador.Posicao = 1; g--; }
                 else if (ld > 0) { jogador.Posicao = 2; ld--; }
@@ -2610,14 +2843,30 @@
 
                 jogador.Nome = objnome.NomeJogador.ToUpper();
 
-                var h = Convert.ToInt32((60 / divisao) / 5) * 5;
-                h = h + (5 * rnd.Next(1, 5)) - 10;
-                jogador.HF = h > 0 ? h : 1;
-                
-                jogador.H = jogador.HF;
-                jogador.Salario = ((jogador.HF / 2) / divisao) * 1000;
-                jogador.Contrato = 2;
+                if (clube != null)
+                {
+                    jogador.Clube = clube;
 
+                    var h = Convert.ToInt32((60 / divisao) / 5) * 5;
+                    h = h + (5 * rnd.Next(1, 5)) - 10;
+                    jogador.HF = h > 0 ? h : 1;
+
+                    jogador.H = jogador.HF;
+                    jogador.Salario = ((jogador.HF / 2) / divisao.Value) * 1000;
+                    jogador.Contrato = 2;
+                }
+                else
+                {
+                    var prob1 = rnd.Next(1, 101);
+                    if (prob1 >= 95)
+                        jogador.H = rnd.Next(70, 91);
+                    else if (prob1 >= 65)
+                        jogador.H = rnd.Next(40, 70);
+                    else if (prob1 >= 30)
+                        jogador.H = rnd.Next(20, 40);
+                    else
+                        jogador.H = rnd.Next(1, 20);
+                }
                 jogadorRepository.SaveOrUpdate(jogador);
             }
 
@@ -3671,21 +3920,6 @@
             partida.Gols = lstGols;
 
             return View(partida);
-        }
-
-        private string LinkaClube(Clube clube)
-        {
-            return "<a href=\"" + Url.Action("Index", "Clube", new { id = clube.Id }) + "\" >" + clube.Nome + "</a>";
-        }
-
-        private string LinkaJogador(Jogador jogador)
-        {
-            return "<a href=\"" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "\" >" + jogador.Nome + "</a>";
-        }
-
-        private string LinkaStaff(Staff staff)
-        {
-            return "<a href=\"" + Url.Action("Index", "Staff", new { id = staff.Id }) + "\" >" + staff.Nome + "</a>";
         }
     }
 }

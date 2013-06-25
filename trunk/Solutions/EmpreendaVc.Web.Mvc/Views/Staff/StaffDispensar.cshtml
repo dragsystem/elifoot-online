@@ -13,7 +13,15 @@
 
 @{ Html.RenderAction("Index", "Mensagem"); }
     <p>
-    Tem certeza que deseja encerrar o contrato de @Model.Nome?
+    @if ((bool)ViewBag.Clube)
+    {
+        @:Para encerrar o contrato com @Model.Nome, você terá que pagar uma multa de $@(((Model.Salario * 2) * Model.Contrato).ToString("N2")).<br />
+    }
+    else
+	{
+        @:Ao dispensar @Model.Nome, você não poderá mais contar com seu trabalho.<br />
+	}    
+    Deseja continuar?
     </p>
     <br />
     <a class="submit" href="@Url.Action("StaffDispensarConfirma", new { id = Model.Id })">CONFIRMAR</a>

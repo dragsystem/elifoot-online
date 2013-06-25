@@ -59,7 +59,7 @@
     {
         foreach (var noticia in Model.Noticias.OrderByDescending(x => x.Data))
         {
-            var data = controle.Dia > noticia.Dia ? DateTime.Now.AddDays(controle.Dia - noticia.Dia) : DateTime.Now;
+            var data = controle.Dia > noticia.Dia ? DateTime.Now.AddDays(noticia.Dia - controle.Dia) : DateTime.Now;
             <p>
                 <b>@data.ToShortDateString()</b><br />
                 @Html.Raw(noticia.Texto)

@@ -44,6 +44,8 @@
             this.noticiaRepository = noticiaRepository;
         }
 
+        [Transaction]
+        [Authorize]
         public ActionResult Index()
         {
             var usuario = authenticationService.GetUserAuthenticated();
