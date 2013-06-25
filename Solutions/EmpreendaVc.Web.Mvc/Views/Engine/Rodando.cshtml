@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Index</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            setTimeout(function () {
+                @if (!(bool)ViewBag.AtualizarDataDia)
+                {
+                    @: window.location.replace("../Engine/AtualizarDataDia");
+                }
+                else if (!(bool)ViewBag.EscalaTimes)
+                {
+                    @: window.location.replace("../Engine/EscalaTimes");
+                }
+                else if (!(bool)ViewBag.RodaPartida)
+                {
+                    @: window.location.replace("../Engine/RodaPartida");
+                }
+                else if (!(bool)ViewBag.AtualizaTabela)
+                {
+                    @: window.location.replace("../Engine/AtualizaTabela");
+                }
+                else if (!(bool)ViewBag.GerarTaca)
+                {
+                    @: window.location.replace("../Engine/GerarTaca");
+                }
+                else if (!(bool)ViewBag.ZerarDelayUsuario)
+                {
+                    @: window.location.replace("../Engine/ZerarDelayUsuario");
+                }
+                else if (!(bool)ViewBag.CriarJogadoresTemporarios)
+                {
+                    @: window.location.replace("../Engine/CriarJogadoresTemporarios");
+                }
+                else if (!(bool)ViewBag.UpdateFinancas)
+                {
+                    @: window.location.replace("../Engine/UpdateFinancas");
+                }
+                else if (!(bool)ViewBag.VerificaTecnicos)
+                {
+                    @: window.location.replace("../Engine/VerificaTecnicos");
+                }
+                else if (!(bool)ViewBag.AtualizarTransferencias)
+                {
+                    @: window.location.replace("../Engine/AtualizarTransferencias");
+                }
+                else if (!(bool)ViewBag.VariarJogador)
+                {
+                    @: window.location.replace("../Engine/VariarJogador");
+                }
+                else if (!(bool)ViewBag.ZeraStaffConsultas)
+                {
+                    @: window.location.replace("../Engine/ZeraStaffConsultas");
+                }
+                else if (!(bool)ViewBag.GerarTesteJogador)
+                {
+                    @: window.location.replace("../Engine/GerarTesteJogador");
+                }
+                else
+                {
+                @: window.location.replace("../Engine/Index");
+                }
+            }, 3000);
+        });
+    </script>
+</head>
+<body>
+    <h2>Mudar DIA</h2>
+    <table>
+        <tr>
+            <th>AtualizarDataDia.......................................................</th>
+            <td>@((bool)ViewBag.AtualizarDataDia ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>EscalaTimes..............................................................</th>
+            <td>@((bool)ViewBag.EscalaTimes ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>RodaPartida..............................................................</th>
+            <td>@((bool)ViewBag.RodaPartida ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>AtualizaTabela..........................................................</th>
+            <td>@((bool)ViewBag.AtualizaTabela ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>GerarTaca.................................................................</th>
+            <td>@((bool)ViewBag.GerarTaca ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>ZerarDelayUsuario...................................................</th>
+            <td>@((bool)ViewBag.ZerarDelayUsuario ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>CriarJogadoresTemporarios.....................................</th>
+            <td>@((bool)ViewBag.CriarJogadoresTemporarios ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>UpdateFinancas............................................................</th>
+            <td>@((bool)ViewBag.UpdateFinancas ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>VerificaTecnicos..........................................................</th>
+            <td>@((bool)ViewBag.VerificaTecnicos ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>AtualizarTransferencias...............................................</th>
+            <td>@((bool)ViewBag.AtualizarTransferencias ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>VariarJogador.............................................................</th>
+            <td>@((bool)ViewBag.VariarJogador ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>ZeraStaffConsultas.......................................................</th>
+            <td>@((bool)ViewBag.ZeraStaffConsultas ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>GerarTesteJogador.......................................................</th>
+            <td>@((bool)ViewBag.GerarTesteJogador ? "OK" : "")</td>
+        </tr>
+   </table>
+</body>
+</html>

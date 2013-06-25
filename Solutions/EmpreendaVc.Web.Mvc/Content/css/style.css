@@ -61,10 +61,14 @@ h2 .legenda b { font-size: 11px; }
 #plantel-financas { float: right; width: 260px; }
 #plantel-proximo { float: right; width: 260px; }
 
-#plantel-posicao { height: 50px; }
-    .posicao-vazio { float: left; margin-right: 7px; width: 60px; background: #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; text-align: center; }
-    .posicao-preenchido { float: left; margin-right: 7px; width: 60px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; text-align: center; }
+#plantel-posicao { height: 50px; width: 650px; float:left; }
+    .posicao-vazio { float: left; margin-right: 5px; width: 34px; background: #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; text-align: center; }
+    .posicao-preenchido { float: left; margin-right: 5px; width: 34px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; text-align: center; }
 
+#plantel-visualizar { height: 50px; float: right; font-size: 14px; }
+    .con { display: none; }
+    .est { display: none; }
+    
 #Ingresso { background: #FBFBFB; padding: 0px; border: none; font-size: 14px; font-weight: bold; text-align: center; }
 
 #classificacao-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
@@ -76,7 +80,7 @@ h2 .legenda b { font-size: 11px; }
 
 #resultados-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
 #resultados-lista a { font-weight: normal; margin-left: 15px; }
-#resultados-tabela { float: left; width: 650px; }
+#resultados-tabela { float: left; width: 650px; min-height: 300px; }
 
 #transferencias-tabela { float: left; width: 650px; }
 

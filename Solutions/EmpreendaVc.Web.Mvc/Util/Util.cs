@@ -246,28 +246,33 @@ namespace EmpreendaVc.Web.Mvc.Util
             return h;
         }
 
-        public static List<SelectListItem> RetornaValorVenda()
+        public static List<SelectListItem> RetornaValorVenda(decimal dinheiro)
         {
             var lst = new List<SelectListItem>();
             decimal valor = 0;
 
-            while (valor <= 80000000)
+            if (dinheiro > 0)
             {
-                lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
+                while (valor <= dinheiro)
+                {
+                    lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
 
-                if (valor <= 300000)
-                    valor = valor + 50000;
-                else if (valor <= 250000)
-                    valor = valor + 250000;
-                else if (valor <= 10000000)
-                    valor = valor + 500000;
-                else if (valor <= 30000000)
-                    valor = valor + 1000000;
-                else if (valor <= 50000000)
-                    valor = valor + 2500000;
-                else if (valor > 50000000)
-                    valor = valor + 5000000;
+                    if (valor <= 300000)
+                        valor = valor + 50000;
+                    else if (valor <= 250000)
+                        valor = valor + 250000;
+                    else if (valor <= 10000000)
+                        valor = valor + 500000;
+                    else if (valor <= 30000000)
+                        valor = valor + 1000000;
+                    else if (valor <= 50000000)
+                        valor = valor + 2500000;
+                    else if (valor > 50000000)
+                        valor = valor + 5000000;
+                }
             }
+            else
+                lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
 
             return lst;
         }
@@ -369,6 +374,21 @@ namespace EmpreendaVc.Web.Mvc.Util
             lst.Add(new SelectListItem { Text = "$50,00", Value = "50" });
 
             return lst;
+        }
+
+        public static string LinkaClube(Clube clube)
+        {
+            return "<a href=\"/Clube/Index/" + clube.Id + "\" >" + clube.Nome + "</a>";
+        }
+
+        public static string LinkaJogador(Jogador jogador)
+        {
+            return "<a href=\"/Jogador/Index/" + jogador.Id + "\" >" + jogador.Nome + "</a>";
+        }
+
+        public static string LinkaStaff(Staff staff)
+        {
+            return "<a href=\"/Jogador/Index/" + staff.Id + "\" >" + staff.Nome + "</a>";
         }
 
         public static List<SelectListItem> SelectListMeses()

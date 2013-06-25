@@ -6,6 +6,13 @@
 <div id="plantel-menu">
 @if (usuario.Clube.Id == Model.Id)
 {
+    <a class="botao" href="@Url.Action("Index", "Conta")">
+        Notícias 
+        @if (usuario.Noticias.Where(x => !x.Lida).Count() > 0)
+        {
+            @: (@usuario.Noticias.Where(x => !x.Lida).Count())
+        }
+    </a><br />
     <a class="botao" href="@Url.Action("MeusJogadores", "Jogador")">Propostas</a><br />
     <a class="botao" href="@Url.Action("Classificacao", "Clube", new { iddivisao = Model.Divisao.Id })">Classificação</a><br />
     <a class="botao" href="@Url.Action("Calendario", "Clube")">Calendário</a><br />

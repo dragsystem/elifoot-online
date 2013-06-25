@@ -242,6 +242,8 @@
 
             jogadoroferta.Jogador = jogador;
 
+            ViewBag.Clube = usuario.Clube;
+
             return View(jogadoroferta);
         }
 
@@ -286,7 +288,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = LinkaClube(jogadoroferta.Clube) + " apresentou uma proposta por " + LinkaJogador(jogadoroferta.Jogador) + ". <br /><br />Entre em Propostas para responder.";
+                    noticia.Texto = Util.Util.LinkaClube(jogadoroferta.Clube) + " apresentou uma proposta por " + Util.Util.LinkaJogador(jogadoroferta.Jogador) + ". <br /><br />Entre em Propostas para responder.";
                     noticia.Usuario = jogador.Clube.Usuario;
 
                     noticiaRepository.SaveOrUpdate(noticia);
@@ -376,7 +378,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = LinkaClube(usuario.Clube) + " aceitou sua proposta por " + LinkaJogador(jogadoroferta.Jogador) + ".<br />Agora você deve aguardar a resposta do jogador.";
+                    noticia.Texto = Util.Util.LinkaClube(usuario.Clube) + " aceitou sua proposta por " + Util.Util.LinkaJogador(jogadoroferta.Jogador) + ".<br />Agora você deve aguardar a resposta do jogador.";
                     noticia.Usuario = jogadoroferta.Clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
@@ -390,7 +392,7 @@
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = LinkaClube(usuario.Clube) + " rejeitou sua proposta por " + LinkaJogador(jogadoroferta.Jogador) + ".";
+                    noticia.Texto = Util.Util.LinkaClube(usuario.Clube) + " rejeitou sua proposta por " + Util.Util.LinkaJogador(jogadoroferta.Jogador) + ".";
                     noticia.Usuario = jogadoroferta.Clube.Usuario;
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
@@ -514,7 +516,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = "Sua proposta por " + LinkaJogador(jogador) + " foi cancelada, pois o mesmo foi dispensado pelo " + LinkaClube(clube) + ".";
+                        noticia.Texto = "Sua proposta por " + Util.Util.LinkaJogador(jogador) + " foi cancelada, pois o mesmo foi dispensado pelo " + Util.Util.LinkaClube(clube) + ".";
                         noticia.Usuario = item.Clube.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -630,7 +632,7 @@
             {
                 var noticia = new Noticia();
                 noticia.Dia = controle.Dia;
-                noticia.Texto = olheiro.Nome + " relatou que " + LinkaJogador(jogador) + " tem uma média de " + jogador.TreinoMedia + " nos treinos pelo " + LinkaClube(jogador.Clube) + " e no último treino teve a nota " + jogador.TreinoUlt + ".";
+                noticia.Texto = olheiro.Nome + " relatou que " + Util.Util.LinkaJogador(jogador) + " tem uma média de " + jogador.TreinoMedia + " nos treinos pelo " + Util.Util.LinkaClube(jogador.Clube) + " e no último treino teve a nota " + jogador.TreinoUlt + ".";
                 noticia.Usuario = usuario;
                 noticiaRepository.SaveOrUpdate(noticia);
 
@@ -674,19 +676,6 @@
             return View(jogador);
         }
 
-        private string LinkaClube(Clube clube)
-        {
-            return "<a href=\"" + Url.Action("Index", "Clube", new { id = clube.Id }) + "\" >" + clube.Nome + "</a>";
-        }
-
-        private string LinkaJogador(Jogador jogador)
-        {
-            return "<a href=\"" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "\" >" + jogador.Nome + "</a>";
-        }
-
-        private string LinkaStaff(Staff staff)
-        {
-            return "<a href=\"" + Url.Action("Index", "Staff", new { id = staff.Id }) + "\" >" + staff.Nome + "</a>";
-        }
+        
     }
 }

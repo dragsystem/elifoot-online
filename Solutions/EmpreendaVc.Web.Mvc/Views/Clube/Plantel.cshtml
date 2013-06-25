@@ -11,7 +11,7 @@
 <script type="text/javascript">
     var idelemento = '';
 
-    $(function () {        
+    $(function () {
         $(".select-escalacao").change(function () {
             idelemento = $(this).attr('id');
             var id = idelemento.replace('F', '');
@@ -26,6 +26,25 @@
             $('#loading').fadeIn();
             $('.select-escalacao > option').remove();
             $('.select-escalacao').append("<option value='' >--</option>");
+        });
+
+        $('#plantel-visualizacao').change(function () {
+            if ($(this).val() == '1')
+            {
+                $('.sel').show();
+                $('.con').hide();
+                $('.est').hide();
+            }
+            else if ($(this).val() == '2') {
+                $('.sel').hide();
+                $('.con').show();
+                $('.est').hide();
+            }
+            else if ($(this).val() == '3') {
+                $('.sel').hide();
+                $('.con').hide();
+                $('.est').show();
+            }
         });
 
         $("#Ingresso").change(function () {
@@ -72,39 +91,54 @@
     }
 </script>
 
-<h2>Plantel</h2>
+<h2>
+    @Model.Nome
+    <div id="plantel-visualizar">
+        <select id="plantel-visualizacao" >
+            <option value="1" selected="selected" >SELEÇÃO</option>
+            <option value="2" >CONTRATO</option>
+            <option value="3" >ESTATÍSTICAS</option>
+        </select>
+    </div>
+</h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
 
-<div id="plantel-posicao">
-    @foreach (var escalacao in Model.Escalacao)
-    {
-        var id = "e" + escalacao.Id;
-        var classe = "posicao-vazio";
-        if (escalacao.Jogador != null)
-        {
-            classe = "posicao-preenchido";
-        }
-        var style = "";
-        if (escalacao.Id == Model.Escalacao.Last().Id)
-        {
-            style = "margin-right:0px;";
-        }
-        <div id="@id" class="@classe" title="@(escalacao.Jogador != null ? escalacao.Jogador.Nome : "")" style="@style">@Util.RetornaPosicao(escalacao.Posicao)</div>
-    }    
-</div>
+<div class="clear"></div>
 
 <div id="left">
+    <div id="plantel-posicao">
+        @foreach (var escalacao in Model.Escalacao)
+        {
+            var id = "e" + escalacao.Id;
+            var classe = "posicao-vazio";
+            if (escalacao.Jogador != null)
+            {
+                classe = "posicao-preenchido";
+            }
+            var style = "";
+            if (escalacao.Id == Model.Escalacao.Last().Id)
+            {
+                style = "margin-right:0px;";
+            }
+            <div id="@id" class="@classe" title="@(escalacao.Jogador != null ? escalacao.Jogador.Nome : "")" style="@style">@Util.RetornaPosicao(escalacao.Posicao)</div>
+        }    
+    </div>
     <div id="plantel-caixa">
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
                 <th width="7%"></th>
                 <th width="25%">JOGADOR</th>
-                <th width="3%">P</th>
-                <th width="15%">NOTA MÉDIA</th>
-                <th width="15%">ÚLT. NOTA</th>
-                <th width="15%">NOTA TREINO</th>
-                <th width="15%">ÚLT. TREINO</th>
-                <th width="5%">GOLS</th>
+                <th width="5%" class="sel">P</th>
+                <th width="14%" class="sel">NOTA MÉDIA</th>
+                <th width="14%" class="sel">ÚLT. NOTA</th>
+                <th width="14%" class="sel">NOTA TREINO</th>
+                <th width="14%" class="sel">ÚLT. TREINO</th>
+                <th width="7%" class="sel">C%</th>
+                <th width="34%" class="con">SALÁRIO</th>
+                <th width="34%" class="con">CONTRATO</th>
+                <th width="23%" class="est">NOTA MÉDIA</th>
+                <th width="22%" class="est">JOGOS</th>
+                <th width="22%" class="est">GOLS</th>
             </tr>
             @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.Nome))
             {
@@ -127,12 +161,17 @@
                         }
                     </td>
                     <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = jog.Id })">@jog.Nome.ToUpper()</a></td>
-                    <td>@Util.RetornaPosicao(jog.Posicao)</td>
-                    <td>@(jog.NotaMedia > 0 ? jog.NotaMedia.ToString("N2") : "0,00")</td>
-                    <td>@(jog.NotaUlt > 0 ? jog.NotaUlt.ToString("N2") : "0,00")</td>
-                    <td>@(jog.TreinoMedia > 0 ? jog.TreinoMedia.ToString("N2") : "0,00")</td>
-                    <td>@(jog.TreinoUlt > 0 ? jog.TreinoUlt.ToString("N2") : "0,00")</td>
-                    <td>@jog.Gols.Where(x => x.Clube.Id == Model.Id).Count()</td>
+                    <td class="sel">@Util.RetornaPosicao(jog.Posicao)</td>
+                    <td class="sel">@(jog.NotaMedia > 0 ? jog.NotaMedia.ToString("N2") : "0,00")</td>
+                    <td class="sel">@(jog.NotaUlt > 0 ? jog.NotaUlt.ToString("N2") : "0,00")</td>
+                    <td class="sel">@(jog.TreinoMedia > 0 ? jog.TreinoMedia.ToString("N2") : "0,00")</td>
+                    <td class="sel">@(jog.TreinoUlt > 0 ? jog.TreinoUlt.ToString("N2") : "0,00")</td>
+                    <td class="sel">@(jog.Lesionado == 0 ? jog.Condicao + "%" : "-")</td>
+                    <td class="con">$@jog.Salario.ToString("N2")</td>
+                    <td class="con">@jog.Contrato ano(s)</td>
+                    <td class="est">@(jog.NotaMedia > 0 ? jog.NotaMedia.ToString("N2") : "0,00")</td>
+                    <td class="est">@jog.Jogos</td>
+                    <td class="est">@(jog.Gols.Where(x => x.Clube.Id == Model.Id).Count())</td>
                 </tr>
             }
         </table>
