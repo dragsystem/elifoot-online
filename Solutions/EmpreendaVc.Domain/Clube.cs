@@ -62,6 +62,10 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<JogadorOferta> Ofertas { get; set; }
 
+        public virtual IList<PatrocinioClube> PatrocinioClubes { get; set; }
+
+        public virtual IList<PatrocinioRecusa> PatrocinioRecusas { get; set; }
+
         public Clube()
         {
             Socios = 1000;
@@ -71,6 +75,8 @@ namespace EmpreendaVc.Domain
             Escalacao = new List<Escalacao>();
             Partidas = new List<Partida>();
             Ofertas = new List<JogadorOferta>();
+            PatrocinioClubes = new List<PatrocinioClube>();
+            PatrocinioRecusas = new List<PatrocinioRecusa>();
             Formacao = "4222";
         }
     }

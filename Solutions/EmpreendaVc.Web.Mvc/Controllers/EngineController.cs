@@ -1888,15 +1888,14 @@
                         if (clubevendedor != null)
                             noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi vendido para o " + clubequecomprou + ".";
                         else
-                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi assinou contrato com " + clubequecomprou + ".";
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta e assinou contrato com " + clubequecomprou + ".";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
 
-                    jogadoroferta.Estagio = 3;
-                    jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+                    jogadorofertaRepository.Delete(jogadoroferta);
                 }
-                else if (clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14)
+                else if (clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() < 15)
                 {
                     if (clubecomprador.Usuario != null)
                     {

@@ -1,0 +1,60 @@
+﻿@model EmpreendaVc.Domain.PatrocinioClube
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var controle = (EmpreendaVc.Domain.Controle)ViewBag.Controle;
+}
+<script type="text/javascript">
+    $(function () {
+        $('#btConfirmar').click(function () {
+            $('#Propor').val('0');
+        });
+        $('#btPropor').click(function () {
+            $('#Propor').val('1');
+        });
+        $('#Tipo, #Valor, #Contrato').change(function () {
+            $('#Propor').val('2');
+            $('#btConfirmar').hide();
+        });
+    });
+</script>
+<h2>
+    NEGOCIAÇÃO - @Model.Patrocinio.Nome
+</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<div id="jogador-valorproposta">
+    @using (Html.BeginForm("PatrocinioOferta", "Patrocinio", new { idpatrocinio = Model.Id }))
+    {
+        <p><b>ATENÇÃO</b>: Você irá negociar com @Model.Patrocinio.Nome, eles só escutarão três propostas suas.<br />
+        As negociações serão encerradas até o próximo ano nos seguintes casos:<br />
+            <ul>
+                <li>Caso esgote as três ofertas</li>
+                <li>Caso você termine as negociações (independente de ACEITO ou REJEITADO o contrato</li>
+            </ul>            
+        </p>
+        <p>Interesse: @Util.RetornaPatrocinioTipo(Model.Patrocinio.Tipo)</p>
+
+        @Html.Hidden("Propor", "1")
+        <h3>Contrato proposto ao patrocinador</h3>
+        @:Tipo de Contrato: @this.Select("Tipo").Options(Util.RetornaPatrocinioListaTipo(Model.Patrocinio.Tipo)).FirstOption("Selecione").Selected(Model.Tipo != 0 ? Model.Tipo.ToString() : "")
+        @:Valor Anual: @this.Select("Valor").Options(Util.RetornaValorPatrocinio(controle.DiaMax)).FirstOption("Selecione").Selected(Model.Valor != 0 ? Model.Valor.ToString() : "")*
+        @:Duração do contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br /><br />
+
+        @:*Caso o ano já tenha começado você só receberá os meses restantes, não totalizando o valor total anual.
+        <br /><br />
+        if ((bool)ViewBag.Resposta)
+        { 
+            <h3 style="color: Red">ATENÇÃO: Qualquer alteração no contrato acima finalizará as negociações.</h3>
+            <input id="btConfirmar" type="submit" class="submit" value="Confirmar" />
+        }
+        else
+        {
+            <input id="btPropor" type="submit" class="submit" value="Propor" />        
+        }
+        <a href="@Url.Action("Index", "Staff", new { id = Model.Id })" >Voltar</a>
+    }
+</div>

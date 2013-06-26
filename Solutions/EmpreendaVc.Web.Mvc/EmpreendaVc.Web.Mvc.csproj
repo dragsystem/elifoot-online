@@ -173,6 +173,7 @@
     <Compile Include="Controllers\ControllerCustom.cs" />
     <Compile Include="Controllers\ClubeController.cs" />
     <Compile Include="Controllers\AIController.cs" />
+    <Compile Include="Controllers\PatrocinioController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\JogadorController.cs" />
     <Compile Include="Controllers\EngineController.cs" />
@@ -456,6 +457,11 @@
     <Content Include="Views\Adm\GridStaff.cshtml" />
     <Content Include="Views\Jogador\ProporTeste.cshtml" />
     <Content Include="Views\Engine\Rodando.cshtml" />
+    <Content Include="Views\Patrocinio\Busca.cshtml" />
+    <Content Include="Views\Patrocinio\Index.cshtml" />
+    <Content Include="Views\Patrocinio\StaffDispensar.cshtml" />
+    <Content Include="Views\Patrocinio\PatrocinioOferta.cshtml" />
+    <Content Include="Views\Patrocinio\StaffRenovar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

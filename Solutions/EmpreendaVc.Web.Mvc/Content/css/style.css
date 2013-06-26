@@ -93,6 +93,10 @@ h2 .legenda b { font-size: 11px; }
 
 #calendario-tabela { float: left; width: 650px; }
 
+#patrocinio-tabela { float: left; width: 650px; }
+#patrocinio-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
+#patrocinio-lista a { font-weight: normal; margin-left: 15px; }
+
 .plantel-sobcontrato { display: block; width: 25px; height: 20px; background: url('../img/sobcontrato.png') center center no-repeat; float: left; }
 .plantel-semcontrato { display: block; width: 25px; height: 20px; background: url('../img/semcontrato.png') center center no-repeat; float: left; }
 .plantel-vender { display: block; width: 25px; height: 20px; background: url('../img/vender.png') center center no-repeat; float: left;  }

@@ -23,7 +23,7 @@
                 <a class="botao" href="@Url.Action("PedirRelatorio", "Jogador", new { id = Model.Id })">Pedir Relatório</a><br />
             }
         }
-        @if (Model.Clube.Id == clube.Id)
+        @if (Model.Clube != null && Model.Clube.Id == clube.Id)
         {
             <a class="botao" href="@Url.Action("JogadorRenovar", "Jogador", new { id = Model.Id })">Renovar Contrato</a><br />
             <a class="botao" href="@Url.Action("JogadorDispensar", "Jogador", new { id = Model.Id })">Dispensar</a><br />
