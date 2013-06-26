@@ -1,0 +1,46 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Patrocinio>
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+}
+<h2>
+    Buscar</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+<div id="left">
+    <div id="patrocinio-tabela">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="60%">NOME</th>
+                <th width="40%">CLUBES</th>
+            </tr>
+            @if (Model.Count() > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="text-align: left;"><a href="@Url.Action("Index", "Patrocinio", new { id = item.Id })">@item.Nome.ToUpper()</a></td>
+                        <td>@item.PatrocinioClubes.Count()</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6"><i>Nenhum patrocinador disponível.</i></td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<div id="right">
+    <div id="patrocinio-lista" class="caixa">
+        <h1>
+            Opções</h1>
+        <a><b>Buscar</b></a><br />
+    </div>
+    @{ Html.RenderAction("_Menu", "Clube"); }
+</div>

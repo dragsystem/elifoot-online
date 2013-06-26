@@ -36,7 +36,7 @@
             foreach (var item in Model)
             {
                 <tr>
-                    <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Jogador.Nome.ToUpper()</a></td>
+                    <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Jogador.Id })">@item.Jogador.Nome.ToUpper()</a></td>
                     <td>@item.Clube.Nome
                     </td>
                     <td>

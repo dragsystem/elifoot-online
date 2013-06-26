@@ -1,0 +1,70 @@
+﻿@model EmpreendaVc.Domain.Staff
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var controle = (EmpreendaVc.Domain.Controle)ViewBag.Controle;
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
+}
+
+<h2>@Model.Nome</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<div id="left">
+    @if (Model.Usuario != null)
+    {
+        <p>Este profissional participa da comissão técnica de @Model.Usuario.NomeCompleto.ToUpper().</p>
+    }
+    <div id="jogador-tabela">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th width="25%">Cargo</th>
+                <th width="25%">Salário</th>
+                <th width="25%">Contrato</th>
+                <th width="25%">Reputação</th>
+            </tr>
+            <tr>
+                <td>@Util.RetornaStaffTipo(Model.Tipo)</td>
+                @if (Model.Usuario != null)
+                {
+                    <td>$@Model.Salario.ToString("N2")</td>
+                    <td>@Model.Contrato ano(s)</td>
+                }
+                else
+                {
+                    <td>-</td>
+                    <td>-</td>
+                }
+                @{ var nota = Convert.ToInt32(Math.Ceiling((decimal)Model.H / 20)); }
+                <td>
+                    <a title="@Util.RetornaStaffReputacao(nota)">
+                        <img src="@Url.Content("~/Content/img/star." + nota + ".png")" />
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="right">
+    <div id="plantel-menu">
+        @if (Model.Usuario == null && clube.Usuario.Staffs.Where(x => x.Tipo == Model.Tipo).Count() < 1)
+        {
+            <a class="botao" href="@Url.Action("StaffOferta", "Staff", new { id = Model.Id })">Fazer Proposta</a><br />
+        }
+        else if (Model.Usuario != null && Model.Usuario.Id == clube.Usuario.Id)
+        {
+            <a class="botao" href="@Url.Action("StaffRenovar", "Staff", new { id = Model.Id })">Renovar Contrato</a><br />
+            <a class="botao" href="@Url.Action("StaffDispensar", "Staff", new { id = Model.Id })">Dispensar</a><br />
+        }
+        else
+        {
+            <i>Você já possui um @Util.RetornaStaffTipo(Model.Tipo). Para negociar você deve encerrar o contrato com seu atual @Util.RetornaStaffTipo(Model.Tipo).</i>
+        }
+    </div>
+</div>
+
+<div class="clear">
+
+<a class="voltar-link" href="javascript:history.back()">VOLTAR</a>

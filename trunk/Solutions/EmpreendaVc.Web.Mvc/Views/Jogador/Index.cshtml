@@ -83,6 +83,7 @@
             </p>
         </div>
     }
+    <h3>Histórico</h3>
     <div id="jogador-historico">
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
@@ -120,16 +121,24 @@
 </div>
 
 <div id="right">
-    <div id="jogador-lista" class="caixa">
-        <h1>Lesão</h1>
-        @if (Model.Lesionado > 0)
-        {
-            @: Lesionado até @(DateTime.Now.AddDays(Model.Lesionado).ToShortDateString()).
-        }
-        else
-        {
-            @: Nenhuma lesão, 100% para a próxima partida.
-        }
+    <div id="jogador-lista" style="width: 280px;">
+        <table class="classificacao" cellpadding="0" cellspacing="0">
+            <tr>
+                <th colspan="2">Condição Física</th>
+            </tr>
+            <tr>
+                @if (Model.Lesionado > 0)
+                {
+                    <td width="80%" style="text-align: left;">Lesionado até @(DateTime.Now.AddDays(Model.Lesionado).ToShortDateString())</td>
+                    <td width="20%">-</td>
+                }
+                else
+                {
+                    <td width="80%" style="text-align: left;">@Util.RetornaCondicao(Model.Condicao)</td>
+                    <td width="20%">@Model.Condicao %</td>
+                }                
+            </tr>
+        </table>
     </div>
     @{ Html.RenderAction("_MenuJogador", "Jogador", new { id = Model.Id }); }
 </div>

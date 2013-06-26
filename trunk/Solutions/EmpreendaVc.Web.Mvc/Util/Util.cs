@@ -71,6 +71,55 @@ namespace EmpreendaVc.Web.Mvc.Util
                 return "Desconhecido";
         }
 
+        public static string RetornaPatrocinioTipo(int tipo)
+        {
+            if (tipo == 1)
+                return "Divulgar a Marca na sua camisa";
+            else 
+                return "Fornecer Material Esportivo";
+        }
+
+        public static List<SelectListItem> RetornaValorPatrocinio(int DiaMax)
+        {
+            var lst = new List<SelectListItem>();
+            decimal valor = 100000;
+
+            while (valor <= 50000000)
+            {
+                var texto = "$" + valor.ToString("N2") + " / $" + (valor / DiaMax).ToString("N2") + " por dia";
+                lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
+
+                if (valor <= 1000000)
+                    valor = valor + 100000;
+                else if (valor <= 10000000)
+                    valor = valor + 500000;
+                else if (valor <= 10000000)
+                    valor = valor + 500000;
+                else if (valor <= 20000000)
+                    valor = valor + 1000000;
+                else if (valor <= 350000000)
+                    valor = valor + 2500000;
+                else if (valor > 35000000)
+                    valor = valor + 5000000;
+            }
+            
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaPatrocinioListaTipo(int tipo)
+        {
+            var lst = new List<SelectListItem>();
+
+            if (tipo == 1)
+            {
+                lst.Add(new SelectListItem { Text = "Contrato de Patrocínio MASTER", Value = "1" });
+                lst.Add(new SelectListItem { Text = "Contrato de Patrocínio Secundário MANGA", Value = "2" });
+            }
+            else
+                lst.Add(new SelectListItem { Text = "Contrato de Fornecimento de material esportivo", Value = "3" });
+            return lst;
+        }
+
         public static string RetornaEstagio(int estagio, int tipo)
         {
             if (tipo == 1)
@@ -330,7 +379,10 @@ namespace EmpreendaVc.Web.Mvc.Util
 
             while (temporada < 5)
             {
-                lst.Add(new SelectListItem { Text = temporada.ToString() + " ano(s)", Value = temporada.ToString() });
+                if (temporada == 1)
+                    lst.Add(new SelectListItem { Text = "Até o final deste ano", Value = temporada.ToString() });
+                else
+                    lst.Add(new SelectListItem { Text = temporada.ToString() + " anos", Value = temporada.ToString() });
 
                 temporada++;
             }
@@ -357,6 +409,20 @@ namespace EmpreendaVc.Web.Mvc.Util
                 return "Este jogador é considerado reserva no clube";
             else
                 return "Este jogador está disponível para venda";
+        }
+
+        public static string RetornaCondicao(int condicao)
+        {
+            if (condicao < 70)
+                return "Desgastado, necessita de descanso para evitar uma lesão";
+            else if (condicao < 80)
+                return "Cansado, necessita de descanso";
+            else if (condicao < 90)
+                return "Cansado após sua última partida";
+            else if (condicao < 100)
+                return "Apto";
+            else
+                return "Totalmente apto";
         }
 
         public static List<SelectListItem> RetornaListaIngresso()
