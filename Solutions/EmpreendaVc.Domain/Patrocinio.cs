@@ -22,5 +22,6 @@ namespace EmpreendaVc.Domain
         //2 - Fornecedor
 
         public virtual IList<PatrocinioClube> PatrocinioClubes { get; set; }
+        public virtual IList<PatrocinioRecusa> PatrocinioRecusas { get; set; }
     }
 }

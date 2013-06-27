@@ -89,10 +89,6 @@
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
-            
-            //if (lstUsuarioOferta.Count() > 0)
-            //    return RedirectToAction("UsuarioOferta", "Conta");
-
             if (usuario.Clube == null)
             {
                 TempData["MsgErro"] = "Você não é treinador de nenhum clube. Aguarde uma proposta.";
@@ -100,11 +96,11 @@
             }
 
             var lstJogadorPedido = jogadorpedidoRepository.GetAll().Where(x => x.Jogador.Clube.Id == usuario.Clube.Id);
-            //if (lstUsuarioOferta.Count() > 0)
-            //    return RedirectToAction("JogadorPedido", "Clube");
-
-            usuario.Clube.Partidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id);
             
+            usuario.Clube.Partidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id);
+
+            ViewBag.Controle = controleRepository.GetAll().FirstOrDefault();
+
             return View(usuario.Clube);
         }
 
