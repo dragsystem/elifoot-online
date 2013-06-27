@@ -102,7 +102,7 @@
             var usuario = authenticationService.GetUserAuthenticated();
             var controle = controleRepository.GetAll().FirstOrDefault();
 
-            if (usuario.Clube == null)
+            if (usuario.Clube == null || usuario.Clube.PatrocinioClubes.Where(x => x.Patrocinio.Id == id).Count() > 0)
                 return RedirectToAction("Index", "Conta");
 
             var clube = usuario.Clube;
@@ -131,10 +131,15 @@
                 }
             }
 
+            var patrocinioclube = new PatrocinioClube();
+            patrocinioclube.Patrocinio = patrocinio;
+            patrocinioclube.Clube = clube;
+
+            Session["PatrocinioClube"] = null;
             ViewBag.Resposta = false;
             ViewBag.Controle = controle;
 
-            return View(patrocinio);
+            return View(patrocinioclube);
         }
 
         [HttpPost]
@@ -145,7 +150,7 @@
             var usuario = authenticationService.GetUserAuthenticated();
             var controle = controleRepository.GetAll().FirstOrDefault();
 
-            if (usuario.Clube == null)
+            if (usuario.Clube == null || usuario.Clube.PatrocinioClubes.Where(x => x.Patrocinio.Id == id).Count() > 0)
                 return RedirectToAction("Index", "Conta");
 
             var clube = usuario.Clube;
@@ -173,10 +178,37 @@
             TryUpdateModel(patrocinioclube, form);
 
             ViewBag.Resposta = false;
-
-            if (form["Propor"] == "1")
+            ViewBag.Controle = controle;
+            
+            if (Session["PatrocinioClube"] == null)
             {
-                var divisaoalvo = (patrocinio.DivisaoAlvo - clube.Divisao.Numero) < 1 ? 1 : patrocinio.DivisaoAlvo - clube.Divisao.Numero; 
+                //valida
+                if (patrocinioclube.Tipo < 1)
+                {
+                    TempData["MsgAlerta"] = "Você precisa selecionar um tipo de contrato.";
+                    Session["PatrocinioClube"] = null;
+                    patrocinioclube.Clube = clube;
+                    patrocinioclube.Patrocinio = patrocinio;
+                    return View(patrocinioclube);
+                }
+                if (patrocinioclube.Valor < 1)
+                {
+                    TempData["MsgAlerta"] = "Você precisa selecionar um valor.";
+                    Session["PatrocinioClube"] = null;
+                    patrocinioclube.Clube = clube;
+                    patrocinioclube.Patrocinio = patrocinio;
+                    return View(patrocinioclube);
+                }
+                if (patrocinioclube.Contrato < 1)
+                {
+                    TempData["MsgAlerta"] = "Você precisa selecionar a duração do contrato.";
+                    Session["PatrocinioClube"] = null;
+                    patrocinioclube.Clube = clube;
+                    patrocinioclube.Patrocinio = patrocinio;
+                    return View(patrocinioclube);
+                }
+
+                var divisaoalvo = (clube.Divisao.Numero - (patrocinio.DivisaoAlvo - 1)) < 1 ? 1 : (clube.Divisao.Numero - (patrocinio.DivisaoAlvo - 1)); 
                 decimal valormax = (patrocinio.ValorMax / divisaoalvo);
 
                 if (patrocinioclube.Valor > valormax)
@@ -202,116 +234,97 @@
                         patrociniorecusa.Ano = controle.Ano;
                         patrociniorecusaRepository.SaveOrUpdate(patrociniorecusa);
 
+                        Session["PatrocinioClube"] = null;
+                        patrocinioclube.Clube = clube;
+                        patrocinioclube.Patrocinio = patrocinio;
                         return View(patrocinioclube);
                     }
                 }
                 else
                 {
-                    TempData["MsgErro"] = patrocinio.Nome + " aceitou sua proposta, CONFIRME para finalizar.";
+                    TempData["MsgOk"] = patrocinio.Nome + " aceitou sua proposta, CONFIRME para finalizar.";
                     ViewBag.Resposta = true;
 
+                    patrocinioclube.Clube = clube;
+                    patrocinioclube.Patrocinio = patrocinio;
+
+                    Session["PatrocinioClube"] = patrocinioclube;
                     return View(patrocinioclube);
                 }
             }
             else
             {
+                patrocinioclube = (PatrocinioClube)Session["PatrocinioClube"];
                 patrocinioclube.Clube = clube;
                 patrocinioclube.Patrocinio = patrocinio;
                 patrocinioclubeRepository.SaveOrUpdate(patrocinioclube);
 
+                Session["PatrocinioClube"] = null;
                 TempData["MsgOk"] = "PARABÉNS! Você fechou contrato de $" + patrocinioclube.Valor.ToString("N2") + " por " + patrocinioclube.Contrato + " ano(s) com " + patrocinio.Nome + ".";
                 return RedirectToAction("Index", "Patrocinio", new { id = patrocinio.Id });
             }
-        }   
-       
-        [Authorize]
-        public ActionResult PatrocinioRenovar(int id)
-        {
-            var usuario = authenticationService.GetUserAuthenticated();
-            var patrocinio = patrocinioRepository.Get(id);
-
-            if (patrocinio.Usuario == null || patrocinio.Usuario.Id != usuario.Id)
-                return RedirectToAction("Index", "Conta");
-
-            return View(patrocinio);
         }
 
         [Authorize]
         [Transaction]
-        [HttpPost]
-        public ActionResult PatrocinioRenovar(FormCollection form)
+        public ActionResult PatrocinioOfertaCancelar(int id)
         {
             var usuario = authenticationService.GetUserAuthenticated();
-            var patrocinio = patrocinioRepository.Get(Convert.ToInt32(form["Jogador"]));
+            var controle = controleRepository.GetAll().FirstOrDefault();
 
-            if (patrocinio.Usuario != null || patrocinio.Usuario.Id != usuario.Id)
+            if (usuario.Clube == null || usuario.Clube.PatrocinioClubes.Where(x => x.Patrocinio.Id == id).Count() > 0)
                 return RedirectToAction("Index", "Conta");
 
-            var salario = Convert.ToDecimal(form["Salario"]);
-            var contrato = Convert.ToInt32(form["Contrato"]);
-
-            if (patrocinio != null)
-            {
-                var salariomin = (patrocinio.Salario / 100) * 120;
-
-                if (salario >= salariomin)
-                {
-                    patrocinio.Salario = salario;
-                    patrocinio.Contrato = contrato;
-                    patrocinioRepository.SaveOrUpdate(patrocinio);
-
-                    TempData["MsgOk"] = patrocinio.Nome + " aceitou sua proposta e renovou por " + contrato + " temporada(s)!";
-                    return RedirectToAction("Index", "Patrocinio", new { id = patrocinio.Id });
-                }
-                else
-                {
-                    TempData["MsgErro"] = patrocinio.Nome + " rejeitou sua proposta de renovação!";
-                }
-            }
-            return View(patrocinio);
-        }
-
-        [Authorize]
-        public ActionResult PatrocinioDispensar(int id)
-        {
-            var usuario = authenticationService.GetUserAuthenticated();
+            var clube = usuario.Clube;
             var patrocinio = patrocinioRepository.Get(id);
 
-            if (patrocinio.Usuario == null || patrocinio.Usuario.Id != usuario.Id)
+            for (int i = 0; i < 3; i++)
+            {
+                var patrociniorecusa = new PatrocinioRecusa();
+                patrociniorecusa.Clube = clube;
+                patrociniorecusa.Patrocinio = patrocinio;
+                patrociniorecusa.Ano = controle.Ano;
+                patrociniorecusaRepository.SaveOrUpdate(patrociniorecusa);
+            }
+
+            Session["PatrocinioClube"] = null;
+
+            return RedirectToAction("Index", "Patrocinio", new { id = patrocinio.Id });
+        }
+        
+        [Authorize]
+        public ActionResult PatrocinioEncerrar(int id)
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null || usuario.Clube.PatrocinioClubes.Where(x => x.Patrocinio.Id == id).Count() == 0)
                 return RedirectToAction("Index", "Conta");
 
-            if (usuario.Clube != null)
-                ViewBag.Clube = true;
-            else
-                ViewBag.Clube = false;
+            var clube = usuario.Clube;
+            var patrocinioclube = patrocinioclubeRepository.Get(clube.PatrocinioClubes.Where(x => x.Patrocinio.Id == id).FirstOrDefault().Id);
 
-            return View(patrocinio);
+            return View(patrocinioclube);
         }        
         
         [Authorize]
         [Transaction]
-        public ActionResult PatrocinioDispensarConfirma(int id)
+        public ActionResult PatrocinioEncerrarConfirma(int id)
         {
             var usuario = authenticationService.GetUserAuthenticated();
-            var patrocinio = patrocinioRepository.Get(id);
 
-            if (patrocinio.Usuario == null || patrocinio.Usuario.Id != usuario.Id)
+            if (usuario.Clube == null || usuario.Clube.PatrocinioClubes.Where(x => x.Patrocinio.Id == id).Count() == 0)
                 return RedirectToAction("Index", "Conta");
 
-            patrocinio.Usuario = null;
-            patrocinio.Salario = 0;
-            patrocinio.Contrato = 0;
-            patrocinioRepository.SaveOrUpdate(patrocinio);
+            var clube = usuario.Clube;
+            var patrocinioclube = patrocinioclubeRepository.Get(id);
 
-            if (usuario.Clube != null)
-            {
-                var clube = usuario.Clube;
-                clube.Dinheiro = clube.Dinheiro - ((patrocinio.Salario * 2) * patrocinio.Contrato);
-                clubeRepository.SaveOrUpdate(clube);
-            }
+            patrocinioclubeRepository.Delete(patrocinioclube);
 
-            TempData["MsgOk"] = patrocinio.Nome + " foi dispensado com sucesso!";
-            return RedirectToAction("Index", "Patrocinio", new { id = id });
+            clube.Dinheiro = clube.Dinheiro - ((patrocinioclube.Valor / 2) * patrocinioclube.Contrato);
+            clubeRepository.SaveOrUpdate(clube);
+
+            TempData["MsgOk"] = "Contrato com " + patrocinioclube.Patrocinio.Nome + " encerrado com sucesso!";
+            return RedirectToAction("Index", "Patrocinio", new { id = patrocinioclube.Patrocinio.Id });
         }          
     }
 }

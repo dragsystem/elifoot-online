@@ -20,7 +20,7 @@
             var hei = $(document).height();
             $('#loading').attr("style", "width:" + wid + "px; height: " + hei + "px;");
 
-            $('a').click(function () {
+            $('a, input:submit').click(function () {
                 $('#loading').fadeIn();
             });
         });

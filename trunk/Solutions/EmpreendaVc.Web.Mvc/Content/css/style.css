@@ -23,6 +23,7 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
 h2 { color: #333; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; } /*#4982B9*/
 h2 .legenda { float: right; font-size: 9px; color: #333; text-transform: uppercase; letter-spacing: 0; margin-top: 2px; text-align:right; }
 h2 .legenda b { font-size: 11px; }
+h3 { text-transform: uppercase; }
 
 .caixa { border: 1px solid #CBDBEB; padding: 10px; border-top: 2px solid #4982B9; border-radius: 3px; margin-bottom: 10px; }
     .caixa h1 { font-size: 15px; background: #EEF3F9; font-weight: bold; border-bottom: 1px solid #CBDBEB; padding: 10px; margin: -10px -10px 10px -10px; } 

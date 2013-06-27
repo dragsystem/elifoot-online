@@ -5,7 +5,7 @@
 @{
     ViewBag.Title = "Plantel";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
+    var controle = (EmpreendaVc.Domain.Controle)ViewBag.Controle;
 }
 
 <script type="text/javascript">
@@ -192,9 +192,12 @@
             {
                 @:Usuário: @Model.Usuario.NomeCompleto<br />
             }
+            Sócios: @Model.Socios.ToString("N0")<br />
             Estádio: @Model.Estadio.ToString("N0")<br />
-            Preço do Ingresso: @this.Select("Ingresso").Options(Util.RetornaListaIngresso()).Selected(Model.Ingresso > 0 ? Model.Ingresso.ToString("N0") : "")<br />
-            Sócios: @Model.Socios.ToString("N0")
+            Preço do Ingresso: @this.Select("Ingresso").Options(Util.RetornaListaIngresso()).Selected(Model.Ingresso > 0 ? Model.Ingresso.ToString("N0") : "")
+            <div style="text-align: right; font-size: 10px;">
+                @*<a href="@Url.Action("Busca", "Patrocinio")">*@GERIR ESTÁDIO@*</a>*@
+            </div> 
         </p>
     </div>
 
@@ -208,6 +211,7 @@
         <h1>FINANÇAS</h1>
         @{ var salarios = Model.Jogadores.Sum(x => x.Salario);
            var socios = Model.Socios * 30;
+           decimal patroc = 0;
            var comissao = Model.Usuario != null ? Model.Usuario.Staffs.Sum(x => x.Salario) : 0;
            decimal renda = 0;
 
@@ -220,21 +224,57 @@
                }
            }
 
-           var previsto = Model.Dinheiro + (socios - (salarios + comissao));
+           
         }
         <p>
-            Dinheiro em caixa: $@Model.Dinheiro.ToString("N2")
+            <b>DINHEIRO EM CAIXA:</b>
+            @if (Model.Dinheiro >= 0)
+            {
+                <b>$@Model.Dinheiro.ToString("N2")</b>
+            }
+            else
+            {
+                <b><span style="color: Red;">$@Model.Dinheiro.ToString("N2")</span></b>
+            }             
         </p>
         <p>
-            Salários: $@salarios.ToString("N2")<br />
-            Sócios: $@socios.ToString("N2")<br />
-            Comissão Técnica: $@comissao.ToString("N2")
+            <b>RECEITAS</b>
+            <br />
+            Sócios: <span style="color: Green;">$@socios.ToString("N2")</span>
+            @if (renda > 0)
+            {
+                @:Renda última partida: <span style="color: Green;">$@renda.ToString("N2")</span>
+            }
+            @foreach (var patrocinio in Model.PatrocinioClubes)
+            {
+                patroc = patrocinio.Valor / controle.DiaMax;
+                <br />@: @patrocinio.Patrocinio.Nome: <span style="color: Green;">$@((patrocinio.Valor / controle.DiaMax).ToString("N2"))</span>
+            }
+            <div style="text-align: right; font-size: 10px;">
+                <a href="@Url.Action("Busca", "Patrocinio")" >BUSCAR PATROCÍNIO</a>
+            </div>            
         </p>
         <p>
-            Renda última partida: $@renda.ToString("N2")
+            <b>DESPESAS</b>
+            <br />
+            Salários: <span style="color: Red;">$@salarios.ToString("N2")</span><br />
+            @if (comissao > 0)
+            {
+                @:Comissão Técnica: <span style="color: Red;">$@comissao.ToString("N2")</span>
+            }
         </p>
         <p>
-            Dinheiro em caixa previsto: $@previsto.ToString("N2")
+            Dinheiro em caixa previsto:
+            @{ var previsto = Model.Dinheiro + ((socios + patroc) - (salarios + comissao)); }
+            @if (previsto >= 0)
+            {
+                @:$@previsto.ToString("N2")
+            }
+            else
+            {
+                <b><span style="color: Red;">$@previsto.ToString("N2")</span></b>
+            } 
+             
         </p>
     </div>
 

@@ -1,0 +1,20 @@
+﻿@model EmpreendaVc.Domain.PatrocinioClube
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    ENCERRAR CONTRATO COM @Model.Patrocinio.Nome</h2>
+
+@{ Html.RenderAction("Index", "Mensagem"); }
+    <p>
+    Para encerrar o contrato com @Model.Patrocinio.Nome, você terá que pagar uma multa de $@(((Model.Valor / 2) * Model.Contrato).ToString("N2")).<br /> 
+    Deseja continuar?
+    </p>
+    <br />
+    <a class="submit" href="@Url.Action("PatrocinioEncerrarConfirma", new { id = Model.Id })">CONFIRMAR</a>
+    <a class="voltar-link" href="@Url.Action("Index", "Patrocinio", new { id = Model.Patrocinio.Id })">VOLTAR</a>

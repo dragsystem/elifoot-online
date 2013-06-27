@@ -87,19 +87,19 @@ namespace EmpreendaVc.Web.Mvc.Util
             while (valor <= 50000000)
             {
                 var texto = "$" + valor.ToString("N2") + " / $" + (valor / DiaMax).ToString("N2") + " por dia";
-                lst.Add(new SelectListItem { Text = "$" + valor.ToString("N2"), Value = valor.ToString() });
+                lst.Add(new SelectListItem { Text = texto, Value = valor.ToString() });
 
-                if (valor <= 1000000)
+                if (valor < 1000000)
                     valor = valor + 100000;
-                else if (valor <= 10000000)
+                else if (valor < 10000000)
                     valor = valor + 500000;
-                else if (valor <= 10000000)
+                else if (valor < 10000000)
                     valor = valor + 500000;
-                else if (valor <= 20000000)
+                else if (valor < 20000000)
                     valor = valor + 1000000;
-                else if (valor <= 350000000)
+                else if (valor < 350000000)
                     valor = valor + 2500000;
-                else if (valor > 35000000)
+                else if (valor >= 35000000)
                     valor = valor + 5000000;
             }
             
@@ -118,6 +118,16 @@ namespace EmpreendaVc.Web.Mvc.Util
             else
                 lst.Add(new SelectListItem { Text = "Contrato de Fornecimento de material esportivo", Value = "3" });
             return lst;
+        }
+
+        public static string RetornaPatrocinioClubeTipo(int tipo)
+        {
+            if (tipo == 1)
+                return "Contrato de Patrocínio MASTER";
+            else if (tipo == 1)
+                return "Contrato de Patrocínio Secundário MANGA";
+            else
+                return "Contrato de Fornecimento de material esportivo";
         }
 
         public static string RetornaEstagio(int estagio, int tipo)
@@ -378,6 +388,24 @@ namespace EmpreendaVc.Web.Mvc.Util
             int temporada = 1;
 
             while (temporada < 5)
+            {
+                if (temporada == 1)
+                    lst.Add(new SelectListItem { Text = "Até o final deste ano", Value = temporada.ToString() });
+                else
+                    lst.Add(new SelectListItem { Text = temporada.ToString() + " anos", Value = temporada.ToString() });
+
+                temporada++;
+            }
+
+            return lst;
+        }
+
+        public static List<SelectListItem> RetornaDuracaoContratoPatrocinio()
+        {
+            var lst = new List<SelectListItem>();
+            int temporada = 1;
+
+            while (temporada < 3)
             {
                 if (temporada == 1)
                     lst.Add(new SelectListItem { Text = "Até o final deste ano", Value = temporada.ToString() });
