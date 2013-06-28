@@ -82,16 +82,35 @@
         }
 
         [Authorize]
-        public ActionResult Busca()
+        public ActionResult Busca(bool? f)
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            var lst = patrocinioRepository.GetAll().OrderBy(x => x.Nome);
+            var lst = patrocinioRepository.GetAll();
+            if (!f.HasValue)
+                lst = lst.Where(x => x.Tipo == 1).OrderBy(x => x.Nome).ToList();
+            else
+                lst = lst.Where(x => x.Tipo == 2).OrderBy(x => x.Nome).ToList();
 
             ViewBag.Clube = usuario.Clube;
+
+            return View(lst);
+        }
+
+        [Authorize]
+        public ActionResult MeusPatrocinios()
+        {
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var clube = usuario.Clube;
+
+            var lst = clube.PatrocinioClubes.OrderByDescending(x => x.Valor);
 
             return View(lst);
         }
@@ -108,7 +127,7 @@
             var clube = usuario.Clube;
             var patrocinio = patrocinioRepository.Get(id);
 
-            if (clube.PatrocinioRecusas.Where(x => x.Patrocinio.Id == patrocinio.Id).Count() >= 3)
+            if ((clube.PatrocinioRecusas.Where(x => x.Patrocinio.Id == patrocinio.Id).Count() >= 3) || patrocinio.DivisaoMinima < clube.Divisao.Numero)
             {
                 TempData["MsgErro"] = patrocinio.Nome + " não tem interesse em negociar com seu clube.";
                 return RedirectToAction("Index", "Patrocinio", new { id = patrocinio.Id });
@@ -155,6 +174,12 @@
 
             var clube = usuario.Clube;
             var patrocinio = patrocinioRepository.Get(id);
+
+            if ((clube.PatrocinioRecusas.Where(x => x.Patrocinio.Id == patrocinio.Id).Count() >= 3) || patrocinio.DivisaoMinima < clube.Divisao.Numero)
+            {
+                TempData["MsgErro"] = patrocinio.Nome + " não tem interesse em negociar com seu clube.";
+                return RedirectToAction("Index", "Patrocinio", new { id = patrocinio.Id });
+            }
 
             if (patrocinio.Tipo == 1)
             {
@@ -208,8 +233,8 @@
                     return View(patrocinioclube);
                 }
 
-                var divisaoalvo = (clube.Divisao.Numero - (patrocinio.DivisaoAlvo - 1)) < 1 ? 1 : (clube.Divisao.Numero - (patrocinio.DivisaoAlvo - 1)); 
-                decimal valormax = (patrocinio.ValorMax / divisaoalvo);
+                var lstclubes = clubeRepository.GetAll().OrderByDescending(x => x.Socios).ToList();
+                decimal valormax = Util.Util.RetornaValorMaxPatrocinio(patrocinio, patrocinioclube.Tipo, clube, lstclubes);
 
                 if (patrocinioclube.Valor > valormax)
                 {

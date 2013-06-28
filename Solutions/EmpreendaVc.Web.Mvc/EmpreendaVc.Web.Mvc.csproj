@@ -169,6 +169,7 @@
     <Compile Include="CastleWindsor\AutomappingConfiguration.cs" />
     <Compile Include="CastleWindsor\ComponentRegistrar.cs" />
     <Compile Include="Controllers\AdmController.cs" />
+    <Compile Include="Controllers\ArtilheiroMap.cs" />
     <Compile Include="Controllers\ContaController.cs" />
     <Compile Include="Controllers\ControllerCustom.cs" />
     <Compile Include="Controllers\ClubeController.cs" />
@@ -461,6 +462,7 @@
     <Content Include="Views\Patrocinio\Index.cshtml" />
     <Content Include="Views\Patrocinio\PatrocinioEncerrar.cshtml" />
     <Content Include="Views\Patrocinio\PatrocinioOferta.cshtml" />
+    <Content Include="Views\Patrocinio\MeusPatrocinios.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

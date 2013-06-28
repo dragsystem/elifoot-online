@@ -6,7 +6,8 @@
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var controle = (EmpreendaVc.Domain.Controle)ViewBag.Controle;
-    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube; 
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+    var rep = Convert.ToInt32(Math.Ceiling((decimal)Model.ValorMax / 10000000));
 }
 
 <h2>@Model.Nome</h2>
@@ -17,19 +18,13 @@
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
                 <th>Clubes com contrato</th>
+                <th>Reputação</th>
             </tr>
             <tr>
-                @if (Model.PatrocinioClubes.Count() > 0)
-                {
-                    foreach (var patrocinioclube in Model.PatrocinioClubes)
-                    {
-                        <td>@patrocinioclube.Clube.Nome</td>
-                    }
-                }
-                else
-                {
-                    <td><i>Nenhum clube</i></td>
-                }
+                <td>@Model.PatrocinioClubes.Count()</td>
+                <td>
+                    <img src="@Url.Content("~/Content/img/star." + rep + ".png")" />
+                </td>
             </tr>
         </table>
     </div>
@@ -42,7 +37,7 @@
         }
         else
         {
-            <a class="botao" href="@Url.Action("StaffDispensar", "Staff", new { id = Model.Id })">Encerrar Contrato</a><br />
+            <a class="botao" href="@Url.Action("PatrocinioEncerrar", "Patrocinio", new { id = Model.Id })">Encerrar Contrato</a><br />
         }
     </div>
 </div>

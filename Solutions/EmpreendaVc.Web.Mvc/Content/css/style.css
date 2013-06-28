@@ -20,7 +20,7 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
 #home-texto { font-size: 16px; float: left; width: 480px; text-align: justify; }    
 #home-login { width: 430px; float: right; }
 
-h2 { color: #333; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; } /*#4982B9*/
+h2 { color: #333; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; text-transform: uppercase; } /*#4982B9*/
 h2 .legenda { float: right; font-size: 9px; color: #333; text-transform: uppercase; letter-spacing: 0; margin-top: 2px; text-align:right; }
 h2 .legenda b { font-size: 11px; }
 h3 { text-transform: uppercase; }

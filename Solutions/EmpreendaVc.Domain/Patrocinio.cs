@@ -15,7 +15,7 @@ namespace EmpreendaVc.Domain
                 
         public virtual decimal ValorMax { get; set; }
 
-        public virtual int DivisaoAlvo { get; set; }
+        public virtual int DivisaoMinima { get; set; }
 
         public virtual int Tipo { get; set; }
         //1 - Mídia

@@ -60,6 +60,8 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<Partida> Partidas { get; set; }
 
+        public virtual IList<DivisaoTabela> DivisaoTabelas { get; set; }
+
         public virtual IList<JogadorOferta> Ofertas { get; set; }
 
         public virtual IList<PatrocinioClube> PatrocinioClubes { get; set; }
@@ -74,6 +76,7 @@ namespace EmpreendaVc.Domain
             Jogadores = new List<Jogador>();
             Escalacao = new List<Escalacao>();
             Partidas = new List<Partida>();
+            DivisaoTabelas = new List<DivisaoTabela>();
             Ofertas = new List<JogadorOferta>();
             PatrocinioClubes = new List<PatrocinioClube>();
             PatrocinioRecusas = new List<PatrocinioRecusa>();

@@ -11,19 +11,28 @@
     Buscar</h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
 <div id="left">
+    <p>
+        <a href="@Url.Action("Busca", "Patrocinio")"class="submit">PATROCINADORES</a>
+        <a href="@Url.Action("Busca", "Patrocinio", new { f = true })" class="submit">FORNECEDORES</a>
+    </p>
     <div id="patrocinio-tabela">
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
                 <th width="60%">NOME</th>
-                <th width="40%">CLUBES</th>
+                <th width="20%">CLUBES</th>
+                <th width="20%">REPUTAÇÃO</th>
             </tr>
             @if (Model.Count() > 0)
             {
                 foreach (var item in Model)
                 {
+                    var rep = Convert.ToInt32(Math.Ceiling((decimal)item.ValorMax / 10000000));
                     <tr>
                         <td style="text-align: left;"><a href="@Url.Action("Index", "Patrocinio", new { id = item.Id })">@item.Nome.ToUpper()</a></td>
                         <td>@item.PatrocinioClubes.Count()</td>
+                        <td>
+                            <img src="@Url.Content("~/Content/img/star." + rep + ".png")" />
+                        </td>
                     </tr>
                 }
             }
@@ -41,6 +50,7 @@
         <h1>
             Opções</h1>
         <a><b>Buscar</b></a><br />
+        <a href="@Url.Action("MeusPatrocinios", "Patrocinio")" >Meus contratos</a>
     </div>
     @{ Html.RenderAction("_Menu", "Clube"); }
 </div>
