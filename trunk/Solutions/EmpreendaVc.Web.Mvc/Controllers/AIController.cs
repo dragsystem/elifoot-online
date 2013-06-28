@@ -15,6 +15,7 @@
     using EmpreendaVc.Infrastructure.Queries.Authentication;
     using EmpreendaVc.Infrastructure.Queries.Usuarios;
     using EmpreendaVc.Infrastructure.Queries.Partidas;
+    using EmpreendaVc.Infrastructure.Queries.Clubes;
     using System.Web.Security;
     using EmpreendaVc.Web.Mvc.Controllers.ViewModels;
     using NHibernate.Criterion;
@@ -24,6 +25,7 @@
     {
 
         private readonly IUsuarioRepository usuarioRepository;
+        private readonly IClubeRepository clubeQueryRepository;
         private readonly IAuthenticationService authenticationService;
         private readonly INHibernateRepository<Clube> clubeRepository;
         private readonly INHibernateRepository<Jogador> jogadorRepository;
@@ -39,9 +41,17 @@
         private readonly INHibernateRepository<Escalacao> escalacaoRepository;
         private readonly INHibernateRepository<Historico> historicoRepository;
         private readonly INHibernateRepository<Nome> nomeRepository;
+        private readonly INHibernateRepository<Sobrenome> sobrenomeRepository;
+        private readonly INHibernateRepository<Artilheiro> artilheiroRepository;
         private readonly INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository;
+        private readonly INHibernateRepository<Staff> staffRepository;
+        private readonly INHibernateRepository<JogadorTeste> jogadortesteRepository;
+        private readonly INHibernateRepository<Patrocinio> patrocinioRepository;
+        private readonly INHibernateRepository<PatrocinioClube> patrocinioclubeRepository;
+        private readonly INHibernateRepository<PatrocinioRecusa> patrociniorecusaRepository;
 
         public AIController(IUsuarioRepository usuarioRepository,
+            IClubeRepository clubeQueryRepository,
             IAuthenticationService authenticationService,
             INHibernateRepository<Clube> clubeRepository,
             INHibernateRepository<Jogador> jogadorRepository,
@@ -57,9 +67,17 @@
             INHibernateRepository<Escalacao> escalacaoRepository,
             INHibernateRepository<Historico> historicoRepository,
             INHibernateRepository<Nome> nomeRepository,
-            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository)
+            INHibernateRepository<Sobrenome> sobrenomeRepository,
+            INHibernateRepository<Staff> staffRepository,
+            INHibernateRepository<Artilheiro> artilheiroRepository,
+            INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository,
+            INHibernateRepository<JogadorTeste> jogadortesteRepository, 
+            INHibernateRepository<Patrocinio> patrocinioRepository,
+            INHibernateRepository<PatrocinioClube> patrocinioclubeRepository,
+            INHibernateRepository<PatrocinioRecusa> patrociniorecusaRepository)
         {
             this.usuarioRepository = usuarioRepository;
+            this.clubeQueryRepository = clubeQueryRepository;
             this.authenticationService = authenticationService;
             this.clubeRepository = clubeRepository;
             this.jogadorRepository = jogadorRepository;
@@ -75,7 +93,14 @@
             this.escalacaoRepository = escalacaoRepository;
             this.historicoRepository = historicoRepository;
             this.nomeRepository = nomeRepository;
+            this.sobrenomeRepository = sobrenomeRepository;
+            this.artilheiroRepository = artilheiroRepository;
+            this.staffRepository = staffRepository;
             this.jogadorhistoricoRepository = jogadorhistoricoRepository;
+            this.jogadortesteRepository = jogadortesteRepository;
+            this.patrocinioRepository = patrocinioRepository;
+            this.patrocinioclubeRepository = patrocinioclubeRepository;
+            this.patrociniorecusaRepository = patrociniorecusaRepository;
         }
 
         
@@ -83,6 +108,68 @@
         public ActionResult Index()
         {
             return View();
+        }
+
+        [Transaction]
+        public ActionResult FechaPatrocinios()
+        {
+            Random rnd = new Random();
+
+            var lstclubes = clubeRepository.GetAll().OrderByDescending(x => x.Socios).ToList();
+
+            foreach (var clube in lstclubes.Where(x => x.Usuario == null && x.PatrocinioClubes.Count() == 0))
+            {
+                //patrocinios
+                var lstpatrocinios = patrocinioRepository.GetAll().Where(x => x.DivisaoMinima == clube.Divisao.Numero && x.Tipo == 1);
+                if (lstpatrocinios.Count() < 2)
+                    lstpatrocinios = patrocinioRepository.GetAll().Where(x => x.DivisaoMinima > clube.Divisao.Numero && x.Tipo == 1).OrderBy(x => x.DivisaoMinima).Take(8);
+
+                var patroc = lstpatrocinios.ElementAt(rnd.Next(0, (lstpatrocinios.Count() - 1)));
+                var patroc2 = lstpatrocinios.ElementAt(rnd.Next(0, (lstpatrocinios.Count() - 1)));
+
+                while (patroc.Id == patroc2.Id)
+                {
+                    patroc2 = lstpatrocinios.ElementAt(rnd.Next(0, (lstpatrocinios.Count() - 1)));
+                }
+
+                var valormax = Util.Util.RetornaValorMaxPatrocinio(patroc, 1, clube, lstclubes);
+                var valormax2 = Util.Util.RetornaValorMaxPatrocinio(patroc2, 2, clube, lstclubes);
+
+                var patroclube = new PatrocinioClube();
+                patroclube.Clube = clube;
+                patroclube.Contrato = 2;
+                patroclube.Patrocinio = patroc;
+                patroclube.Tipo = 1;
+                patroclube.Valor = valormax;
+                patrocinioclubeRepository.SaveOrUpdate(patroclube);
+
+                patroclube = new PatrocinioClube();
+                patroclube.Clube = clube;
+                patroclube.Contrato = 2;
+                patroclube.Patrocinio = patroc2;
+                patroclube.Tipo = 2;
+                patroclube.Valor = valormax2;
+                patrocinioclubeRepository.SaveOrUpdate(patroclube);
+
+                //fornecedor
+                lstpatrocinios = patrocinioRepository.GetAll().Where(x => x.DivisaoMinima == clube.Divisao.Numero && x.Tipo == 2);
+                if (lstpatrocinios.Count() < 2)
+                    lstpatrocinios = patrocinioRepository.GetAll().Where(x => x.DivisaoMinima > clube.Divisao.Numero && x.Tipo == 2).OrderBy(x => x.DivisaoMinima).Take(4);
+
+                var fornec = lstpatrocinios.ElementAt(rnd.Next(0, (lstpatrocinios.Count() - 1)));
+
+                var fornecvalormax = Util.Util.RetornaValorMaxPatrocinio(fornec, 3, clube, lstclubes);
+
+                patroclube = new PatrocinioClube();
+                patroclube.Clube = clube;
+                patroclube.Contrato = 2;
+                patroclube.Patrocinio = fornec;
+                patroclube.Tipo = 3;
+                patroclube.Valor = fornecvalormax;
+                patrocinioclubeRepository.SaveOrUpdate(patroclube);
+            }
+
+            return RedirectToAction("Index", "AI");
         }
 
         [Transaction]

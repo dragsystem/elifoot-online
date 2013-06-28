@@ -282,6 +282,18 @@
 
             jogadoroferta.Clube = usuario.Clube;
 
+            //valida
+            if (jogadoroferta.Salario < 1)
+            {
+                TempData["MsgAlerta"] = "Você precisa selecionar um valor para salário.";
+                return View(jogadoroferta);
+            }
+            if (jogadoroferta.Contrato < 1)
+            {
+                TempData["MsgAlerta"] = "Você precisa selecionar a duração do contrato.";
+                return View(jogadoroferta);
+            }            
+
             if (jogadoroferta.IsValid())
             {
                 if (jogador.Clube.Usuario != null)
@@ -632,7 +644,7 @@
             {
                 var noticia = new Noticia();
                 noticia.Dia = controle.Dia;
-                noticia.Texto = olheiro.Nome + " relatou que " + Util.Util.LinkaJogador(jogador) + " tem uma média de " + jogador.TreinoMedia + " nos treinos pelo " + Util.Util.LinkaClube(jogador.Clube) + " e no último treino teve a nota " + jogador.TreinoUlt + ".";
+                noticia.Texto = Util.Util.LinkaStaff(olheiro) + " relatou que " + Util.Util.LinkaJogador(jogador) + " tem uma média de " + jogador.TreinoMedia.ToString("N2") + " nos treinos pelo " + Util.Util.LinkaClube(jogador.Clube) + " e no último treino teve a nota " + jogador.TreinoUlt.ToString("N2") + ".<br />Você possui " + olheiro.Consultas + " consultas a utilizar.";
                 noticia.Usuario = usuario;
                 noticiaRepository.SaveOrUpdate(noticia);
 

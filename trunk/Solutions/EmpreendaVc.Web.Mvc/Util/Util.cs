@@ -71,6 +71,25 @@ namespace EmpreendaVc.Web.Mvc.Util
                 return "Desconhecido";
         }
 
+        public static decimal RetornaValorMaxPatrocinio(Patrocinio patrocinio, int tipo, Clube clube, List<Clube> lstClubes)
+        {
+            decimal valor = patrocinio.ValorMax;
+
+            if (tipo == 2)
+                valor = valor / 3;
+
+            var index = lstClubes.IndexOf(clube);
+
+            valor = (valor / lstClubes.Count()) * (lstClubes.Count() - index);
+
+            if ((valor / 1000000) < 1)
+                valor = Convert.ToInt32(valor / 100000) * 100000;
+            else
+                valor = Convert.ToInt32(valor / 1000000) * 1000000;
+
+            return valor;
+        }
+
         public static string RetornaPatrocinioTipo(int tipo)
         {
             if (tipo == 1)
@@ -483,6 +502,11 @@ namespace EmpreendaVc.Web.Mvc.Util
         public static string LinkaStaff(Staff staff)
         {
             return "<a href=\"/Jogador/Index/" + staff.Id + "\" >" + staff.Nome + "</a>";
+        }
+
+        public static string LinkaPatrocinio(Patrocinio patrocinio)
+        {
+            return "<a href=\"/Patrocinio/Index/" + patrocinio.Id + "\" >" + patrocinio.Nome + "</a>";
         }
 
         public static List<SelectListItem> SelectListMeses()

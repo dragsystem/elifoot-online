@@ -112,6 +112,7 @@
     <Compile Include="NHibernateMaps\Conventions\PrimaryKeyConvention.cs" />
     <Compile Include="NHibernateMaps\Conventions\TableNameConvention.cs" />
     <Compile Include="NHibernateMaps\AutoPersistenceModelGenerator.cs" />
+    <Compile Include="NHibernateMaps\NoticiaMap.cs" />
     <Compile Include="Queries\Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Queries\Authentication\IAuthenticationService.cs" />
     <Compile Include="Queries\Clubes\IClubeRepository.cs" />

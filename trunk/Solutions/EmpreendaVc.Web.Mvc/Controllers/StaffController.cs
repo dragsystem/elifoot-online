@@ -195,6 +195,18 @@
 
             TryUpdateModel(staff, form);
 
+            //valida
+            if (staff.Salario < 1)
+            {
+                TempData["MsgAlerta"] = "Você precisa selecionar um valor.";
+                return View(staff);
+            }
+            if (staff.Contrato < 1)
+            {
+                TempData["MsgAlerta"] = "Você precisa selecionar a duração do contrato.";
+                return View(staff);
+            }
+
             var nota = Convert.ToInt32(Math.Ceiling((decimal)staff.H / 20));
             var reputacao = Convert.ToInt32(Math.Ceiling((decimal)usuario.ReputacaoGeral / 20));
             var salariomin = 3000 * (nota + (5 - reputacao));

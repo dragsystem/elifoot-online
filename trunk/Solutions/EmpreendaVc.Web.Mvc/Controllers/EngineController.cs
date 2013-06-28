@@ -23,7 +23,6 @@
 
     public class EngineController : ControllerCustom
     {
-
         private readonly IUsuarioRepository usuarioRepository;
         private readonly IClubeRepository clubeQueryRepository;
         private readonly IAuthenticationService authenticationService;
@@ -46,6 +45,9 @@
         private readonly INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository;
         private readonly INHibernateRepository<Staff> staffRepository;
         private readonly INHibernateRepository<JogadorTeste> jogadortesteRepository;
+        private readonly INHibernateRepository<Patrocinio> patrocinioRepository;
+        private readonly INHibernateRepository<PatrocinioClube> patrocinioclubeRepository;
+        private readonly INHibernateRepository<PatrocinioRecusa> patrociniorecusaRepository;
 
         public EngineController(IUsuarioRepository usuarioRepository,
             IClubeRepository clubeQueryRepository,
@@ -68,7 +70,10 @@
             INHibernateRepository<Staff> staffRepository,
             INHibernateRepository<Artilheiro> artilheiroRepository,
             INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository,
-            INHibernateRepository<JogadorTeste> jogadortesteRepository)
+            INHibernateRepository<JogadorTeste> jogadortesteRepository, 
+            INHibernateRepository<Patrocinio> patrocinioRepository,
+            INHibernateRepository<PatrocinioClube> patrocinioclubeRepository,
+            INHibernateRepository<PatrocinioRecusa> patrociniorecusaRepository)
         {
             this.usuarioRepository = usuarioRepository;
             this.clubeQueryRepository = clubeQueryRepository;
@@ -92,6 +97,9 @@
             this.staffRepository = staffRepository;
             this.jogadorhistoricoRepository = jogadorhistoricoRepository;
             this.jogadortesteRepository = jogadortesteRepository;
+            this.patrocinioRepository = patrocinioRepository;
+            this.patrocinioclubeRepository = patrocinioclubeRepository;
+            this.patrociniorecusaRepository = patrociniorecusaRepository;
         }
 
         //OK - GerarCampeonato(); 
@@ -1685,6 +1693,7 @@
                 if (clube.Usuario != null)
                     staff = clube.Usuario.Staffs.Sum(x => x.Salario);
 
+                clube.Socios = clube.Socios + (7 - clube.DivisaoTabelas.FirstOrDefault().Posicao);
                 clube.Dinheiro = clube.Dinheiro + (socios - (salarios + staff));
                 clubeRepository.SaveOrUpdate(clube);
             }
@@ -2055,6 +2064,9 @@
                         else
                             tempo = tempo / 2;
 
+                        if (tempo < 1)
+                            tempo = 1;
+
                         jogador.Lesionado = tempo;
                         jogadorRepository.SaveOrUpdate(jogador);
 
@@ -2268,6 +2280,10 @@
             historico.Gols = artilheiro.Taca;
             historicoRepository.SaveOrUpdate(historico);
 
+            var clube = clubeRepository.Get(partidafinaltaca.Vencedor.Id);
+            clube.Socios = clube.Socios + 4000;
+            clubeRepository.SaveOrUpdate(clube);
+
             return RedirectToAction("Index", "Engine");
             //return RedirectToAction("ZerarTransferencias", "Engine");
         }
@@ -2280,6 +2296,41 @@
                 jogadorofertaRepository.Delete(jogadoroferta);
             }
             
+            return RedirectToAction("Index", "Engine");
+            //return RedirectToAction("ZerarAnoStaff", "Engine");
+        }
+
+        [Transaction]
+        public ActionResult ZerarPatrocinio()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+
+            foreach (var patrociniorecusa in patrociniorecusaRepository.GetAll())
+            {
+                patrociniorecusaRepository.Delete(patrociniorecusa);
+            }
+
+            foreach (var patrocinioclube in patrocinioclubeRepository.GetAll())
+            {
+                patrocinioclube.Contrato = (patrocinioclube.Contrato - 1) >= 0 ? patrocinioclube.Contrato - 1 : 0;
+
+                if (patrocinioclube.Contrato == 0)
+                {
+                    if (patrocinioclube.Clube.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Dia = controle.Dia;
+                        noticia.Texto = "Seu contrato com " +  Util.Util.LinkaPatrocinio(patrocinioclube.Patrocinio) + " terminou.";
+                        noticia.Usuario = patrocinioclube.Clube.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    patrocinioclubeRepository.Delete(patrocinioclube);
+                }
+                else
+                    patrocinioclubeRepository.SaveOrUpdate(patrocinioclube);
+            }
+
             return RedirectToAction("Index", "Engine");
             //return RedirectToAction("ZerarAnoStaff", "Engine");
         }
@@ -2483,6 +2534,11 @@
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
                 }
+
+                clube1.Socios = clube1.Socios + 4000 / divisao.Numero;
+                clube2.Socios = clube2.Socios + 2000 / divisao.Numero;
+                clube11.Socios = clube11.Socios - 1000 / divisao.Numero;
+                clube12.Socios = clube12.Socios - 1000 / divisao.Numero;
 
                 clubeRepository.SaveOrUpdate(clube1);
                 clubeRepository.SaveOrUpdate(clube2);
