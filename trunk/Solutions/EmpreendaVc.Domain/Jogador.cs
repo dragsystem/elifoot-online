@@ -48,6 +48,11 @@ namespace EmpreendaVc.Domain
         //2 - Reserva
         //3 - Disponível para Transferência
 
+        public virtual int Satisfacao { get; set; }
+        //0 - Contente com sua situação no clube
+        //1 - Indiferente
+        //2 - Insatisfeito. Deseja sair do clube
+
         public virtual decimal Valor
         {
             get
@@ -74,6 +79,8 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<JogadorOferta> JogadorOfertas { get; set; }
 
+        public virtual IList<JogadorPreContrato> JogadorPreContrato { get; set; }
+
         public virtual IList<JogadorHistorico> Historico { get; set; }
 
         public Jogador()
@@ -85,6 +92,7 @@ namespace EmpreendaVc.Domain
             NotaTotal = 0;
             Gols = new List<Gol>();
             JogadorOfertas = new List<JogadorOferta>();
+            JogadorPreContrato = new List<JogadorPreContrato>();
             Historico = new List<JogadorHistorico>();
         }
     }

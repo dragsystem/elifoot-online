@@ -1796,8 +1796,7 @@
             {
                 var jogador = jogadoroferta.Jogador;
                 var clubecomprador = clubeRepository.Get(jogadoroferta.Clube.Id);
-                var clubevendedor = jogador.Clube != null ? clubeRepository.Get(jogador.Clube.Id) : null;
-                
+                var clubevendedor = jogador.Clube != null ? clubeRepository.Get(jogador.Clube.Id) : null;                
 
                 if (((clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14) || clubevendedor == null) && lstvendidos.Where(x => x.Id == jogador.Id).Count() == 0 && clubecomprador.Dinheiro >= jogadoroferta.Valor && jogadoroferta.Pontos > 0)
                 {
@@ -1824,6 +1823,7 @@
                     jogador.Contrato = jogadoroferta.Contrato;
                     jogador.Salario = jogadoroferta.Salario;
                     jogador.Situacao = 1;
+                    jogador.Satisfacao = 0;
                     jogador.Jogos = 0;
                     jogador.NotaTotal = 0;
                     jogador.NotaUlt = 0;
@@ -3975,6 +3975,22 @@
             partida.Gols = lstGols;
 
             return View(partida);
+        }
+
+        [Transaction]
+        public ActionResult FuncaoAleatoria()
+        {
+            foreach (var jogador in jogadorRepository.GetAll().Where(x => x.Clube != null))
+            {
+                if (jogador.Posicao < 6)
+                    jogador.Salario = (40 / jogador.Clube.Divisao.Numero) * 1000;
+                else
+                    jogador.Salario = (60 / jogador.Clube.Divisao.Numero) * 1000;
+
+                jogadorRepository.SaveOrUpdate(jogador);
+            }
+
+            return RedirectToAction("Index", "Engine");
         }
     }
 }

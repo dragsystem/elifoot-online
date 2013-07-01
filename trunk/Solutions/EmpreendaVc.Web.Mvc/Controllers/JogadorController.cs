@@ -222,8 +222,9 @@
         }
 
         [Authorize]
-        public ActionResult JogadorOferta(int id)
+        public ActionResult JogadorOferta(int id, int tipo)
         {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             var usuario = authenticationService.GetUserAuthenticated();
 
             if (usuario.Clube == null)
@@ -235,11 +236,10 @@
             if (jogadoroferta == null)
                 jogadoroferta = new JogadorOferta();
 
-            if (jogador.Clube != null)
-                jogadoroferta.Tipo = 1;
-            else
-                jogadoroferta.Tipo = 2;
+            if ((tipo == 1 && jogador.Clube == null) || (tipo == 2 && jogador.Clube != null) || (tipo == 3 && (jogador.Contrato > 1 || controle.Dia < (controle.Dia / 2))))
+                return RedirectToAction("Index", "Jogador", new { id = id });
 
+            jogadoroferta.Tipo = tipo;
             jogadoroferta.Jogador = jogador;
 
             ViewBag.Clube = usuario.Clube;
@@ -267,18 +267,15 @@
 
             TryUpdateModel(jogadoroferta, form);
 
+            if ((jogadoroferta.Tipo == 1 && jogador.Clube == null) || (jogadoroferta.Tipo == 2 && jogador.Clube != null) || (jogadoroferta.Tipo == 3 && (jogador.Contrato > 1 || controle.Dia < (controle.Dia / 2))))
+                return RedirectToAction("Index", "Jogador", new { id = idjogador });
+
             jogadoroferta.Jogador = jogador;
 
-            if (jogador.Clube != null)
-            {
-                jogadoroferta.Tipo = 1;
+            if (jogadoroferta.Tipo == 1)
                 jogadoroferta.Estagio = 1;
-            }
             else
-            {
-                jogadoroferta.Tipo = 2;
                 jogadoroferta.Estagio = 2;
-            }
 
             jogadoroferta.Clube = usuario.Clube;
 
@@ -296,11 +293,14 @@
 
             if (jogadoroferta.IsValid())
             {
-                if (jogador.Clube.Usuario != null)
+                if (jogador.Clube != null && jogador.Clube.Usuario != null)
                 {
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = Util.Util.LinkaClube(jogadoroferta.Clube) + " apresentou uma proposta por " + Util.Util.LinkaJogador(jogadoroferta.Jogador) + ". <br /><br />Entre em Propostas para responder.";
+                    if (jogadoroferta.Tipo == 1)
+                        noticia.Texto = Util.Util.LinkaClube(jogadoroferta.Clube) + " apresentou uma proposta por " + Util.Util.LinkaJogador(jogadoroferta.Jogador) + ". <br />Entre em Propostas para responder.";
+                    else
+                        noticia.Texto = Util.Util.LinkaClube(jogadoroferta.Clube) + " apresentou um pré contrato a " + Util.Util.LinkaJogador(jogadoroferta.Jogador) + ". <br />Caso ele aceite, irá se transferir ao final do contrato com seu clube.";
                     noticia.Usuario = jogador.Clube.Usuario;
 
                     noticiaRepository.SaveOrUpdate(noticia);
@@ -311,7 +311,7 @@
                 if (jogador.Clube != null)
                 {
                     pontos = pontos + (jogador.Clube.Divisao.Numero - jogadoroferta.Clube.Divisao.Numero);
-                    pontos = pontos + (jogador.Situacao - 1);
+                    pontos = pontos + (jogador.Situacao - 1) + jogador.Satisfacao;
                 }
 
                 jogadoroferta.Pontos = pontos;
@@ -477,12 +477,15 @@
             if (jogador != null)
             {
                 int pontos = Convert.ToInt32((salario - jogador.Salario) / 10000);
-                pontos = pontos - jogador.Situacao;
+                pontos = pontos - (jogador.Situacao - 1) - (jogador.Satisfacao);
+                if (jogador.Satisfacao == 2)
+                    pontos = pontos - 2;
 
                 if (pontos > 0)
                 {
                     jogador.Salario = salario;
                     jogador.Contrato = contrato;
+                    jogador.Satisfacao = 0;
                     jogadorRepository.SaveOrUpdate(jogador);
 
                     TempData["MsgOk"] = jogador.Nome + " aceitou sua proposta e renovou por " + contrato + " temporada(s)!";
@@ -510,6 +513,7 @@
         }
 
         [Authorize]
+        [Transaction]
         public ActionResult JogadorDispensarConfirma(int id)
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
@@ -541,7 +545,7 @@
             {
                 var escalacao = clube.Escalacao.Where(x => x.Jogador != null && x.Jogador.Id == jogador.Id).FirstOrDefault();
                 escalacao.Jogador = null;
-                escalacao.Jogador.H = 0;
+                escalacao.H = 0;
                 escalacaoRepository.SaveOrUpdate(escalacao);
             }
 
@@ -567,6 +571,7 @@
             jogador.Treinos = 0;
             jogador.TreinoTotal = 0;
             jogador.Situacao = 0;
+            jogador.Satisfacao = 0;
             jogadorRepository.SaveOrUpdate(jogador);
 
             TempData["MsgOk"] = jogador.Nome + " dispensado com sucesso!";
@@ -644,7 +649,7 @@
             {
                 var noticia = new Noticia();
                 noticia.Dia = controle.Dia;
-                noticia.Texto = Util.Util.LinkaStaff(olheiro) + " relatou que " + Util.Util.LinkaJogador(jogador) + " tem uma média de " + jogador.TreinoMedia.ToString("N2") + " nos treinos pelo " + Util.Util.LinkaClube(jogador.Clube) + " e no último treino teve a nota " + jogador.TreinoUlt.ToString("N2") + ".<br />Você possui " + olheiro.Consultas + " consultas a utilizar.";
+                noticia.Texto = Util.Util.LinkaStaff(olheiro) + " relatou que " + Util.Util.LinkaJogador(jogador) + " tem uma média de <b>" + jogador.TreinoMedia.ToString("N2") + "</b> nos treinos pelo " + Util.Util.LinkaClube(jogador.Clube) + " e no último treino teve a nota <b>" + jogador.TreinoUlt.ToString("N2") + "</b>.<br />Você possui " + olheiro.Consultas + " consultas a utilizar.";
                 noticia.Usuario = usuario;
                 noticiaRepository.SaveOrUpdate(noticia);
 

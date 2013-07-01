@@ -54,7 +54,13 @@
         {
             @:Tipo de Proposta: Assinatura de contrato<br />
         }
-
+        else if (Model.Tipo == 3)
+        {
+            @:Tipo de Proposta: Assinatura de pré-contrato<br />
+            @:ATENÇÃO: @Model.Jogador.Nome só irá se transferir ao final do seu atual contrato.
+        }
+        
+        @Html.HiddenFor(x => x.Tipo)
         <h3>Contrato proposto ao jogador</h3>
         @:Salário ofertado: @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model.Salario != 0 ? Model.Salario.ToString() : "")
         @:Duração do contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br /><br />
