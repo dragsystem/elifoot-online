@@ -12,6 +12,7 @@ namespace EmpreendaVc.Domain
     public class JogadorOferta : Entity
     {
         public virtual int Dia { get; set; }
+
         public virtual Jogador Jogador { get; set; }
                 
         public virtual Clube Clube { get; set; }
@@ -19,12 +20,13 @@ namespace EmpreendaVc.Domain
         public virtual int Tipo { get; set; }
         //COMPRA: Tipo = 1 
         //ASSINAR: Tipo = 2
+        //ASSINAR PRÉ CONTRATO: Tipo = 3
 
         public virtual int Estagio { get; set; }
         //COMPRA: Estagio: 1 - AGUARDANDO CLUBE RESPONDER / 2 - Aguardando resposta do jogador
         //2 - Aguardando resposta do jogador
+        
         //3 - FINALIZADA
-
         // 0 - recusada
 
         public virtual decimal Valor { get; set; }

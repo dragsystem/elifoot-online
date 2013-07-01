@@ -259,7 +259,7 @@
                     var atotal = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Count();
                     var a = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Sum(x => x.H) / atotal;
 
-                    var lstjogadores = jogadorRepository.GetAll().Where(x => (x.Clube == null || (x.Clube != null && x.Clube.Id != clube.Id)) && !x.Temporario);                                                             
+                    var lstjogadores = jogadorRepository.GetAll().Where(x => (x.Clube == null || (x.Clube != null && x.Clube.Id != clube.Id)) && x.JogadorPreContrato.Count() == 0 && !x.Temporario);                                                             
                     var lstjogadoroferta = jogadorofertaRepository.GetAll();
                     var lstcompra = new List<Jogador>();
 
@@ -448,10 +448,13 @@
                             if (salarioplus > 0)
                                 jogadoroferta.Salario = jogadoroferta.Salario + salarioplus;
 
-                            var pontos = jogador.Salario > 0 ? Convert.ToInt32((jogadoroferta.Salario - jogador.Salario) / 10000) : 1;
+                            var pontos = jogador.Salario > 0 ? Convert.ToInt32((jogadoroferta.Salario - jogador.Salario) / 10000) : Convert.ToInt32(jogadoroferta.Salario / 10000);
 
                             if (jogador.Clube != null)
+                            {
                                 pontos = pontos + (jogador.Clube.Divisao.Numero - jogadoroferta.Clube.Divisao.Numero);
+                                pontos = pontos + (jogador.Situacao - 1) + jogador.Satisfacao;
+                            }
                             else
                                 pontos = pontos + (jogadoroferta.Clube.Socios / 1000);
 
@@ -653,6 +656,7 @@
                     jogador.Treinos = 0;
                     jogador.TreinoTotal = 0;
                     jogador.Situacao = 0;
+                    jogador.Satisfacao = 0;
                     jogadorRepository.SaveOrUpdate(jogador);
                 }
             }
@@ -665,7 +669,7 @@
             var controle = controleRepository.GetAll().FirstOrDefault();
             var lstjogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Clube != null && x.Jogador.Clube.Usuario == null);
 
-            foreach (var jogadoroferta in lstjogadoroferta.Where(x => x.Jogador.Clube != null && x.Estagio > 0 && x.Estagio < 3))
+            foreach (var jogadoroferta in lstjogadoroferta.Where(x => x.Jogador.Clube != null && x.Estagio > 0 && x.Estagio < 3 && x.Tipo == 1))
             {
                 var jogador = jogadoroferta.Jogador;
                 var clube = clubeRepository.Get(jogador.Clube.Id);

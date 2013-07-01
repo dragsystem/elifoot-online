@@ -13,17 +13,18 @@
             {
                 frase = "Alterar Proposta"; 
             }
-            <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id })">@frase</a><br />
-            if (Model.Clube == null)
+            if (Model.Clube != null)
             {
-                <a class="botao" href="@Url.Action("ProporTeste", "Jogador", new { id = Model.Id })">Propor Teste</a><br />
-            }
-            else
-            {
+                <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id, tipo = 1 })">@frase</a><br />
                 <a class="botao" href="@Url.Action("PedirRelatorio", "Jogador", new { id = Model.Id })">Pedir Relatório</a><br />
             }
+            if (Model.Clube == null)
+            {
+                <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id, tipo = 2 })">@frase</a><br />
+                <a class="botao" href="@Url.Action("ProporTeste", "Jogador", new { id = Model.Id })">Propor Teste</a><br />
+            }
         }
-        @if (Model.Clube != null && Model.Clube.Id == clube.Id)
+        else
         {
             <a class="botao" href="@Url.Action("JogadorRenovar", "Jogador", new { id = Model.Id })">Renovar Contrato</a><br />
             <a class="botao" href="@Url.Action("JogadorDispensar", "Jogador", new { id = Model.Id })">Dispensar</a><br />
