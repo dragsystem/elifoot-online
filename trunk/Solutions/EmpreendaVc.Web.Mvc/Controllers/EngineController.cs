@@ -143,7 +143,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -170,7 +170,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -406,7 +406,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -425,6 +425,8 @@
                 ////////////////////////////////FOR PARTIDAS
                 foreach (var partida in lstPartidas)
                 {
+                    //partidaRepository.LimparGols(partida.Id);
+
                     var clube1 = clubeRepository.Get(partida.Clube1.Id);
                     var clube2 = clubeRepository.Get(partida.Clube2.Id);
                     var gol1 = 0;
@@ -1420,11 +1422,12 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
             return View("Rodando");
+            //return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
@@ -1477,7 +1480,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -1579,7 +1582,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -1608,73 +1611,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
-            ViewBag.ZeraStaffConsultas = false;
-            ViewBag.GerarTesteJogador = false;
-
-            return View("Rodando");
-        }
-
-        [Transaction]
-        public ActionResult CriarJogadoresTemporarios()
-        {
-            foreach (var clube in clubeRepository.GetAll())
-            {
-                var nomes = nomeRepository.GetAll();
-                var rnd = new Random();
-
-                rnd.Next(0, clube.Id);
-
-                for (int pos = 1; pos < 8; pos++)
-                {
-                    var min = 0;
-
-                    if (pos == 1 || pos == 2 || pos == 4)
-                        min = 1;
-                    else if (pos == 3 || pos == 5 || pos == 6 || pos == 7)
-                        min = 2;
-
-                    if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario && x.Lesionado == 0).Count() < min)
-                    {
-                        var temporarios = clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario).Count();
-                        if (min == 2 && temporarios == 1 || min == 1 && temporarios == 0)
-                        {
-                            var jogador = new Jogador();
-                            jogador.Clube = clube;
-                            jogador.Posicao = pos;
-                            jogador.Temporario = true;
-                            jogador.H = 1;
-                            jogador.HF = 1;
-
-                            var objnome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
-                            if (!objnome.Comum) { objnome = nomes.ElementAt(rnd.Next(0, nomes.Count())); }
-
-                            jogador.Nome = objnome.NomeJogador.ToUpper();
-                            jogadorRepository.SaveOrUpdate(jogador);
-                        }
-                    }
-                    else if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() > min)
-                    {
-                        foreach (var jog in clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario))
-                        {
-                            jog.Clube = null;
-                            jogadorRepository.SaveOrUpdate(jog);
-                        }
-                    }
-                }
-            }
-
-            ViewBag.AtualizarDataDia = true;
-            ViewBag.EscalaTimes = true;
-            ViewBag.RodaPartida = true;
-            ViewBag.AtualizaTabela = true;
-            ViewBag.GerarTaca = true;
-            ViewBag.ZerarDelayUsuario = true;
-            ViewBag.CriarJogadoresTemporarios = true;
-            ViewBag.UpdateFinancas = false;
-            ViewBag.VerificaTecnicos = false;
-            ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -1684,17 +1621,22 @@
         [Transaction]
         public ActionResult UpdateFinancas()
         {
+            var controle = controleRepository.GetAll().FirstOrDefault();
             foreach (var clube in clubeRepository.GetAll())
             {
                 var salarios = clube.Jogadores.Sum(x => x.Salario);
                 var socios = clube.Socios * 30;
                 decimal staff = 0;
+                decimal patrocinio = 0;
 
                 if (clube.Usuario != null)
                     staff = clube.Usuario.Staffs.Sum(x => x.Salario);
 
+                if (clube.PatrocinioClubes.Count() > 0)
+                    patrocinio = clube.PatrocinioClubes.Sum(x => x.Valor) / controle.DiaMax;
+
                 clube.Socios = clube.Socios + (7 - clube.DivisaoTabelas.FirstOrDefault().Posicao);
-                clube.Dinheiro = clube.Dinheiro + (socios - (salarios + staff));
+                clube.Dinheiro = clube.Dinheiro + (socios + patrocinio) - (salarios + staff);
                 clubeRepository.SaveOrUpdate(clube);
             }
 
@@ -1704,11 +1646,11 @@
             ViewBag.AtualizaTabela = true;
             ViewBag.GerarTaca = true;
             ViewBag.ZerarDelayUsuario = true;
-            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.CriarJogadoresTemporarios = false;
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -1735,11 +1677,9 @@
 
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = "Você foi despedido do " + Util.Util.LinkaClube(clube) + ", pois a diretoria não estava satisfeita com seu trabalho.<br /><br />Procure outro clube para dirigir.";
+                    noticia.Texto = "Você foi despedido do " + Util.Util.LinkaClube(clube) + ", pois a diretoria não estava satisfeita com seu trabalho.<br />Procure outro clube para dirigir.";
                     noticia.Usuario = tecnicoatual;
                     noticiaRepository.SaveOrUpdate(noticia);
-
-                    clubeQueryRepository.TirarTreinador(clube.Id);
 
                     var repgeral = clube.Divisao.Numero < ultdivisao ? (80 / clube.Divisao.Numero) : 0;
                     foreach (var tecniconovo in usuarioRepository.GetAll().Where(x => x.ReputacaoGeral >= repgeral && x.DelayTroca == 0 && x.IdUltimoClube != clube.Id))
@@ -1750,6 +1690,8 @@
                         noticia.Usuario = tecniconovo;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
+
+                    clube.Usuario = null;
                 }
                 else if (clube.Usuario == null && clube.ReputacaoAI < 5)
                 {
@@ -1765,8 +1707,8 @@
 
                     clube.ReputacaoAI = 30;
                     clube.Formacao = "4222";
-                    clubeRepository.SaveOrUpdate(clube);
-                }                
+                }
+                clubeRepository.SaveOrUpdate(clube);
             }
 
             ViewBag.AtualizarDataDia = true;
@@ -1775,15 +1717,16 @@
             ViewBag.AtualizaTabela = true;
             ViewBag.GerarTaca = true;
             ViewBag.ZerarDelayUsuario = true;
-            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.CriarJogadoresTemporarios = false;
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = false;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
             return View("Rodando");
+            //return RedirectToAction("Index", "Engine");
         }
 
         [Transaction]
@@ -1938,11 +1881,11 @@
             ViewBag.AtualizaTabela = true;
             ViewBag.GerarTaca = true;
             ViewBag.ZerarDelayUsuario = true;
-            ViewBag.CriarJogadoresTemporarios = true;
+            ViewBag.CriarJogadoresTemporarios = false;
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
-            ViewBag.VariarJogador = false;
+            ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -1950,11 +1893,20 @@
         }
 
         [Transaction]
-        public ActionResult VariarJogador()
+        public ActionResult VariarJogador(int fase)
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
+            var lstJogador = jogadorRepository.GetAll().Where(x => !x.Temporario);
+            var skip = 0;
+            var take = lstJogador.Count() / 2;
+            if (fase > 0)
+            {
+                skip = lstJogador.Count() / 2;
+                take = lstJogador.Count() - skip;
+            }
+
             var rnd = new Random();
-            foreach (var jogador in jogadorRepository.GetAll().Where(x => !x.Temporario))
+            foreach (var jogador in lstJogador.Skip(skip).Take(take))
             {
                 var variavel = rnd.Next(-2, 3);
 
@@ -1969,12 +1921,14 @@
 
                 if (jogador.Lesionado == 0 && jogador.Clube != null)
                 {
-                    var chancelesionar = 4;
+                    var chancelesionar = 2;
 
-                    if (jogador.Condicao < 70)
+                    if (jogador.Condicao < 50)
                         chancelesionar = 20;
-                    else if (jogador.Condicao < 80)
+                    else if (jogador.Condicao < 60)
                         chancelesionar = 10;
+                    else if (jogador.Condicao < 80)
+                        chancelesionar = 5;
 
                     if (rnd.Next(1, 101) > chancelesionar)
                     {
@@ -2037,6 +1991,9 @@
                         jogador.Treinos = jogador.Treinos + 1;
                         jogador.TreinoTotal = jogador.TreinoTotal + Convert.ToDecimal(nota);
                         jogador.TreinoUlt = Convert.ToDecimal(nota);
+
+                        if (jogador.Clube.Usuario == null)
+                            jogador.Condicao = 100;
 
                         if (jogador.Condicao < 90)
                             jogador.Condicao = jogador.Condicao + 10;
@@ -2113,11 +2070,80 @@
             ViewBag.AtualizaTabela = true;
             ViewBag.GerarTaca = true;
             ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = true;
+            ViewBag.AtualizarTransferencias = true;
+            if (fase == 0)
+                ViewBag.VariarJogador = 1;
+            else
+                ViewBag.VariarJogador = 2;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            return View("Rodando");
+        }
+
+        [Transaction]
+        public ActionResult CriarJogadoresTemporarios()
+        {
+            foreach (var clube in clubeRepository.GetAll())
+            {
+                var nomes = nomeRepository.GetAll();
+                var rnd = new Random();
+
+                rnd.Next(0, clube.Id);
+
+                for (int pos = 1; pos < 8; pos++)
+                {
+                    var min = 0;
+
+                    if (pos == 1 || pos == 2 || pos == 4)
+                        min = 1;
+                    else if (pos == 3 || pos == 5 || pos == 6 || pos == 7)
+                        min = 2;
+
+                    if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario && x.Lesionado == 0).Count() < min)
+                    {
+                        var temporarios = clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario).Count();
+                        if (min == 2 && temporarios == 1 || min == 1 && temporarios == 0)
+                        {
+                            var jogador = new Jogador();
+                            jogador.Clube = clube;
+                            jogador.Posicao = pos;
+                            jogador.Temporario = true;
+                            jogador.H = 1;
+                            jogador.HF = 1;
+
+                            var objnome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
+                            if (!objnome.Comum) { objnome = nomes.ElementAt(rnd.Next(0, nomes.Count())); }
+
+                            jogador.Nome = objnome.NomeJogador.ToUpper();
+                            jogadorRepository.SaveOrUpdate(jogador);
+                        }
+                    }
+                    else if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() > min)
+                    {
+                        foreach (var jog in clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario))
+                        {
+                            jog.Clube = null;
+                            jogadorRepository.SaveOrUpdate(jog);
+                        }
+                    }
+                }
+            }
+
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
             ViewBag.CriarJogadoresTemporarios = true;
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
-            ViewBag.VariarJogador = true;
+            ViewBag.VariarJogador = 2;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
@@ -2143,7 +2169,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
-            ViewBag.VariarJogador = true;
+            ViewBag.VariarJogador = 2;
             ViewBag.ZeraStaffConsultas = true;
             ViewBag.GerarTesteJogador = false;
 
@@ -2237,7 +2263,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
-            ViewBag.VariarJogador = true;
+            ViewBag.VariarJogador = 2;
             ViewBag.ZeraStaffConsultas = true;
             ViewBag.GerarTesteJogador = true;
 
@@ -3980,15 +4006,7 @@
         [Transaction]
         public ActionResult FuncaoAleatoria()
         {
-            foreach (var jogador in jogadorRepository.GetAll().Where(x => x.Clube != null))
-            {
-                if (jogador.Posicao < 6)
-                    jogador.Salario = (40 / jogador.Clube.Divisao.Numero) * 1000;
-                else
-                    jogador.Salario = (60 / jogador.Clube.Divisao.Numero) * 1000;
-
-                jogadorRepository.SaveOrUpdate(jogador);
-            }
+            clubeQueryRepository.TirarTreinador(25);
 
             return RedirectToAction("Index", "Engine");
         }
