@@ -79,5 +79,17 @@ namespace EmpreendaVc.Infrastructure.Queries.Partidas
         {
             Session.Delete(partida);
         }
+
+        public void LimparGols(int idpartida)
+        {
+            var lst = Session.QueryOver<Gol>().Where(x => x.Partida.Id == idpartida).List();
+
+            foreach (var item in lst)
+            {
+                Session.Delete(item);
+            }
+
+            Session.Transaction.Commit();
+        }
     }
 }

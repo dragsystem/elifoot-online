@@ -44,7 +44,7 @@ namespace EmpreendaVc.Infrastructure.Queries.Clubes
             var clube = Session.Get<Clube>(id);
             clube.Usuario = null;
 
-            Session.Save(clube);
+            Session.SaveOrUpdate(clube);
         }
     }
 }

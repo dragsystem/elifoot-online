@@ -12,6 +12,8 @@ namespace EmpreendaVc.Infrastructure.Queries.Partidas
         Partida Get(int Id);
         IList<Partida> GetAll();
 
+        void LimparGols(int idpartida);
+
         void Delete(Partida partida);
 
         List<string> SaveOrUpdate(Partida userAccount);

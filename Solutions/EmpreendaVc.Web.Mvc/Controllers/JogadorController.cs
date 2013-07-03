@@ -579,6 +579,7 @@
         }
 
         [Authorize]
+        [Transaction]
         public ActionResult ProporTeste(int id)
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
@@ -598,6 +599,7 @@
         }
 
         [Authorize]
+        [Transaction]
         public ActionResult ProporTesteConfirma(int id)
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
@@ -618,6 +620,7 @@
             teste.Jogador = jogador;
             teste.Clube = usuario.Clube;
             teste.Dia = controle.Dia;
+            jogadortesteRepository.SaveOrUpdate(teste);
 
             TempData["MsgOk"] = jogador.Nome + " participará do teste no treino de hoje!";
             return RedirectToAction("Index", "Jogador", new { id = jogador.Id });

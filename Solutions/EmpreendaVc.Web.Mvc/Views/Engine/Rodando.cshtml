@@ -31,10 +31,6 @@
                 {
                     @: window.location.replace("../Engine/ZerarDelayUsuario");
                 }
-                else if (!(bool)ViewBag.CriarJogadoresTemporarios)
-                {
-                    @: window.location.replace("../Engine/CriarJogadoresTemporarios");
-                }
                 else if (!(bool)ViewBag.UpdateFinancas)
                 {
                     @: window.location.replace("../Engine/UpdateFinancas");
@@ -47,9 +43,13 @@
                 {
                     @: window.location.replace("../Engine/AtualizarTransferencias");
                 }
-                else if (!(bool)ViewBag.VariarJogador)
+                else if ((int)ViewBag.VariarJogador < 2)
                 {
-                    @: window.location.replace("../Engine/VariarJogador");
+                    @: window.location.replace("../Engine/VariarJogador?fase=@((int)ViewBag.VariarJogador)");
+                }
+                else if (!(bool)ViewBag.CriarJogadoresTemporarios)
+                {
+                    @: window.location.replace("../Engine/CriarJogadoresTemporarios");
                 }
                 else if (!(bool)ViewBag.ZeraStaffConsultas)
                 {
@@ -61,7 +61,7 @@
                 }
                 else
                 {
-                @: window.location.replace("../Engine/Index");
+                @: alert('Acabou!');
                 }
             }, 3000);
         });
@@ -95,10 +95,6 @@
             <td>@((bool)ViewBag.ZerarDelayUsuario ? "OK" : "")</td>
         </tr>
         <tr>
-            <th>CriarJogadoresTemporarios.....................................</th>
-            <td>@((bool)ViewBag.CriarJogadoresTemporarios ? "OK" : "")</td>
-        </tr>
-        <tr>
             <th>UpdateFinancas............................................................</th>
             <td>@((bool)ViewBag.UpdateFinancas ? "OK" : "")</td>
         </tr>
@@ -112,7 +108,11 @@
         </tr>
         <tr>
             <th>VariarJogador.............................................................</th>
-            <td>@((bool)ViewBag.VariarJogador ? "OK" : "")</td>
+            <td>@((int)ViewBag.VariarJogador == 2 ? "OK" : ((int)ViewBag.VariarJogador).ToString())</td>
+        </tr>
+        <tr>
+            <th>CriarJogadoresTemporarios.....................................</th>
+            <td>@((bool)ViewBag.CriarJogadoresTemporarios ? "OK" : "")</td>
         </tr>
         <tr>
             <th>ZeraStaffConsultas.......................................................</th>

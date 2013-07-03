@@ -123,6 +123,14 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
                     clube.Usuario = userAccount;
                     Session.Save(clube);
                 }
+                else
+                {
+                    var clube = Session.Get<Clube>(userAccount.IdUltimoClube);
+                    if (clube.Usuario.Id == userAccount.Id)
+                        clube.Usuario = null;
+
+                    Session.Save(clube);
+                }
 
                 Session.SaveOrUpdate(userAccount);
 
