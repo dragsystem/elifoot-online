@@ -186,14 +186,16 @@
                 {
                     var lstnova = new List<Escalacao>();
 
+                    var lstJogadores = clube.Jogadores.Where(x => x.Lesionado == 0);
+
                     //GOLEIRO
                     var escalacao = new Escalacao();
                     escalacao.Clube = clube;
                     escalacao.Posicao = 1;
                     if (clube.Usuario != null)
-                        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
+                        escalacao.Jogador = lstJogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
                     else
-                        escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
+                        escalacao.Jogador = lstJogadores.Where(x => x.Posicao == 1).OrderByDescending(x => x.H).FirstOrDefault();
 
                     if (escalacao.Jogador.H >= 90)
                         escalacao.H = escalacao.Jogador.H + 20;
@@ -214,9 +216,9 @@
                         escalacao.Clube = clube;
                         escalacao.Posicao = 2;
                         if (clube.Usuario != null)
-                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
+                            escalacao.Jogador = lstJogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
                         else
-                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
+                            escalacao.Jogador = lstJogadores.Where(x => x.Posicao == 2).OrderByDescending(x => x.H).FirstOrDefault();
 
                         if (escalacao.Jogador.H >= 90)
                             escalacao.H = escalacao.Jogador.H + 20;
@@ -232,14 +234,14 @@
                     }
 
                     //ZAGUEIROS
-                    var zagueiros = clube.Jogadores.Where(x => x.Posicao == 3);
+                    var zagueiros = lstJogadores.Where(x => x.Posicao == 3);
                     if (clube.Usuario != null)
                         zagueiros = zagueiros.OrderByDescending(x => x.TreinoMedia).Take(3);
                     else
                         zagueiros = zagueiros.OrderByDescending(x => x.H).Take(3);
 
                     if (clube.Formacao.Substring(0, 1) == "4")
-                        zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
+                        zagueiros = lstJogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
 
                     foreach (var zag in zagueiros)
                     {
@@ -267,9 +269,9 @@
                         escalacao.Clube = clube;
                         escalacao.Posicao = 4;
                         if (clube.Usuario != null)
-                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
+                            escalacao.Jogador = lstJogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.TreinoMedia).FirstOrDefault();
                         else
-                            escalacao.Jogador = clube.Jogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
+                            escalacao.Jogador = lstJogadores.Where(x => x.Posicao == 4).OrderByDescending(x => x.H).FirstOrDefault();
                         if (escalacao.Jogador.H >= 90)
                             escalacao.H = escalacao.Jogador.H + 20;
                         else if (escalacao.Jogador.H >= 80)
@@ -284,7 +286,7 @@
                     }
 
                     //VOLANTE
-                    var volantes = clube.Jogadores.Where(x => x.Posicao == 5);
+                    var volantes = lstJogadores.Where(x => x.Posicao == 5);
                     if (clube.Usuario != null)
                         volantes = volantes.OrderByDescending(x => x.TreinoMedia);
                     else
@@ -293,7 +295,7 @@
                     volantes = volantes.Take(Convert.ToInt32(clube.Formacao.Substring(1, 1)));
 
                     if (clube.Formacao.Substring(0, 1) == "4")
-                        zagueiros = clube.Jogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
+                        zagueiros = lstJogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
                     
                     foreach (var vol in volantes)
                     {
@@ -315,7 +317,7 @@
                     }
 
                     //MEIA OFENSIVO
-                    var meias = clube.Jogadores.Where(x => x.Posicao == 6);
+                    var meias = lstJogadores.Where(x => x.Posicao == 6);
                     if (clube.Usuario != null)
                         meias = meias.OrderByDescending(x => x.TreinoMedia);
                     else
@@ -343,7 +345,7 @@
                     }
 
                     //ATACANTES
-                    var atacantes = clube.Jogadores.Where(x => x.Posicao == 7);
+                    var atacantes = lstJogadores.Where(x => x.Posicao == 7);
                     if (clube.Usuario != null)
                         atacantes = atacantes.OrderByDescending(x => x.TreinoMedia);
                     else

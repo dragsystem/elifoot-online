@@ -9,7 +9,7 @@
         @if ((Model.Clube != null && Model.Clube.Id != clube.Id) || Model.Clube == null)
         {
             var frase = "Fazer Proposta";
-            if (Model.JogadorOfertas.Where(x => x.Clube.Id == clube.Id).Count() > 0)
+            if (Model.JogadorOfertas.Where(x => x.Clube.Id == clube.Id && x.Estagio != 0 && x.Estagio != 3).Count() > 0)
             {
                 frase = "Alterar Proposta"; 
             }
