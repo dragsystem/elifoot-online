@@ -231,7 +231,7 @@
                 return RedirectToAction("Index", "Conta");
 
             var jogador = jogadorRepository.Get(id);
-            var jogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id && x.Clube.Id == usuario.Clube.Id).FirstOrDefault();
+            var jogadoroferta = jogadorofertaRepository.GetAll().Where(x => x.Jogador.Id == jogador.Id && x.Clube.Id == usuario.Clube.Id && x.Estagio != 0 && x.Estagio != 3).FirstOrDefault();
 
             if (jogadoroferta == null)
                 jogadoroferta = new JogadorOferta();

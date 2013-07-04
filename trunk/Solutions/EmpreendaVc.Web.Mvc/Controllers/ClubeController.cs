@@ -430,7 +430,15 @@
 
             if (idescalacao > 0)
             {
-                var escalacaoitem = clube.Escalacao.FirstOrDefault(x => x.Id == idescalacao);
+                var escalacaoitem = clube.Escalacao.FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == id);
+                if (escalacaoitem != null)
+                {
+                    escalacaoitem.Jogador = null;
+                    escalacaoitem.H = 0;
+                    escalacaoRepository.SaveOrUpdate(escalacaoitem);
+                }
+
+                escalacaoitem = clube.Escalacao.FirstOrDefault(x => x.Id == idescalacao);
                 escalacaoitem.Jogador = jogadorRepository.Get(id);
                 escalacaoitem.H = Util.Util.RetornaHabilidadePosicao(escalacaoitem.Jogador, escalacaoitem.Posicao);
                 escalacaoRepository.SaveOrUpdate(escalacaoitem);

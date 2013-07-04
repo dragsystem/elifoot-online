@@ -468,7 +468,6 @@
                                 noticia.Dia = controle.Dia;
                                 noticia.Texto = jogadoroferta.Clube.Nome + " apresentou uma proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a>. <br />Entre em <a href='" + Url.Action("MeusJogadores", "Jogador") + "'>PROPOSTAS</a> para responder.";
                                 noticia.Usuario = jogador.Clube.Usuario;
-
                                 noticiaRepository.SaveOrUpdate(noticia);
                             }
                         }
@@ -632,6 +631,7 @@
                             noticia.Dia = controle.Dia;
                             noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi cancelada, pois o mesmo foi dispensado pelo " + clube.Nome + ".";
                             noticia.Usuario = jogadoroferta.Clube.Usuario;
+                            noticiaRepository.SaveOrUpdate(noticia);
                         }
 
                         jogadorofertaRepository.Delete(jogadoroferta);
@@ -704,6 +704,7 @@
                         noticia.Dia = controle.Dia;
                         noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi aceita pelo " + jogador.Clube.Nome + ", você deve esperar a resposta do contrato do jogador.";
                         noticia.Usuario = jogadoroferta.Clube.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
                     }
 
                     jogadoroferta.Estagio = 2;
@@ -717,6 +718,7 @@
                         noticia.Dia = controle.Dia;
                         noticia.Texto = "Sua proposta por <a href='" + Url.Action("Index", "Jogador", new { id = jogador.Id }) + "'>" + jogador.Nome + "</a> foi rejeitada pelo " + jogador.Clube.Nome + ".";
                         noticia.Usuario = jogadoroferta.Clube.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
                     }
 
                     jogadoroferta.Estagio = 0;
