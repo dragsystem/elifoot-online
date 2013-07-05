@@ -574,7 +574,7 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1)
+                            if (jogador.Posicao != 1 && !jogador.Temporario)
                                 jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
@@ -663,7 +663,7 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1)
+                            if (jogador.Posicao != 1 && !jogador.Temporario)
                                 jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
@@ -859,7 +859,7 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1)
+                            if (jogador.Posicao != 1 && !jogador.Temporario)
                                 jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
@@ -950,7 +950,7 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1)
+                            if (jogador.Posicao != 1 && !jogador.Temporario)
                                 jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
@@ -1094,7 +1094,7 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1)
+                            if (jogador.Posicao != 1 && !jogador.Temporario)
                                 jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
@@ -1185,7 +1185,7 @@
                             jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
                             jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1)
+                            if (jogador.Posicao != 1 && !jogador.Temporario)
                                 jogador.Condicao = jogador.Condicao - 15;
 
                             jogadorRepository.SaveOrUpdate(jogador);
@@ -2124,7 +2124,7 @@
                             jogadorRepository.SaveOrUpdate(jogador);
                         }
                     }
-                    else if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() > min)
+                    else if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario).Count() >= min)
                     {
                         foreach (var jog in clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario))
                         {

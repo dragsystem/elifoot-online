@@ -126,7 +126,7 @@
                 jogadorfiltro = (JogadorFiltroView)Session["JogadorFiltroView"];
 
                 var lstJogador = jogadorRepository.GetAll()
-                            .Where(x => x.Clube == null || (x.Clube != null && x.Clube.Id != usuario.Clube.Id));
+                            .Where(x => (x.Clube == null || (x.Clube != null && x.Clube.Id != usuario.Clube.Id)) && !x.Temporario);
 
                 if (!string.IsNullOrEmpty(jogadorfiltro.Nome))
                     lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome.ToUpper()));
@@ -186,7 +186,7 @@
             Session["JogadorFiltroView"] = jogadorfiltro;
 
             var lstJogador = jogadorRepository.GetAll()
-                            .Where(x => x.Clube == null || (x.Clube != null && x.Clube.Id != usuario.Clube.Id));
+                            .Where(x => (x.Clube == null || (x.Clube != null && x.Clube.Id != usuario.Clube.Id)) && !x.Temporario);
 
             if (!string.IsNullOrEmpty(jogadorfiltro.Nome))
                 lstJogador = lstJogador.Where(x => x.Nome.Contains(jogadorfiltro.Nome.ToUpper()));
