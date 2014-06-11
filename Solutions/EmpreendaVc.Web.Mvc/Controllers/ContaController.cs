@@ -157,6 +157,96 @@
             return View(usuario);
         }
 
+        [HttpPost]
+        [Transaction]
+        public ActionResult CadastroFacebook(FormCollection collection)
+        {
+            //var usuario = new Usuario();
+            //TryUpdateModel(usuario, collection);
+
+            //if (usuario.NomeCompleto != null)
+            //{
+            //    usuario.NomeCompleto = usuario.NomeCompleto.ToUpper();
+            //    if (usuarioRepository.GetNome(usuario.NomeCompleto) != null)
+            //        TempData["MsgErro"] = "Nome já em uso";
+            //}
+            //else
+            //    TempData["MsgErro"] = "Nome é um campo obrigatório";
+
+            //if (usuario.Email != null)
+            //{
+            //    if (usuarioRepository.GetEmail(usuario.Email) != null)
+            //        TempData["MsgErro"] = "E-mail já em uso";
+
+            //    if (usuario.Email.Contains("@@"))
+            //        TempData["MsgErro"] = "Favor preencher um E-mail válido";
+            //}
+            //else
+            //    TempData["MsgErro"] = "E-mail é um campo obrigatório";
+
+            //if (usuario.Senha != null)
+            //{
+            //    if (usuario.Senha.Length < 6)
+            //        TempData["MsgErro"] = "A senha precisa ter 6 ou mais caracteres";
+            //}
+            //else
+            //{
+            //    TempData["MsgErro"] = "Favor preencher a senha";
+            //}
+
+            //var ConfirmaSenha = collection["ConfirmaSenha"].ToString();
+
+            //if (ConfirmaSenha == string.Empty)
+            //    TempData["MsgErro"] = "Favor preencher a confirmação da senha";
+
+            //try
+            //{
+            //    if (ModelState.IsValid && usuario.IsValid())
+            //    {
+            //        if (usuario.Senha == ConfirmaSenha)
+            //        {
+
+            //            var result = this.usuarioRepository.SaveOrUpdate(usuario);
+
+            //            //define Guid do usuário
+            //            usuario.Guid = new Random().Next(1000000, 9999999).ToString();
+
+            //            this.usuarioRepository.SaveOrUpdate(usuario);
+
+            //            if (result.Count() == 0)
+            //            {
+            //                // _authenticationService.SignIn(usuario, usuario.IsRememberLogin);
+
+            //                //envia email de confirnação de cadastro
+            //                new SendMailController().ConfirmaCadastro(usuario).Deliver();
+            //                //authenticationService.SignIn(usuario, usuario.IsRememberLogin);
+
+            //                return this.RedirectToAction("CadastroSucesso");
+            //            }
+            //            else
+            //            {
+            //                foreach (var item in result)
+            //                {
+            //                    TempData["MsgErro"] = item;
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            TempData["MsgErro"] = "A senha e confirma senha precisam ser idênticas";
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    ObjLog.Error("ContaController(Cadastro): " + ex.ToString());
+            //}
+
+            //return View(usuario);
+
+            return this.RedirectToAction("CadastroSucesso");
+        }
+
         public ActionResult CadastroSucesso()
         {
             return View();

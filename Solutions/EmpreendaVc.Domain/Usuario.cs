@@ -46,7 +46,13 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<Noticia> Noticias { get; set; }
 
-        public virtual IList<Staff> Staffs { get; set; }  
+        public virtual IList<Staff> Staffs { get; set; }
+
+        public virtual bool IsFacebook { get; set; }
+
+        public virtual string FacebookId { get; set; }
+
+        public virtual string Foto { get; set; }
 
         public Usuario()
         {

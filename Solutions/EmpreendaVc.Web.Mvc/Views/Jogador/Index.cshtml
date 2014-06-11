@@ -90,9 +90,8 @@
                 <th width="10%">Ano</th>
                 <th width="40%">Clube</th>
                 <th width="20%"></th>
-                <th width="10%">Jogos</th>
-                <th width="10%">Gols</th>
-                <th width="10%">Nota</th>
+                <th width="15%">Jogos</th>
+                <th width="15%">Gols</th>
             </tr>
             @if (Model.Clube != null)
             {
@@ -102,7 +101,6 @@
                     <td></td>
                     <td>@Model.Jogos</td>
                     <td>@Model.Gols.Where(x => x.Clube.Id == Model.Clube.Id).Count()</td>
-                    <td>@(Model.NotaMedia > 0 ? Model.NotaMedia.ToString("N2") : "0,00")</td>
                 </tr>
             }
             @foreach (var historico in Model.Historico.OrderByDescending(x => x.Ano).ThenByDescending(x => x.Data))

@@ -491,183 +491,183 @@
                         decimal notaclube1 = 0;
                         decimal notaclube2 = 0;
 
-                        //notas CLUBE 1
-                        foreach (var escalacao in clube1.Escalacao)
-                        {
-                            var jogador = escalacao.Jogador;
-                            var probjogarbem = 50;
+                        ////notas CLUBE 1
+                        //foreach (var escalacao in clube1.Escalacao)
+                        //{
+                        //    var jogador = escalacao.Jogador;
+                        //    var probjogarbem = 50;
 
-                            if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
-                            {
-                                probjogarbem = 50 + (jogador.H - Defesa2);
+                        //    if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Defesa2);
 
-                                if ((jogador.H - Defesa2) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem + 15;
+                        //        if ((jogador.H - Defesa2) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem + 15;
 
-                            }
-                            else
-                            {
-                                probjogarbem = 50 + (jogador.H - Ataque2);
+                        //    }
+                        //    else
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Ataque2);
 
-                                if ((jogador.H - Ataque2) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem + 15;
-                            }
+                        //        if ((jogador.H - Ataque2) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem + 15;
+                        //    }
 
-                            probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+                        //    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
-                            double nota = 0;
-                            var rndnota = rnd.Next(1, 101);
-                            var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                            var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                            var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+                        //    double nota = 0;
+                        //    var rndnota = rnd.Next(1, 101);
+                        //    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        //    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        //    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                            if (rnd.Next(1, 101) <= probjogarbem)
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.5;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 6.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 7.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 7.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 8.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 8.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 9.0;
-                                else
-                                    nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                            }
-                            else
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.0;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 4.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 4.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 3.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 2.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 2.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 1.5;
-                                else
-                                    nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                            }
+                        //    if (rnd.Next(1, 101) <= probjogarbem)
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.5;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 6.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 7.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 7.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 8.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 8.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 9.0;
+                        //        else
+                        //            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.0;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 4.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 4.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 3.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 2.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 2.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 1.5;
+                        //        else
+                        //            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        //    }
 
-                            notaclube1 = notaclube1 + Convert.ToDecimal(nota);
+                        //    notaclube1 = notaclube1 + Convert.ToDecimal(nota);
 
-                            jogador.Jogos = jogador.Jogos + 1;
-                            jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
-                            jogador.NotaUlt = Convert.ToDecimal(nota);
+                        //    jogador.Jogos = jogador.Jogos + 1;
+                        //    jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
+                        //    jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1 && !jogador.Temporario)
-                                jogador.Condicao = jogador.Condicao - 15;
+                        //    if (jogador.Posicao != 1 && !jogador.Temporario)
+                        //        jogador.Condicao = jogador.Condicao - 15;
 
-                            jogadorRepository.SaveOrUpdate(jogador);
-                        }
+                        //    jogadorRepository.SaveOrUpdate(jogador);
+                        //}
 
-                        //notas CLUBE 2
-                        foreach (var escalacao in clube2.Escalacao)
-                        {
-                            var jogador = escalacao.Jogador;
-                            var probjogarbem = 50;
+                        ////notas CLUBE 2
+                        //foreach (var escalacao in clube2.Escalacao)
+                        //{
+                        //    var jogador = escalacao.Jogador;
+                        //    var probjogarbem = 50;
 
-                            if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
-                            {
-                                probjogarbem = 50 + (jogador.H - Defesa1);
+                        //    if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Defesa1);
 
-                                if ((jogador.H - Defesa1) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
+                        //        if ((jogador.H - Defesa1) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
 
-                            }
-                            else
-                            {
-                                probjogarbem = 50 + (jogador.H - Ataque1);
+                        //    }
+                        //    else
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Ataque1);
 
-                                if ((jogador.H - Ataque1) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
-                            }
+                        //        if ((jogador.H - Ataque1) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
+                        //    }
 
-                            probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+                        //    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
-                            double nota = 0;
-                            var rndnota = rnd.Next(1, 101);
-                            var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                            var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                            var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+                        //    double nota = 0;
+                        //    var rndnota = rnd.Next(1, 101);
+                        //    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        //    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        //    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                            if (rnd.Next(1, 101) <= probjogarbem)
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.5;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 6.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 7.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 7.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 8.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 8.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 9.0;
-                                else
-                                    nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                            }
-                            else
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.0;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 4.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 4.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 3.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 2.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 2.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 1.5;
-                                else
-                                    nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                            }
+                        //    if (rnd.Next(1, 101) <= probjogarbem)
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.5;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 6.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 7.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 7.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 8.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 8.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 9.0;
+                        //        else
+                        //            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.0;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 4.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 4.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 3.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 2.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 2.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 1.5;
+                        //        else
+                        //            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        //    }
 
-                            notaclube2 = notaclube2 + Convert.ToDecimal(nota);
+                        //    notaclube2 = notaclube2 + Convert.ToDecimal(nota);
 
-                            jogador.Jogos = jogador.Jogos + 1;
-                            jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
-                            jogador.NotaUlt = Convert.ToDecimal(nota);
+                        //    jogador.Jogos = jogador.Jogos + 1;
+                        //    jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
+                        //    jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1 && !jogador.Temporario)
-                                jogador.Condicao = jogador.Condicao - 15;
+                        //    if (jogador.Posicao != 1 && !jogador.Temporario)
+                        //        jogador.Condicao = jogador.Condicao - 15;
 
-                            jogadorRepository.SaveOrUpdate(jogador);
-                        }
+                        //    jogadorRepository.SaveOrUpdate(jogador);
+                        //}
 
                         notaclube1 = notaclube1 / 11;
                         notaclube2 = notaclube2 / 11;
@@ -772,189 +772,189 @@
                         decimal notaclube1 = 0;
                         decimal notaclube2 = 0;
 
-                        //notas CLUBE 1
-                        foreach (var escalacao in clube1.Escalacao)
-                        {
-                            var jogador = escalacao.Jogador;
-                            var probjogarbem = 50;
+                        ////notas CLUBE 1
+                        //foreach (var escalacao in clube1.Escalacao)
+                        //{
+                        //    var jogador = escalacao.Jogador;
+                        //    var probjogarbem = 50;
 
-                            if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
-                            {
-                                probjogarbem = 50 + (jogador.H - Defesa2);
+                        //    if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Defesa2);
 
-                                if ((jogador.H - Defesa2) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else if ((jogador.H - Defesa2) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
+                        //        if ((jogador.H - Defesa2) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else if ((jogador.H - Defesa2) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
 
-                            }
-                            else
-                            {
-                                probjogarbem = 50 + (jogador.H - Ataque2);
+                        //    }
+                        //    else
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Ataque2);
 
-                                if ((jogador.H - Ataque2) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else if ((jogador.H - Ataque2) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
-                            }
+                        //        if ((jogador.H - Ataque2) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else if ((jogador.H - Ataque2) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
+                        //    }
 
-                            probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+                        //    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
-                            double nota = 0;
-                            var rndnota = rnd.Next(1, 101);
-                            var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                            var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                            var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+                        //    double nota = 0;
+                        //    var rndnota = rnd.Next(1, 101);
+                        //    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        //    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        //    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                            if (rnd.Next(1, 101) <= probjogarbem)
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.5;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 6.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 7.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 7.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 8.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 8.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 9.0;
-                                else
-                                    nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                            }
-                            else
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.0;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 4.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 4.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 3.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 2.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 2.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 1.5;
-                                else
-                                    nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                            }
+                        //    if (rnd.Next(1, 101) <= probjogarbem)
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.5;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 6.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 7.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 7.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 8.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 8.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 9.0;
+                        //        else
+                        //            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.0;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 4.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 4.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 3.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 2.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 2.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 1.5;
+                        //        else
+                        //            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        //    }
 
-                            notaclube1 = notaclube1 + Convert.ToDecimal(nota);
+                        //    notaclube1 = notaclube1 + Convert.ToDecimal(nota);
 
-                            jogador.Jogos = jogador.Jogos + 1;
-                            jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
-                            jogador.NotaUlt = Convert.ToDecimal(nota);
+                        //    jogador.Jogos = jogador.Jogos + 1;
+                        //    jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
+                        //    jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1 && !jogador.Temporario)
-                                jogador.Condicao = jogador.Condicao - 15;
+                        //    if (jogador.Posicao != 1 && !jogador.Temporario)
+                        //        jogador.Condicao = jogador.Condicao - 15;
 
-                            jogadorRepository.SaveOrUpdate(jogador);
-                        }
+                        //    jogadorRepository.SaveOrUpdate(jogador);
+                        //}
 
-                        //notas CLUBE 2
-                        foreach (var escalacao in clube2.Escalacao)
-                        {
-                            var jogador = escalacao.Jogador;
-                            var probjogarbem = 50;
+                        ////notas CLUBE 2
+                        //foreach (var escalacao in clube2.Escalacao)
+                        //{
+                        //    var jogador = escalacao.Jogador;
+                        //    var probjogarbem = 50;
 
-                            if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
-                            {
-                                probjogarbem = 50 + (jogador.H - Defesa1);
+                        //    if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Defesa1);
 
-                                if ((jogador.H - Defesa1) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else if ((jogador.H - Defesa1) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
+                        //        if ((jogador.H - Defesa1) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else if ((jogador.H - Defesa1) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
 
-                            }
-                            else
-                            {
-                                if ((jogador.H - Ataque1) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else if ((jogador.H - Ataque1) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
-                            }
+                        //    }
+                        //    else
+                        //    {
+                        //        if ((jogador.H - Ataque1) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else if ((jogador.H - Ataque1) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
+                        //    }
 
-                            probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+                        //    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
-                            double nota = 0;
-                            var rndnota = rnd.Next(1, 101);
-                            var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                            var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                            var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+                        //    double nota = 0;
+                        //    var rndnota = rnd.Next(1, 101);
+                        //    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        //    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        //    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                            if (rnd.Next(1, 101) <= probjogarbem)
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.5;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 6.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 7.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 7.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 8.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 8.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 9.0;
-                                else
-                                    nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                            }
-                            else
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.0;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 4.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 4.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 3.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 2.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 2.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 1.5;
-                                else
-                                    nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                            }
+                        //    if (rnd.Next(1, 101) <= probjogarbem)
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.5;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 6.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 7.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 7.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 8.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 8.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 9.0;
+                        //        else
+                        //            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.0;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 4.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 4.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 3.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 2.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 2.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 1.5;
+                        //        else
+                        //            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        //    }
 
-                            notaclube2 = notaclube2 + Convert.ToDecimal(nota);
+                        //    notaclube2 = notaclube2 + Convert.ToDecimal(nota);
 
-                            jogador.Jogos = jogador.Jogos + 1;
-                            jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
-                            jogador.NotaUlt = Convert.ToDecimal(nota);
+                        //    jogador.Jogos = jogador.Jogos + 1;
+                        //    jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
+                        //    jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1 && !jogador.Temporario)
-                                jogador.Condicao = jogador.Condicao - 15;
+                        //    if (jogador.Posicao != 1 && !jogador.Temporario)
+                        //        jogador.Condicao = jogador.Condicao - 15;
 
-                            jogadorRepository.SaveOrUpdate(jogador);
-                        }
+                        //    jogadorRepository.SaveOrUpdate(jogador);
+                        //}
 
                         if (placar < 35)
                         {
@@ -1012,184 +1012,184 @@
                         decimal notaclube1 = 0;
                         decimal notaclube2 = 0;
 
-                        //notas CLUBE 1
-                        foreach (var escalacao in clube1.Escalacao)
-                        {
-                            var jogador = escalacao.Jogador;
-                            var probjogarbem = 50;
+                        ////notas CLUBE 1
+                        //foreach (var escalacao in clube1.Escalacao)
+                        //{
+                        //    var jogador = escalacao.Jogador;
+                        //    var probjogarbem = 50;
 
-                            if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
-                            {
-                                probjogarbem = 50 + (jogador.H - Defesa2);
+                        //    if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Defesa2);
 
-                                if ((jogador.H - Defesa2) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
-                            }
-                            else
-                            {
-                                probjogarbem = 50 - (jogador.H + Ataque2);
+                        //        if ((jogador.H - Defesa2) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
+                        //    }
+                        //    else
+                        //    {
+                        //        probjogarbem = 50 - (jogador.H + Ataque2);
 
-                                if ((jogador.H - Ataque1) > 20)
-                                    probjogarbem = probjogarbem - 40;
-                                else
-                                    probjogarbem = probjogarbem - 15;
-                            }
+                        //        if ((jogador.H - Ataque1) > 20)
+                        //            probjogarbem = probjogarbem - 40;
+                        //        else
+                        //            probjogarbem = probjogarbem - 15;
+                        //    }
 
-                            probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+                        //    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
-                            double nota = 0;
-                            var rndnota = rnd.Next(1, 101);
-                            var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                            var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                            var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+                        //    double nota = 0;
+                        //    var rndnota = rnd.Next(1, 101);
+                        //    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        //    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        //    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                            if (rnd.Next(1, 101) <= probjogarbem)
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.5;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 6.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 7.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 7.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 8.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 8.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 9.0;
-                                else
-                                    nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                            }
-                            else
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.0;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 4.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 4.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 3.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 2.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 2.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 1.5;
-                                else
-                                    nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                            }
+                        //    if (rnd.Next(1, 101) <= probjogarbem)
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.5;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 6.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 7.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 7.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 8.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 8.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 9.0;
+                        //        else
+                        //            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.0;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 4.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 4.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 3.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 2.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 2.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 1.5;
+                        //        else
+                        //            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        //    }
 
-                            notaclube1 = notaclube1 + Convert.ToDecimal(nota);
+                        //    notaclube1 = notaclube1 + Convert.ToDecimal(nota);
 
-                            jogador.Jogos = jogador.Jogos + 1;
-                            jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
-                            jogador.NotaUlt = Convert.ToDecimal(nota);
+                        //    jogador.Jogos = jogador.Jogos + 1;
+                        //    jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
+                        //    jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1 && !jogador.Temporario)
-                                jogador.Condicao = jogador.Condicao - 15;
+                        //    if (jogador.Posicao != 1 && !jogador.Temporario)
+                        //        jogador.Condicao = jogador.Condicao - 15;
 
-                            jogadorRepository.SaveOrUpdate(jogador);
-                        }
+                        //    jogadorRepository.SaveOrUpdate(jogador);vai vai 
+                        //}
 
-                        //notas CLUBE 2
-                        foreach (var escalacao in clube2.Escalacao)
-                        {
-                            var jogador = escalacao.Jogador;
-                            var probjogarbem = 50;
+                        ////notas CLUBE 2
+                        //foreach (var escalacao in clube2.Escalacao)
+                        //{
+                        //    var jogador = escalacao.Jogador;
+                        //    var probjogarbem = 50;
 
-                            if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
-                            {
-                                probjogarbem = 50 + (jogador.H - Defesa1);
+                        //    if (jogador.Posicao == 1 || jogador.Posicao == 2 || jogador.Posicao == 3 || jogador.Posicao == 4 || jogador.Posicao == 5)
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Defesa1);
 
-                                if ((jogador.H - Defesa1) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem + 15;
+                        //        if ((jogador.H - Defesa1) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem + 15;
 
-                            }
-                            else
-                            {
-                                probjogarbem = 50 + (jogador.H - Ataque1);
+                        //    }
+                        //    else
+                        //    {
+                        //        probjogarbem = 50 + (jogador.H - Ataque1);
 
-                                if ((jogador.H - Ataque1) < -20)
-                                    probjogarbem = probjogarbem + 40;
-                                else
-                                    probjogarbem = probjogarbem + 15;
-                            }
+                        //        if ((jogador.H - Ataque1) < -20)
+                        //            probjogarbem = probjogarbem + 40;
+                        //        else
+                        //            probjogarbem = probjogarbem + 15;
+                        //    }
 
-                            probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+                        //    probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
-                            double nota = 0;
-                            var rndnota = rnd.Next(1, 101);
-                            var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                            var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                            var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                            var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                            var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+                        //    double nota = 0;
+                        //    var rndnota = rnd.Next(1, 101);
+                        //    var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        //    var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        //    var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //    var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //    var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                            if (rnd.Next(1, 101) <= probjogarbem)
-                            {
+                        //    if (rnd.Next(1, 101) <= probjogarbem)
+                        //    {
 
 
-                                if (rndnota < nota1)
-                                    nota = 5.5;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 6.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 7.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 7.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 8.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 8.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 9.0;
-                                else
-                                    nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                            }
-                            else
-                            {
-                                if (rndnota < nota1)
-                                    nota = 5.0;
-                                else if (rndnota < (nota1 + nota2))
-                                    nota = 4.5;
-                                else if (rndnota < (nota1 + nota2 + nota3))
-                                    nota = 4.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                    nota = 3.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                    nota = 2.5;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                    nota = 2.0;
-                                else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                    nota = 1.5;
-                                else
-                                    nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                            }
+                        //        if (rndnota < nota1)
+                        //            nota = 5.5;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 6.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 7.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 7.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 8.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 8.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 9.0;
+                        //        else
+                        //            nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        //    }
+                        //    else
+                        //    {
+                        //        if (rndnota < nota1)
+                        //            nota = 5.0;
+                        //        else if (rndnota < (nota1 + nota2))
+                        //            nota = 4.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3))
+                        //            nota = 4.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //            nota = 3.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //            nota = 2.5;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //            nota = 2.0;
+                        //        else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //            nota = 1.5;
+                        //        else
+                        //            nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        //    }
 
-                            notaclube2 = notaclube2 + Convert.ToDecimal(nota);
+                        //    notaclube2 = notaclube2 + Convert.ToDecimal(nota);
 
-                            jogador.Jogos = jogador.Jogos + 1;
-                            jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
-                            jogador.NotaUlt = Convert.ToDecimal(nota);
+                        //    jogador.Jogos = jogador.Jogos + 1;
+                        //    jogador.NotaTotal = jogador.NotaTotal + Convert.ToDecimal(nota);
+                        //    jogador.NotaUlt = Convert.ToDecimal(nota);
 
-                            if (jogador.Posicao != 1 && !jogador.Temporario)
-                                jogador.Condicao = jogador.Condicao - 15;
+                        //    if (jogador.Posicao != 1 && !jogador.Temporario)
+                        //        jogador.Condicao = jogador.Condicao - 15;
 
-                            jogadorRepository.SaveOrUpdate(jogador);
-                        }
+                        //    jogadorRepository.SaveOrUpdate(jogador);
+                        //}
 
                         notaclube1 = notaclube1 / 11;
                         notaclube2 = notaclube2 / 11;
@@ -1914,12 +1914,15 @@
 
                 jogador.H = jogador.H + (variavel);
 
-                if (jogador.H > (jogador.HF + 10))
-                    jogador.H = jogador.HF + 10;
-                else if (jogador.H < (jogador.HF - 10))
-                    jogador.H = jogador.HF - 10;
+                if (jogador.H > (jogador.HF + 20))
+                    jogador.H = jogador.HF + 20;
+                else if (jogador.H < (jogador.HF - 20))
+                    jogador.H = jogador.HF - 20;
 
-                
+                if (jogador.H > 99)
+                    jogador.H = 99;
+                else if (jogador.H < 1)
+                    jogador.H = 1;               
 
                 if (jogador.Lesionado == 0 && jogador.Clube != null)
                 {
@@ -1934,65 +1937,65 @@
 
                     if (rnd.Next(1, 101) > chancelesionar)
                     {
-                        var clubejogadores = jogador.Clube.Jogadores.Where(x => !x.Temporario);
+                        //var clubejogadores = jogador.Clube.Jogadores.Where(x => !x.Temporario);
 
-                        var hmediotime = clubejogadores.Sum(x => x.H) / clubejogadores.Count();
+                        //var hmediotime = clubejogadores.Sum(x => x.H) / clubejogadores.Count();
 
-                        var probjogarbem = 50 + (jogador.H - hmediotime);
-                        probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
+                        //var probjogarbem = 50 + (jogador.H - hmediotime);
+                        //probjogarbem = probjogarbem > 90 ? 90 : probjogarbem < 10 ? 10 : probjogarbem;
 
-                        double nota = 0;
-                        var rndnota = rnd.Next(1, 101);
-                        var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
-                        var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
-                        var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                        var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
-                        var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                        var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
-                        var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
+                        //double nota = 0;
+                        //var rndnota = rnd.Next(1, 101);
+                        //var nota1 = Convert.ToInt32(((double)probjogarbem / 100) * 25);
+                        //var nota2 = Convert.ToInt32(((double)probjogarbem / 100) * 20);
+                        //var nota3 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //var nota4 = Convert.ToInt32(((double)probjogarbem / 100) * 15);
+                        //var nota5 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //var nota6 = Convert.ToInt32(((double)probjogarbem / 100) * 10);
+                        //var nota7 = Convert.ToInt32(((double)probjogarbem / 100) * 5);
 
-                        if (rnd.Next(1, 101) <= probjogarbem)
-                        {
-                            if (rndnota < nota1)
-                                nota = 5.5;
-                            else if (rndnota < (nota1 + nota2))
-                                nota = 6.5;
-                            else if (rndnota < (nota1 + nota2 + nota3))
-                                nota = 7.0;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                nota = 7.5;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                nota = 8.0;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                nota = 8.5;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                nota = 9.0;
-                            else
-                                nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
-                        }
-                        else
-                        {
-                            if (rndnota < nota1)
-                                nota = 5.0;
-                            else if (rndnota < (nota1 + nota2))
-                                nota = 4.5;
-                            else if (rndnota < (nota1 + nota2 + nota3))
-                                nota = 4.0;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4))
-                                nota = 3.5;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
-                                nota = 2.5;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
-                                nota = 2.0;
-                            else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
-                                nota = 1.5;
-                            else
-                                nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
-                        }
+                        //if (rnd.Next(1, 101) <= probjogarbem)
+                        //{
+                        //    if (rndnota < nota1)
+                        //        nota = 5.5;
+                        //    else if (rndnota < (nota1 + nota2))
+                        //        nota = 6.5;
+                        //    else if (rndnota < (nota1 + nota2 + nota3))
+                        //        nota = 7.0;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //        nota = 7.5;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //        nota = 8.0;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //        nota = 8.5;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //        nota = 9.0;
+                        //    else
+                        //        nota = (double)(jogador.H > 55 ? jogador.H / 10 : 6.0);
+                        //}
+                        //else
+                        //{
+                        //    if (rndnota < nota1)
+                        //        nota = 5.0;
+                        //    else if (rndnota < (nota1 + nota2))
+                        //        nota = 4.5;
+                        //    else if (rndnota < (nota1 + nota2 + nota3))
+                        //        nota = 4.0;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4))
+                        //        nota = 3.5;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5))
+                        //        nota = 2.5;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6))
+                        //        nota = 2.0;
+                        //    else if (rndnota < (nota1 + nota2 + nota3 + nota4 + nota5 + nota6 + nota7))
+                        //        nota = 1.5;
+                        //    else
+                        //        nota = (double)(jogador.H > 30 ? jogador.H / 10 : 3.0);
+                        //}
 
-                        jogador.Treinos = jogador.Treinos + 1;
-                        jogador.TreinoTotal = jogador.TreinoTotal + Convert.ToDecimal(nota);
-                        jogador.TreinoUlt = Convert.ToDecimal(nota);
+                        //jogador.Treinos = jogador.Treinos + 1;
+                        //jogador.TreinoTotal = jogador.TreinoTotal + Convert.ToDecimal(nota);
+                        //jogador.TreinoUlt = Convert.ToDecimal(nota);
 
                         if (jogador.Clube.Usuario == null)
                             jogador.Condicao = 100;
@@ -2002,9 +2005,9 @@
                         else
                             jogador.Condicao = 100;
 
-                        var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
-                        if (escalacao == null)
-                            jogador.NotaUlt = 0;
+                        //var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
+                        //if (escalacao == null)
+                        //    jogador.NotaUlt = 0;
                     }
                     else
                     {

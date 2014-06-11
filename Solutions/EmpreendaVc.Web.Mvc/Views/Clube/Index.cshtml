@@ -13,9 +13,9 @@
                 <th width="10%"></th>
                 <th width="30%">JOGADOR</th>
                 <th width="15%">POSIÇÃO</th>
-                <th width="15%">NOTA MÉDIA</th>
-                <th width="15%">ÚLT. NOTA</th>
-                <th width="15%">GOLS</th>
+                <th width="15%">H</th>
+                <th width="20%">JOGOS</th>
+                <th width="20%">GOLS</th>
             </tr>
             @foreach (var jog in Model.Jogadores.OrderBy(x => x.Posicao).ThenByDescending(x => x.Nome))
             {
@@ -40,8 +40,8 @@
                     </td>
                     <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = jog.Id })">@jog.Nome.ToUpper()</a></td>
                     <td>@Util.RetornaPosicao(jog.Posicao)</td>
-                    <td>@(jog.NotaMedia > 0 ? jog.NotaMedia.ToString("N2") : "0,00")</td>
-                    <td>@(jog.NotaUlt > 0 ? jog.NotaUlt.ToString("N2") : "0,00")</td>
+                    <td>@jog.H</td>
+                    <td>@jog.Jogos</td>
                     <td>@jog.Gols.Where(x => x.Clube.Id == Model.Id).Count()</td>
                 </tr>
             }
