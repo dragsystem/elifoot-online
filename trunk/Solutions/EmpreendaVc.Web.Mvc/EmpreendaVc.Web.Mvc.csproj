@@ -339,6 +339,7 @@
     <Content Include="Content\img\star.4.png" />
     <Content Include="Content\img\star.5.png" />
     <Content Include="Content\img\vender.png" />
+    <Content Include="Content\js\facebook.js" />
     <Content Include="Content\js\fullcalendar\fullcalendar.css" />
     <Content Include="Content\js\fullcalendar\fullcalendar.js" />
     <Content Include="Content\js\fullcalendar\fullcalendar.min.js" />
@@ -403,6 +404,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ImageHandler.ashx" />
+    <Content Include="channel.html" />
     <None Include="Content\adm\images\nav\Thumbs.db" />
     <Content Include="Views\SendMail\_LayoutEmail.cshtml" />
     <Content Include="Views\Adm\DetalheUsuario.cshtml" />

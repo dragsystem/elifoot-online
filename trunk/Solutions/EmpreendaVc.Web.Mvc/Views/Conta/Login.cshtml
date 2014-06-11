@@ -4,6 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }*@
 
+<script type="text/javascript" src="@Url.Content("~/Content/js/facebook.js")"></script>
+
 <div id="home-login" class="caixa">
     @if (Model == null)
     {
@@ -24,6 +26,9 @@
                     <input type="submit" class="submit" value="Entrar" /><br /><br />
                     @Html.ActionLink("Esqueci minha senha", "RecuperarSenha") <br />
                     @Html.ActionLink("Não sou cadastrado", "Cadastro")   
+                </p>
+                <p>
+                    <a id="btFacebook" href="#">FACEBOOK</a>
                 </p>
             </div>
         }
