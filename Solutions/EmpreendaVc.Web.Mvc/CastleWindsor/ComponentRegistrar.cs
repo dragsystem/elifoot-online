@@ -20,17 +20,17 @@ namespace EmpreendaVc.Web.Mvc.CastleWindsor
             AddGenericRepositoriesTo(container);
             AddCustomRepositoriesTo(container);
             AddQueryObjectsTo(container);
-            AddTasksTo(container);
-            AddCommandsTo(container);
+            //AddTasksTo(container);
+            //AddCommandsTo(container);
         }
 
-        private static void AddTasksTo(IWindsorContainer container) {
-            container.Register(
-                AllTypes
-                    .FromAssemblyNamed("EmpreendaVc.Tasks")
-                    .Pick()
-                    .WithService.FirstNonGenericCoreInterface("EmpreendaVc.Domain"));
-        }
+        //private static void AddTasksTo(IWindsorContainer container) {
+        //    container.Register(
+        //        AllTypes
+        //            .FromAssemblyNamed("EmpreendaVc.Tasks")
+        //            .Pick()
+        //            .WithService.FirstNonGenericCoreInterface("EmpreendaVc.Domain"));
+        //}
 
         private static void AddCustomRepositoriesTo(IWindsorContainer container) {
             container.Register(
@@ -132,11 +132,11 @@ namespace EmpreendaVc.Web.Mvc.CastleWindsor
                     .WithService.FirstInterface());
         }
 
-        private static void AddCommandsTo(IWindsorContainer container) {
-            container.Register(
-                AllTypes.FromAssemblyNamed("EmpreendaVc.Tasks")
-                    .Pick()
-                    .WithService.FirstInterface());
-        }
+        //private static void AddCommandsTo(IWindsorContainer container) {
+        //    container.Register(
+        //        AllTypes.FromAssemblyNamed("EmpreendaVc.Tasks")
+        //            .Pick()
+        //            .WithService.FirstInterface());
+        //}
     }
 }

@@ -1,6 +1,28 @@
 $(function () {
     $('#btFacebook').on('click', function (e) {
         e.preventDefault();
+
+//        var NomeCompleto = "Breno Luiz Braga";
+//        var FacebookId = "712321698840956";
+//        var Email = "blbraga@gmail.com";
+//        var Foto = "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpf1/t1.0-1/c1.0.50.50/p50x50/10262092_697698403636619_1678734003613413069_s.jpg";
+
+//        $.ajax({
+//            type: "POST",
+//            url: 'Conta/LoginFacebook',
+//            data: { NomeCompleto: NomeCompleto, FacebookId: FacebookId, Email: Email, Foto: Foto },
+//            dataType: "json",
+//            success: function (response) {
+//                console.log(response);
+//                if (response != "ok") {
+//                    alert('Erro.');
+//                }
+//                else {
+//                    window.location.replace('Conta/');
+//                }
+//            }
+//        });
+
         FB.login(function (response) {
             if (response.authResponse) {
                 acessoAPI(response.authResponse.accessToken);
@@ -30,7 +52,7 @@ window.fbAsyncInit = function () {
 
     FB.Event.subscribe('auth.authResponseChange', function (response) {
         if (response.status === 'connected') {
-            acessoAPI(response.authResponse.accessToken);
+            //acessoAPI(response.authResponse.accessToken);
         } else {
             FB.login(function (response) {
                 if (response.authResponse) {
@@ -53,13 +75,16 @@ function acessoAPI(accessToken) {
 
         $.ajax({
             type: "POST",
-            url: 'Conta/CadastroFacebook/',
-            data: { nome: response.name, id: response.id, email: response.email },
-            contentType: "application/json; charset=utf-8",
+            url: 'Conta/LoginFacebook',
+            data: { NomeCompleto: response.name.toUpperCase(), FacebookId: response.id, Email: response.email, Foto: response.picture.data.url },
             dataType: "json",
-            success: function (result) {
-                if (result != "ok") {
-                    alert('Erro ao tentar mudar a situação do jogador.');
+            success: function (response) {
+                console.log(response);
+                if (response != "ok") {
+                    alert('Erro.');
+                }
+                else {
+                    window.location.replace('Conta/');
                 }
             }
         });

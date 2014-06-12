@@ -11,6 +11,7 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
     {
         Usuario Get(int Id);
         Usuario GetEmail(string Email);
+        Usuario GetFacebook(string FacebookId);
         Usuario GetNome(string Nome);
         Usuario GetGuid(string Guid);
         IList<Usuario> GetAll();

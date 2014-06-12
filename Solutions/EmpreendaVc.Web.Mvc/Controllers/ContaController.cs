@@ -157,96 +157,6 @@
             return View(usuario);
         }
 
-        [HttpPost]
-        [Transaction]
-        public ActionResult CadastroFacebook(FormCollection collection)
-        {
-            //var usuario = new Usuario();
-            //TryUpdateModel(usuario, collection);
-
-            //if (usuario.NomeCompleto != null)
-            //{
-            //    usuario.NomeCompleto = usuario.NomeCompleto.ToUpper();
-            //    if (usuarioRepository.GetNome(usuario.NomeCompleto) != null)
-            //        TempData["MsgErro"] = "Nome já em uso";
-            //}
-            //else
-            //    TempData["MsgErro"] = "Nome é um campo obrigatório";
-
-            //if (usuario.Email != null)
-            //{
-            //    if (usuarioRepository.GetEmail(usuario.Email) != null)
-            //        TempData["MsgErro"] = "E-mail já em uso";
-
-            //    if (usuario.Email.Contains("@@"))
-            //        TempData["MsgErro"] = "Favor preencher um E-mail válido";
-            //}
-            //else
-            //    TempData["MsgErro"] = "E-mail é um campo obrigatório";
-
-            //if (usuario.Senha != null)
-            //{
-            //    if (usuario.Senha.Length < 6)
-            //        TempData["MsgErro"] = "A senha precisa ter 6 ou mais caracteres";
-            //}
-            //else
-            //{
-            //    TempData["MsgErro"] = "Favor preencher a senha";
-            //}
-
-            //var ConfirmaSenha = collection["ConfirmaSenha"].ToString();
-
-            //if (ConfirmaSenha == string.Empty)
-            //    TempData["MsgErro"] = "Favor preencher a confirmação da senha";
-
-            //try
-            //{
-            //    if (ModelState.IsValid && usuario.IsValid())
-            //    {
-            //        if (usuario.Senha == ConfirmaSenha)
-            //        {
-
-            //            var result = this.usuarioRepository.SaveOrUpdate(usuario);
-
-            //            //define Guid do usuário
-            //            usuario.Guid = new Random().Next(1000000, 9999999).ToString();
-
-            //            this.usuarioRepository.SaveOrUpdate(usuario);
-
-            //            if (result.Count() == 0)
-            //            {
-            //                // _authenticationService.SignIn(usuario, usuario.IsRememberLogin);
-
-            //                //envia email de confirnação de cadastro
-            //                new SendMailController().ConfirmaCadastro(usuario).Deliver();
-            //                //authenticationService.SignIn(usuario, usuario.IsRememberLogin);
-
-            //                return this.RedirectToAction("CadastroSucesso");
-            //            }
-            //            else
-            //            {
-            //                foreach (var item in result)
-            //                {
-            //                    TempData["MsgErro"] = item;
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            TempData["MsgErro"] = "A senha e confirma senha precisam ser idênticas";
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    ObjLog.Error("ContaController(Cadastro): " + ex.ToString());
-            //}
-
-            //return View(usuario);
-
-            return this.RedirectToAction("CadastroSucesso");
-        }
-
         public ActionResult CadastroSucesso()
         {
             return View();
@@ -276,7 +186,7 @@
                 {
                     var usuario = usuarioRepository.GetEmail(model.Email);
 
-                    if (usuario.IsAtivo)
+                    if (usuario != null && usuario.IsAtivo)
                     {
                         authenticationService.SignIn(usuario, usuario.IsRememberLogin);
 
@@ -285,7 +195,6 @@
                     else
                     {
                         TempData["MsgErro"] = "Esse usuario está inativo no momento.";
-
                     }
                 }
                 else
@@ -301,6 +210,56 @@
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpPost]
+        public ActionResult LoginFacebook(FormCollection collection)
+        {
+            Session["init"] = null;
+
+            var model = new Usuario();
+            try
+            {
+                TryUpdateModel(model, collection);
+                model.Senha = new Random().Next(100000, 999999).ToString();
+                model.IsFacebook = true;
+
+                var usuario = usuarioRepository.GetEmail(model.Email);
+
+                if (usuario != null && usuario.IsAtivo)
+                {
+                    authenticationService.SignIn(usuario, usuario.IsRememberLogin);
+                }
+                else
+                {
+                    var result = this.usuarioRepository.SaveOrUpdate(model);
+
+                    //define Guid do usuário
+                    model.Guid = new Random().Next(1000000, 9999999).ToString();
+                    model.IsAtivo = true;
+
+                    result = this.usuarioRepository.SaveOrUpdate(model);
+
+                    if (result.Count() == 0)
+                    {
+                        //envia email de confirnação de cadastro
+                        new SendMailController().ConfirmaCadastro(model).Deliver();
+                        authenticationService.SignIn(model, model.IsRememberLogin);
+                    }
+                }
+
+                var response = "ok";
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                ObjLog.Error("ContaController(Login): " + ex.ToString());
+
+                var response = ex.ToString();
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json("?", JsonRequestBehavior.AllowGet);
+        }
+        
         public ActionResult MenuTop()
         {
             var usuario = authenticationService.GetUserAuthenticated();

@@ -379,10 +379,6 @@
       <Project>{9544D94B-9B6E-4B61-8A09-88382205BF86}</Project>
       <Name>EmpreendaVc.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EmpreendaVc.Tasks\EmpreendaVc.Tasks.csproj">
-      <Project>{C9AAC14B-E695-4508-83B7-ACB8FC5A7284}</Project>
-      <Name>EmpreendaVc.Tasks</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="NHibernate.config">
