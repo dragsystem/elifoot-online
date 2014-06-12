@@ -28,6 +28,12 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
                 .Where(x => x.Email == Email).SingleOrDefault();
         }
 
+        public Usuario GetFacebook(string FacebookId)
+        {
+            return Session.QueryOver<Usuario>()
+                .Where(x => x.FacebookId == FacebookId).SingleOrDefault();
+        }
+
         public Usuario GetNome(string Nome)
         {
             return Session.QueryOver<Usuario>()
@@ -126,10 +132,12 @@ namespace EmpreendaVc.Infrastructure.Queries.Usuarios
                 else
                 {
                     var clube = Session.Get<Clube>(userAccount.IdUltimoClube);
-                    if (clube.Usuario.Id == userAccount.Id)
+                    if (clube != null && clube.Usuario.Id == userAccount.Id)
+                    {
                         clube.Usuario = null;
 
-                    Session.Save(clube);
+                        Session.Save(clube);
+                    }
                 }
 
                 Session.SaveOrUpdate(userAccount);
