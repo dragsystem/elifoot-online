@@ -85,6 +85,7 @@
     <Compile Include="Clube.cs" />
     <Compile Include="Controle.cs" />
     <Compile Include="Artilheiro.cs" />
+    <Compile Include="JogadorLeilao.cs" />
     <Compile Include="JogadorPreContrato.cs" />
     <Compile Include="PatrocinioRecusa.cs" />
     <Compile Include="PatrocinioClube.cs" />
