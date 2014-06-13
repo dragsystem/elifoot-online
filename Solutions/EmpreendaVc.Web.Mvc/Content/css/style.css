@@ -20,6 +20,8 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
 #home-texto { font-size: 16px; float: left; width: 480px; text-align: justify; }    
 #home-login { width: 430px; float: right; }
 
+.btFacebook { cursor: pointer; background: url('../img/btface.png'); width: 250px; height: 50px; margin: 0 auto; margin-top: 15px; }
+
 h2 { color: #333; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; text-transform: uppercase; } /*#4982B9*/
 h2 .legenda { float: right; font-size: 9px; color: #333; text-transform: uppercase; letter-spacing: 0; margin-top: 2px; text-align:right; }
 h2 .legenda b { font-size: 11px; }
@@ -47,6 +49,10 @@ h3 { text-transform: uppercase; }
 
 #usuario-left { width: 465px; float: left; }
 #usuario-right { width: 465px; float: right; }
+
+.noticia { padding-bottom: 10px; border-bottom: 1px #CBDBEB solid; }
+
+hr { border: none; border-bottom: 1px #CBDBEB solid; }
 
 #plantel-caixa { width: 650px; }
     #plantel-caixa table { width: 100%; }
@@ -120,7 +126,7 @@ h3 { text-transform: uppercase; }
 .select-escalacao { background: #FBFBFB; padding: 0px; border: none; font-size: 14px; font-weight: bold; text-align: center; width: 48px; }
 .lesionado { display: block; height: 20px; width: 20px; background: url('../img/lesionado.png') center center no-repeat; }
 
-input[type="text"], input[type="password"], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; }
+input[type="text"], input[type="password"], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; padding: 10px; border-radius: 3px; }
 .submit { cursor: pointer; min-width: 200px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
 .submit:hover { background: #444; }
 
