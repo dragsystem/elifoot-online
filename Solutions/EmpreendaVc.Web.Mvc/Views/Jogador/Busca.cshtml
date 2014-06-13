@@ -37,7 +37,7 @@
                 <th width="30%">JOGADOR</th>
                 <th width="25%">CLUBE</th>
                 <th width="10%">POSIÇÃO</th>
-                <th width="15%">NOTA MÉDIA</th>
+                <th width="10%">H</th>
                 <th width="10%">JOGOS</th>
                 <th width="10%">GOLS</th>
             </tr>
@@ -49,9 +49,17 @@
                     {
                         <tr>
                             <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Nome.ToUpper()</a></td>
-                            <td>@(item.Clube != null ? item.Clube.Nome : "-")</td>
+                            <td>@if (item.Clube != null) {
+                                    <a href=" + @Url.Action("Index", "Clube", new { id = item.Clube.Id }) + ">@item.Clube.Nome</a>
+                                }
+                                else
+	                            {
+                                    @:-
+	                            }
+                            </td>
                             <td>@Util.RetornaPosicao(item.Posicao)</td>
-                            <td>@(item.NotaMedia > 0 ? item.NotaMedia.ToString("N2") : "0,00")</td>
+                            <td>@item.H
+</td>
                             <td>@(item.Clube != null ? item.Jogos.ToString() : "-")</td>
                             <td>@(item.Clube != null ? item.Gols.Where(x => x.Clube.Id == item.Clube.Id).Count().ToString() : "-")</td>
                         </tr>

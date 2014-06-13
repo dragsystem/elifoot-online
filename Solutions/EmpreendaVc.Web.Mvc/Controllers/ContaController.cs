@@ -256,8 +256,6 @@
                 var response = ex.ToString();
                 return Json(response, JsonRequestBehavior.AllowGet);
             }
-
-            return Json("?", JsonRequestBehavior.AllowGet);
         }
         
         public ActionResult MenuTop()

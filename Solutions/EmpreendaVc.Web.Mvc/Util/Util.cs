@@ -501,7 +501,7 @@ namespace EmpreendaVc.Web.Mvc.Util
 
         public static string LinkaStaff(Staff staff)
         {
-            return "<a href=\"/Jogador/Index/" + staff.Id + "\" >" + staff.Nome + "</a>";
+            return "<a href=\"/Staff/Index/" + staff.Id + "\" >" + staff.Nome + "</a>";
         }
 
         public static string LinkaPatrocinio(Patrocinio patrocinio)

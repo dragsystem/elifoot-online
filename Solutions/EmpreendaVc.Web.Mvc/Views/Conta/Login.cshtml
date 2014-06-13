@@ -15,6 +15,8 @@
         {
             @Html.AntiForgeryToken()
             <div id="login">
+                <p class="btFacebook"></p>
+                <p style="text-align: center;">ou</p>
                 @Html.ValidationSummary(true)
                 <p style="text-align: center;">
                     E-mail: @Html.TextBoxFor(model => model.Email, new { size = 40 })
@@ -26,9 +28,6 @@
                     <input type="submit" class="submit" value="Entrar" /><br /><br />
                     @Html.ActionLink("Esqueci minha senha", "RecuperarSenha") <br />
                     @Html.ActionLink("Não sou cadastrado", "Cadastro")   
-                </p>
-                <p>
-                    <a id="btFacebook" href="#">FACEBOOK</a>
                 </p>
             </div>
         }

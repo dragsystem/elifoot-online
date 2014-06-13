@@ -1,5 +1,5 @@
 $(function () {
-    $('#btFacebook').on('click', function (e) {
+    $('.btFacebook').on('click', function (e) {
         e.preventDefault();
 
 //        var NomeCompleto = "Breno Luiz Braga";
