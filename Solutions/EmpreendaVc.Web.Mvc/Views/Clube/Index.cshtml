@@ -104,5 +104,5 @@
             </p>
         }
     </div>
-    @{ Html.RenderAction("_Menu", "Clube"); }
+    @{ Html.RenderAction("_Menu", "Clube", new { id = Model.Id }); }
 </div>

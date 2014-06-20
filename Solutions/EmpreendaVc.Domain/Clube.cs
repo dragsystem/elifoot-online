@@ -64,6 +64,8 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<JogadorOferta> Ofertas { get; set; }
 
+        public virtual IList<JogadorLeilaoOferta> LeilaoOfertas { get; set; }
+
         public virtual IList<PatrocinioClube> PatrocinioClubes { get; set; }
 
         public virtual IList<PatrocinioRecusa> PatrocinioRecusas { get; set; }

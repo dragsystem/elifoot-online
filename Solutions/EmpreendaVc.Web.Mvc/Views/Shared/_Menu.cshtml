@@ -4,8 +4,10 @@
 }
 
 <div id="plantel-menu">
-@if (usuario.Clube.Id == Model.Id)
+@if (Model != null)
 {
+    if (usuario.Clube != null && usuario.Clube.Id == Model.Id)
+    {
     <a class="botao" href="@Url.Action("Index", "Conta")">
         Notícias 
         @if (usuario.Noticias.Where(x => !x.Lida).Count() > 0)
@@ -13,21 +15,26 @@
             @: (@usuario.Noticias.Where(x => !x.Lida).Count())
         }
     </a><br />
-    <a class="botao" href="@Url.Action("MeusJogadores", "Jogador")">Propostas</a><br />
+    <a class="botao" href="@Url.Action("Busca", "Jogador")">Negociações</a><br />
     <a class="botao" href="@Url.Action("Classificacao", "Clube", new { iddivisao = Model.Divisao.Id })">Classificação</a><br />
     <a class="botao" href="@Url.Action("Calendario", "Clube")">Calendário</a><br />
     <a class="botao" href="@Url.Action("Resultados", "Clube", new { divisao = Model.Divisao.Id })">Resultados</a><br />
     @*<a class="botao" href="@Url.Action("Transferencias", "Clube")">Transferências</a><br />*@
     <a class="botao" href="@Url.Action("Historico", "Clube", new { divisao = Model.Divisao.Id })">Histórico</a><br />
     <a class="botao" href="@Url.Action("PedirDemissao", "Clube")">Pedir Demissao</a><br />
+    }
+    else
+    {
+        if (usuario.DelayTroca == 0 && Model.Id != usuario.IdUltimoClube && Model.Usuario == null)
+        {
+        <a class="botao" href="@Url.Action("Proposta", "Clube", new { id = Model.Id })">Pedir Cargo de Treinador</a><br />
+        }
+    <a class="botao" href="@Url.Action("Calendario", "Clube", new { id = Model.Id })">Calendário</a><br />
+    <a class="botao" href="@Url.Action("Historico", "Clube", new { divisao = Model.Divisao.Id })">Histórico</a><br />
+    }
 }
 else
 {
-    if (usuario.DelayTroca == 0 && Model.Id != usuario.IdUltimoClube && Model.Usuario == null)
-    {
-        <a class="botao" href="@Url.Action("Proposta", "Clube", new { id = Model.Id })">Pedir Cargo de Treinador</a><br />
-    }
-    <a class="botao" href="@Url.Action("Calendario", "Clube", new { id = Model.Id })">Calendário</a><br />
-    <a class="botao" href="@Url.Action("Historico", "Clube", new { divisao = Model.Divisao.Id })">Histórico</a><br />
+    
 }
 </div>

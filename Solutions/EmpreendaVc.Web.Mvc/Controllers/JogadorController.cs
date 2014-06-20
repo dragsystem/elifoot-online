@@ -147,8 +147,6 @@
                     lstJogador = lstJogador.OrderBy(x => x.Posicao);
                 else if (jogadorfiltro.Ordenacao == 2)
                     lstJogador = lstJogador.OrderByDescending(x => x.Posicao);
-                else if (jogadorfiltro.Ordenacao == 3)
-                    lstJogador = lstJogador.OrderByDescending(x => x.NotaMedia);
 
                 var skip = 0;
 

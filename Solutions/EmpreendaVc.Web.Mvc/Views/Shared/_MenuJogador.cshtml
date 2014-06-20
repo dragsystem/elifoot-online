@@ -8,25 +8,26 @@
     <div id="plantel-menu">
         @if ((Model.Clube != null && Model.Clube.Id != clube.Id) || Model.Clube == null)
         {
-            var frase = "Fazer Proposta";
-            if (Model.JogadorOfertas.Where(x => x.Clube.Id == clube.Id && x.Estagio != 0 && x.Estagio != 3).Count() > 0)
-            {
-                frase = "Alterar Proposta"; 
-            }
+            //var frase = "Fazer Proposta";
+            //if (Model.JogadorOfertas.Where(x => x.Clube.Id == clube.Id && x.Estagio != 0 && x.Estagio != 3).Count() > 0)
+            //{
+            //    frase = "Alterar Proposta"; 
+            //}
             if (Model.Clube != null)
             {
-                <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id, tipo = 1 })">@frase</a><br />
-                <a class="botao" href="@Url.Action("PedirRelatorio", "Jogador", new { id = Model.Id })">Pedir Relatório</a><br />
+                <a class="botao" href="@Url.Action("JogadorPedido", "Leilao", new { id = Model.Id, tipo = 1 })">Pedir Leilão</a><br />
+                @*<a class="botao" href="@Url.Action("PedirRelatorio", "Jogador", new { id = Model.Id })">Pedir Relatório</a><br />*@
             }
             if (Model.Clube == null)
             {
-                <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id, tipo = 2 })">@frase</a><br />
-                <a class="botao" href="@Url.Action("ProporTeste", "Jogador", new { id = Model.Id })">Propor Teste</a><br />
+                <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id, tipo = 2 })">Fazer proposta</a><br />
+                @*<a class="botao" href="@Url.Action("ProporTeste", "Jogador", new { id = Model.Id })">Propor Teste</a><br />*@
             }
         }
         else
         {
             <a class="botao" href="@Url.Action("JogadorRenovar", "Jogador", new { id = Model.Id })">Renovar Contrato</a><br />
+            <a class="botao" href="@Url.Action("JogadorVender", "Jogador", new { id = Model.Id })">Botar em Leilão</a><br />
             <a class="botao" href="@Url.Action("JogadorDispensar", "Jogador", new { id = Model.Id })">Dispensar</a><br />
         }
     </div>

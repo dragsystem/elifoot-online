@@ -209,7 +209,6 @@ namespace EmpreendaVc.Web.Mvc.Util
             lst.Add(new SelectListItem { Text = "NOME", Value = "0" });
             lst.Add(new SelectListItem { Text = "POSIÇÃO - D > A", Value = "1" });
             lst.Add(new SelectListItem { Text = "POSIÇÃO - A > D", Value = "2" });
-            lst.Add(new SelectListItem { Text = "NOTA MÉDIA", Value = "3" });
 
             return lst;
         }

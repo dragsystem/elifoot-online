@@ -30,6 +30,8 @@
         private readonly INHibernateRepository<Jogador> jogadorRepository;
         private readonly INHibernateRepository<Controle> controleRepository;
         private readonly INHibernateRepository<JogadorOferta> jogadorofertaRepository;
+        private readonly INHibernateRepository<JogadorLeilao> jogadorleilaoRepository;
+        private readonly INHibernateRepository<JogadorLeilaoOferta> jogadorleilaoofertaRepository;
         private readonly INHibernateRepository<Divisao> divisaoRepository;
         private readonly IPartidaRepository partidaRepository;
         private readonly INHibernateRepository<Gol> golRepository;
@@ -56,6 +58,8 @@
             INHibernateRepository<Jogador> jogadorRepository,
             INHibernateRepository<Controle> controleRepository,
             INHibernateRepository<JogadorOferta> jogadorofertaRepository,
+            INHibernateRepository<JogadorLeilao> jogadorleilaoRepository,
+            INHibernateRepository<JogadorLeilaoOferta> jogadorleilaoofertaRepository,
             INHibernateRepository<Divisao> divisaoRepository,
             IPartidaRepository partidaRepository,
             INHibernateRepository<Gol> golRepository,
@@ -82,6 +86,8 @@
             this.jogadorRepository = jogadorRepository;
             this.controleRepository = controleRepository;
             this.jogadorofertaRepository = jogadorofertaRepository;
+            this.jogadorleilaoRepository = jogadorleilaoRepository;
+            this.jogadorleilaoofertaRepository = jogadorleilaoofertaRepository;
             this.divisaoRepository = divisaoRepository;
             this.partidaRepository = partidaRepository;
             this.golRepository = golRepository;
@@ -143,6 +149,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -170,6 +177,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -408,6 +416,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -746,62 +755,10 @@
 
                     ///FIM TAÇA
 
-                    //DECIDE QUEM FEZ OS GOLS
-                    rnd = new Random();
-                    if (gol1 > 0)
-                    {
-                        var totalgols = clube1.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).Take(5).Sum(x => x.HGol) + 1;
-                        for (int i = 1; i <= gol1; i++)
-                        {
-                            var gol = new Gol();
-                            gol.Clube = clube1;
-                            gol.Minuto = rnd.Next(1, 94);
-                            gol.Partida = partida;
-                            var contagem = 0;
-                            var goleador = rnd.Next(1, totalgols);
-                            foreach (var jog in clube1.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).ThenByDescending(x => x.Posicao).Take(5))
-                            {
-                                contagem = contagem + jog.HGol;
-                                if (goleador <= contagem)
-                                {
-                                    gol.Jogador = jog.Jogador;
-                                    break;
-                                }
-                            }
+                    var lstgoleadores1 = new List<GolPossibilidadeView>();
+                    var lstgoleadores2 = new List<GolPossibilidadeView>();
 
-                            golRepository.SaveOrUpdate(gol);
-                        }
-                    }
-
-                    rnd = new Random();
-                    rnd.Next(1, 100);
-
-                    var listgol2 = new List<Gol>();
-                    if (gol2 > 0)
-                    {
-                        var totalgols = clube2.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).Take(5).Sum(x => x.HGol) + 1;
-                        for (int i = 1; i <= gol2; i++)
-                        {
-                            var gol = new Gol();
-                            gol.Clube = clube2;
-                            gol.Minuto = rnd.Next(1, 94);
-                            gol.Partida = partida;
-                            var contagem = 0;
-                            var goleador = rnd.Next(1, totalgols);
-                            foreach (var jog in clube2.Escalacao.OrderByDescending(x => x.Jogador.NotaUlt).ThenByDescending(x => x.Posicao).Take(5))
-                            {
-                                contagem = contagem + jog.HGol;
-                                if (goleador <= contagem)
-                                {
-                                    gol.Jogador = jog.Jogador;
-                                    break;
-                                }
-                            }
-
-                            golRepository.SaveOrUpdate(gol);
-                        }
-                    }
-
+                    //ATUALIZA TIMES. JOGOS, H E CONDIÇÃO
                     foreach (var escalacao in clube1.Escalacao)
                     {
                         var jogador = escalacao.Jogador;
@@ -818,6 +775,18 @@
                             jogador.Condicao = jogador.Condicao - 15;
 
                         jogadorRepository.SaveOrUpdate(jogador);
+
+                        if (gol1 > 0)
+                        {
+                            var gp = new GolPossibilidadeView();
+                            gp.Jogador = jogador;
+                            if (jogador.Posicao == 1)
+                                gp.P = 1;
+                            else
+                                gp.P = lstgoleadores1.Sum(x => x.P) + (jogador.Posicao + (jogador.H / 10));
+
+                            lstgoleadores1.Add(gp);
+                        }
                     }
 
                     foreach (var escalacao in clube2.Escalacao)
@@ -836,6 +805,54 @@
                             jogador.Condicao = jogador.Condicao - 15;
 
                         jogadorRepository.SaveOrUpdate(jogador);
+
+                        if (gol2 > 0)
+                        {
+                            var gp = new GolPossibilidadeView();
+                            gp.Jogador = jogador;
+                            if (jogador.Posicao == 1)
+                                gp.P = 1;
+                            else
+                                gp.P = lstgoleadores2.Sum(x => x.P) + (jogador.Posicao + (jogador.H / 10));
+
+                            lstgoleadores2.Add(gp);
+                        }
+                    }
+
+                    //DECIDE QUEM FEZ OS GOLS
+                    rnd = new Random();
+                    if (gol1 > 0)
+                    {                       
+                        for (int i = 1; i <= gol1; i++)
+                        {
+                            var gol = new Gol();
+                            gol.Clube = clube1;
+                            gol.Minuto = rnd.Next(1, 94);
+                            gol.Partida = partida;
+                            var goleador = rnd.Next(1, lstgoleadores1.OrderByDescending(x => x.P).FirstOrDefault().P);
+                            gol.Jogador = lstgoleadores1.FirstOrDefault(x => goleador >= x.P).Jogador;
+
+                            golRepository.SaveOrUpdate(gol);
+                        }
+                    }
+
+                    rnd = new Random();
+                    rnd.Next(1, 100);
+
+                    var listgol2 = new List<Gol>();
+                    if (gol2 > 0)
+                    {
+                        for (int i = 1; i <= gol2; i++)
+                        {
+                            var gol = new Gol();
+                            gol.Clube = clube2;
+                            gol.Minuto = rnd.Next(1, 94);
+                            gol.Partida = partida;
+                            var goleador = rnd.Next(1, lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P);
+                            gol.Jogador = lstgoleadores2.FirstOrDefault(x => goleador >= x.P).Jogador;
+
+                            golRepository.SaveOrUpdate(gol);
+                        }
                     }
 
                     //publico 
@@ -883,6 +900,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -941,6 +959,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -1043,6 +1062,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -1072,6 +1092,7 @@
             ViewBag.UpdateFinancas = false;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -1111,6 +1132,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = false;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -1182,6 +1204,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = false;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -1195,14 +1218,16 @@
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
             var lstvendidos = new List<Jogador>();
+            var lstposvendidos = new List<PosicaoCompradaView>();
+            var lstleilao = new List<JogadorLeilaoOferta>();
 
-            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Dia < controle.Dia && x.Estagio == 2).OrderByDescending(x => x.Pontos).ThenByDescending(x => x.Salario))
+            foreach (var jogadoroferta in jogadorofertaRepository.GetAll().Where(x => x.Dia < controle.Dia && x.Estagio == 2).OrderByDescending(x => x.Jogador.H).ThenByDescending(x => x.Pontos).ThenByDescending(x => x.Salario))
             {
                 var jogador = jogadoroferta.Jogador;
                 var clubecomprador = clubeRepository.Get(jogadoroferta.Clube.Id);
-                var clubevendedor = jogador.Clube != null ? clubeRepository.Get(jogador.Clube.Id) : null;                
+                var clubevendedor = jogador.Clube != null ? clubeRepository.Get(jogador.Clube.Id) : null;
 
-                if (((clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14) || clubevendedor == null) && lstvendidos.Where(x => x.Id == jogador.Id).Count() == 0 && clubecomprador.Dinheiro >= jogadoroferta.Valor && jogadoroferta.Pontos > 0)
+                if (((clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14) || clubevendedor == null) && lstvendidos.Where(x => x.Id == jogador.Id).Count() == 0 && lstposvendidos.Where(x => x.Clube.Id == clubecomprador.Id && x.Posicao == jogador.Posicao).Count() == 0 && clubecomprador.Dinheiro >= jogadoroferta.Valor && jogadoroferta.Pontos > 0)
                 {
                     clubecomprador.Dinheiro = clubecomprador.Dinheiro - jogadoroferta.Valor;
                     clubeRepository.SaveOrUpdate(clubecomprador);
@@ -1241,9 +1266,9 @@
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
                         if (clubevendedor != null)
-                            noticia.Texto =  Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") foi vendido para o " + Util.Util.LinkaClube(clubecomprador) + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") foi vendido para o " + Util.Util.LinkaClube(clubecomprador) + " por $" + jogadoroferta.Valor.ToString("N2");
                         else
-                            noticia.Texto =  Util.Util.LinkaJogador(jogador) + ", que estava sem clube, assinou contrato com o " + Util.Util.LinkaClube(clubecomprador) + "."; 
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + ", que estava sem clube, assinou contrato com o " + Util.Util.LinkaClube(clubecomprador) + ".";
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -1251,12 +1276,13 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2"); 
+                        noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.Valor.ToString("N2");
                         noticia.Usuario = clubevendedor.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
 
                     lstvendidos.Add(jogador);
+                    lstposvendidos.Add(new PosicaoCompradaView() { Clube = clubecomprador, Posicao = jogador.Posicao });
 
                     jogadoroferta.Estagio = 3;
                     jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
@@ -1271,6 +1297,11 @@
                             escalacaoRepository.SaveOrUpdate(escalacao);
                         }
                     }
+
+                    foreach (var leilaooferta in jogadorleilaoofertaRepository.GetAll().Where(x => x.Clube.Id == clubecomprador.Id && x.JogadorLeilao.Jogador.Posicao == jogador.Posicao))
+                    {
+                        lstleilao.Add(leilaooferta);
+                    }
                 }
                 else if (jogadoroferta.Pontos < 1)
                 {
@@ -1282,13 +1313,17 @@
                             noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta.";
                         else
                             noticia.Texto = Util.Util.LinkaJogador(jogador) + " rejeitou sua proposta.";
-                        
+
                         noticia.Usuario = clubecomprador.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
 
                     jogadoroferta.Estagio = 0;
                     jogadorofertaRepository.SaveOrUpdate(jogadoroferta);
+                }
+                else if (lstposvendidos.Where(x => x.Clube.Id == clubecomprador.Id && x.Posicao == jogador.Posicao).Count() > 0)
+                {
+                    jogadorofertaRepository.Delete(jogadoroferta);
                 }
                 else if (lstvendidos.Where(x => x.Id == jogador.Id).Count() > 0)
                 {
@@ -1336,6 +1371,11 @@
                 }
             }
 
+            foreach (var leilaooferta in lstleilao)
+            {
+                jogadorleilaoofertaRepository.Delete(leilaooferta);
+            }
+
             ViewBag.AtualizarDataDia = true;
             ViewBag.EscalaTimes = true;
             ViewBag.RodaPartida = true;
@@ -1346,10 +1386,332 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
+            ViewBag.AtualizarLeiloes = false;
             ViewBag.VariarJogador = 0;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
 
+            return View("Rodando");
+        }
+
+        [Transaction]
+        public ActionResult AtualizarLeiloes()
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var lstvendidos = new List<Jogador>();
+            var lstposvendidos = new List<PosicaoCompradaView>();
+            var lstleilao = new List<JogadorLeilaoOferta>();
+
+            foreach (var leilao in jogadorleilaoRepository.GetAll().Where(x => x.Dia < controle.Dia && x.Estagio < 2))
+            {
+                if (leilao.LeilaoOfertas.Where(x => x.Pontos > 0).Count() < 1)
+                {
+                    foreach (var item in jogadorleilaoofertaRepository.GetAll().Where(x => x.JogadorLeilao.Id == leilao.Id))
+                    {
+                        jogadorleilaoofertaRepository.Delete(item);
+                    }
+
+                    if (leilao.Clube.Usuario != null)
+                    {
+                        var noticia = new Noticia();
+                        noticia.Texto = "Leilão por " + Util.Util.LinkaJogador(leilao.Jogador) + " foi finalizado sem ofertas.";
+                        noticia.Usuario = leilao.Clube.Usuario;
+                        noticiaRepository.SaveOrUpdate(noticia);
+                    }
+
+                    leilao.Estagio = 2;
+                    jogadorleilaoRepository.Delete(leilao);
+                }
+                else
+                {
+                    if (leilao.Clube.Jogadores.Where(x => !x.Temporario).Count() > 14)// && clubecomprador.Dinheiro >= jogadoroferta.JogadorLeilao.Valor && jogadoroferta.Pontos > 0)
+                    {
+                        var finalizado = false;
+
+                        while (finalizado != true)
+                        {
+                            var comprador = leilao.LeilaoOfertas.OrderByDescending(x => x.Pontos).ThenByDescending(x => x.Salario).FirstOrDefault();
+
+                            if (comprador != null && comprador.Clube.Dinheiro >= leilao.Valor && comprador.Pontos > 0)
+                            {
+                                var clubecomprador = clubeRepository.Get(comprador.Clube.Id);
+                                var clubevendedor = leilao.Clube != null ? clubeRepository.Get(leilao.Clube.Id) : null;
+                                var jogador = leilao.Jogador;
+
+                                clubevendedor.Dinheiro = clubecomprador.Dinheiro + leilao.Valor;
+                                clubeRepository.SaveOrUpdate(clubevendedor);
+
+                                var historico = new JogadorHistorico();
+                                historico.Ano = controle.Ano;
+                                historico.Clube = clubevendedor;
+                                historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clubevendedor.Id).Count();
+                                historico.Jogador = jogador;
+                                historico.Jogos = jogador.Jogos;
+                                historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
+                                historico.Valor = leilao.Valor;
+                                jogadorhistoricoRepository.SaveOrUpdate(historico);
+
+                                jogador.Clube = clubecomprador;
+                                jogador.Contrato = comprador.Contrato;
+                                jogador.Salario = comprador.Salario;
+                                jogador.Situacao = 1;
+                                jogador.Satisfacao = 0;
+                                jogador.Jogos = 0;
+                                jogador.NotaTotal = 0;
+                                jogador.NotaUlt = 0;
+                                jogador.Treinos = 0;
+                                jogador.TreinoUlt = 0;
+                                jogador.TreinoTotal = 0;
+                                jogadorRepository.SaveOrUpdate(jogador);
+
+                                if (clubecomprador.Usuario != null)
+                                {
+                                    var noticia = new Noticia();
+                                    noticia.Dia = controle.Dia;
+                                    if (clubevendedor != null)
+                                        noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") foi vendido para o " + Util.Util.LinkaClube(clubecomprador) + " por $" + leilao.Valor.ToString("N2");
+                                    else
+                                        noticia.Texto = Util.Util.LinkaJogador(jogador) + ", que estava sem clube, assinou contrato com o " + Util.Util.LinkaClube(clubecomprador) + ".";
+                                    noticia.Usuario = clubecomprador.Usuario;
+                                    noticiaRepository.SaveOrUpdate(noticia);
+                                }
+                                if (clubevendedor != null && clubevendedor.Usuario != null)
+                                {
+                                    var noticia = new Noticia();
+                                    noticia.Dia = controle.Dia;
+                                    noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + leilao.Valor.ToString("N2");
+                                    noticia.Usuario = clubevendedor.Usuario;
+                                    noticiaRepository.SaveOrUpdate(noticia);
+                                }
+
+                                lstvendidos.Add(jogador);
+                                lstposvendidos.Add(new PosicaoCompradaView() { Clube = clubecomprador, Posicao = jogador.Posicao });
+
+                                leilao.Estagio = 2;
+                                leilao.Vencedor = clubecomprador;
+                                jogadorleilaoRepository.SaveOrUpdate(leilao);
+
+                                if (clubevendedor != null)
+                                {
+                                    var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
+                                    if (escalacao != null)
+                                    {
+                                        escalacao.Jogador = null;
+                                        escalacao.H = 0;
+                                        escalacaoRepository.SaveOrUpdate(escalacao);
+                                    }
+                                }
+
+                                foreach (var item in jogadorleilaoofertaRepository.GetAll().Where(x => x.JogadorLeilao.Id == leilao.Id))
+                                {
+                                    lstleilao.Add(item);
+                                }
+
+                                finalizado = true;
+                            }
+                            else
+                            {
+                                foreach (var item in jogadorleilaoofertaRepository.GetAll().Where(x => x.JogadorLeilao.Id == leilao.Id))
+                                {
+                                    jogadorleilaoofertaRepository.Delete(item);
+                                }
+
+                                if (leilao.Clube.Usuario != null)
+                                {
+                                    var noticia = new Noticia();
+                                    noticia.Texto = "Leilão por " + Util.Util.LinkaJogador(leilao.Jogador) + " foi finalizado sem ofertas.";
+                                    noticia.Usuario = leilao.Clube.Usuario;
+                                    noticiaRepository.SaveOrUpdate(noticia);
+                                }
+
+                                finalizado = true;
+                                leilao.Estagio = 2;
+                                jogadorleilaoRepository.SaveOrUpdate(leilao);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in jogadorleilaoofertaRepository.GetAll().Where(x => x.JogadorLeilao.Id == leilao.Id))
+                        {
+                            jogadorleilaoofertaRepository.Delete(item);
+                        }
+
+                        if (leilao.Clube.Usuario != null)
+                        {
+                            var noticia = new Noticia();
+                            noticia.Texto = "Leilão por " + Util.Util.LinkaJogador(leilao.Jogador) + " foi cancelado pois você está no limite de jogadores.";
+                            noticia.Usuario = leilao.Clube.Usuario;
+                            noticiaRepository.SaveOrUpdate(noticia);
+                        }
+
+                        leilao.Estagio = 2;
+                        jogadorleilaoRepository.Delete(leilao);
+                    }
+                }
+            }
+
+            //foreach (var jogadoroferta in jogadorleilaoofertaRepository.GetAll().Where(x => x.Estagio < 3).OrderByDescending(x => x.JogadorLeilao.Jogador.H).ThenByDescending(x => x.Pontos).ThenByDescending(x => x.Salario))
+            //{
+            //    var jogador = jogadoroferta.JogadorLeilao.Jogador;
+            //    var clubecomprador = clubeRepository.Get(jogadoroferta.Clube.Id);
+            //    var clubevendedor = jogador.Clube != null ? clubeRepository.Get(jogador.Clube.Id) : null;
+
+            //    if (((clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() > 14) || clubevendedor == null) && lstvendidos.Where(x => x.Id == jogador.Id).Count() == 0 && lstposvendidos.Where(x => x.Clube.Id == clubecomprador.Id && x.Posicao == jogador.Posicao).Count() == 0 && clubecomprador.Dinheiro >= jogadoroferta.JogadorLeilao.Valor && jogadoroferta.Pontos > 0)
+            //    {
+            //        clubecomprador.Dinheiro = clubecomprador.Dinheiro - jogadoroferta.JogadorLeilao.Valor;
+            //        //                    clubeRepository.SaveOrUpdate(clubecomprador);
+
+            //        if (clubevendedor != null)
+            //        {
+            //            clubevendedor.Dinheiro = clubecomprador.Dinheiro + jogadoroferta.JogadorLeilao.Valor;
+            //            //                        clubeRepository.SaveOrUpdate(clubevendedor);
+
+            //            var historico = new JogadorHistorico();
+            //            historico.Ano = controle.Ano;
+            //            historico.Clube = clubevendedor;
+            //            historico.Gols = jogador.Gols.Where(x => x.Clube.Id == clubevendedor.Id).Count();
+            //            historico.Jogador = jogador;
+            //            historico.Jogos = jogador.Jogos;
+            //            historico.NotaMedia = jogador.NotaMedia > 0.0 ? jogador.NotaMedia : 0.00;
+            //            historico.Valor = jogadoroferta.JogadorLeilao.Valor;
+            //            //                        jogadorhistoricoRepository.SaveOrUpdate(historico);
+            //        }
+
+            //        jogador.Clube = clubecomprador;
+            //        jogador.Contrato = jogadoroferta.Contrato;
+            //        jogador.Salario = jogadoroferta.Salario;
+            //        jogador.Situacao = 1;
+            //        jogador.Satisfacao = 0;
+            //        jogador.Jogos = 0;
+            //        jogador.NotaTotal = 0;
+            //        jogador.NotaUlt = 0;
+            //        jogador.Treinos = 0;
+            //        jogador.TreinoUlt = 0;
+            //        jogador.TreinoTotal = 0;
+            //        //                    jogadorRepository.SaveOrUpdate(jogador);
+
+            //        if (clubecomprador.Usuario != null)
+            //        {
+            //            var noticia = new Noticia();
+            //            noticia.Dia = controle.Dia;
+            //            if (clubevendedor != null)
+            //                noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") foi vendido para o " + Util.Util.LinkaClube(clubecomprador) + " por $" + jogadoroferta.JogadorLeilao.Valor.ToString("N2");
+            //            else
+            //                noticia.Texto = Util.Util.LinkaJogador(jogador) + ", que estava sem clube, assinou contrato com o " + Util.Util.LinkaClube(clubecomprador) + ".";
+            //            noticia.Usuario = clubecomprador.Usuario;
+            //            noticiaRepository.SaveOrUpdate(noticia);
+            //        }
+            //        if (clubevendedor != null && clubevendedor.Usuario != null)
+            //        {
+            //            var noticia = new Noticia();
+            //            noticia.Dia = controle.Dia;
+            //            noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + clubevendedor.Nome + ") foi vendido para o " + clubecomprador.Nome + " por $" + jogadoroferta.JogadorLeilao.Valor.ToString("N2");
+            //            noticia.Usuario = clubevendedor.Usuario;
+            //            noticiaRepository.SaveOrUpdate(noticia);
+            //        }
+
+            //        lstvendidos.Add(jogador);
+            //        lstposvendidos.Add(new PosicaoCompradaView() { Clube = clubecomprador, Posicao = jogador.Posicao });
+
+            //        jogadoroferta.Estagio = 3;
+            //        //                    jogadorleilaoofertaRepository.SaveOrUpdate(jogadoroferta);
+
+            //        if (clubevendedor != null)
+            //        {
+            //            var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
+            //            if (escalacao != null)
+            //            {
+            //                escalacao.Jogador = null;
+            //                escalacao.H = 0;
+            //                //                            escalacaoRepository.SaveOrUpdate(escalacao);
+            //            }
+            //        }
+            //    }
+            //    else if (jogadoroferta.Pontos < 1)
+            //    {
+            //        if (clubecomprador.Usuario != null)
+            //        {
+            //            var noticia = new Noticia();
+            //            noticia.Dia = controle.Dia;
+            //            if (clubevendedor != null)
+            //                noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta.";
+            //            else
+            //                noticia.Texto = Util.Util.LinkaJogador(jogador) + " rejeitou sua proposta.";
+
+            //            noticia.Usuario = clubecomprador.Usuario;
+            //            noticiaRepository.SaveOrUpdate(noticia);
+            //        }
+
+            //        jogadoroferta.Estagio = 0;
+            //        jogadorleilaoofertaRepository.Delete(jogadoroferta);
+            //    }
+            //    else if (lstposvendidos.Where(x => x.Clube.Id == clubecomprador.Id && x.Posicao == jogador.Posicao).Count() > 0)
+            //    {
+            //        jogadorleilaoofertaRepository.Delete(jogadoroferta);
+            //    }
+            //    else if (lstvendidos.Where(x => x.Id == jogador.Id).Count() > 0)
+            //    {
+            //        if (clubecomprador.Usuario != null)
+            //        {
+            //            var clubequecomprou = lstvendidos.FirstOrDefault(x => x.Id == jogador.Id).Clube.Nome;
+
+            //            var noticia = new Noticia();
+            //            noticia.Dia = controle.Dia;
+            //            if (clubevendedor != null)
+            //                noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta e foi vendido para o " + clubequecomprou + ".";
+            //            else
+            //                noticia.Texto = Util.Util.LinkaJogador(jogador) + " (" + Util.Util.LinkaClube(clubevendedor) + ") rejeitou sua proposta e assinou contrato com " + clubequecomprou + ".";
+            //            noticia.Usuario = clubecomprador.Usuario;
+            //            noticiaRepository.SaveOrUpdate(noticia);
+            //        }
+
+            //        jogadorleilaoofertaRepository.Delete(jogadoroferta);
+            //    }
+            //    else if (clubevendedor != null && clubevendedor.Jogadores.Where(x => !x.Temporario).Count() < 15)
+            //    {
+            //        if (clubecomprador.Usuario != null)
+            //        {
+            //            var noticia = new Noticia();
+            //            noticia.Dia = controle.Dia;
+            //            noticia.Texto = Util.Util.LinkaClube(clubevendedor) + " cancelou o leilão de " + Util.Util.LinkaJogador(jogador) + " por estar com poucos jogadores no elenco.";
+            //            noticia.Usuario = clubecomprador.Usuario;
+            //            noticiaRepository.SaveOrUpdate(noticia);
+            //        }
+
+            //        jogadorleilaoofertaRepository.Delete(jogadoroferta);
+            //    }
+            //    else if (clubecomprador.Dinheiro < jogadoroferta.JogadorLeilao.Valor)
+            //    {
+            //        if (clubecomprador.Usuario != null)
+            //        {
+            //            var noticia = new Noticia();
+            //            noticia.Dia = controle.Dia;
+            //            noticia.Texto = "Sua proposta por " + Util.Util.LinkaJogador(jogador) + " foi cancelada, pois você não possui dinheiro para fechar a compra.";
+            //            noticia.Usuario = clubecomprador.Usuario;
+            //            noticiaRepository.SaveOrUpdate(noticia);
+            //        }
+
+            //        jogadorleilaoofertaRepository.Delete(jogadoroferta);
+            //    }
+            //}
+
+            ViewBag.AtualizarDataDia = true;
+            ViewBag.EscalaTimes = true;
+            ViewBag.RodaPartida = true;
+            ViewBag.AtualizaTabela = true;
+            ViewBag.GerarTaca = true;
+            ViewBag.ZerarDelayUsuario = true;
+            ViewBag.CriarJogadoresTemporarios = false;
+            ViewBag.UpdateFinancas = true;
+            ViewBag.VerificaTecnicos = true;
+            ViewBag.AtualizarTransferencias = true;
+            ViewBag.AtualizarLeiloes = true;
+            ViewBag.VariarJogador = 0;
+            ViewBag.ZeraStaffConsultas = false;
+            ViewBag.GerarTesteJogador = false;
+
+            //return View("Index");
             return View("Rodando");
         }
 
@@ -1538,6 +1900,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
+            ViewBag.AtualizarLeiloes = true;
             if (fase == 0)
                 ViewBag.VariarJogador = 1;
             else
@@ -1607,6 +1970,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
+            ViewBag.AtualizarLeiloes = true;
             ViewBag.VariarJogador = 2;
             ViewBag.ZeraStaffConsultas = false;
             ViewBag.GerarTesteJogador = false;
@@ -1633,6 +1997,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
+            ViewBag.AtualizarLeiloes = true;
             ViewBag.VariarJogador = 2;
             ViewBag.ZeraStaffConsultas = true;
             ViewBag.GerarTesteJogador = false;
@@ -1727,6 +2092,7 @@
             ViewBag.UpdateFinancas = true;
             ViewBag.VerificaTecnicos = true;
             ViewBag.AtualizarTransferencias = true;
+            ViewBag.AtualizarLeiloes = true;
             ViewBag.VariarJogador = 2;
             ViewBag.ZeraStaffConsultas = true;
             ViewBag.GerarTesteJogador = true;

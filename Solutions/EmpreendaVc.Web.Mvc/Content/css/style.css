@@ -1,4 +1,4 @@
-﻿body { margin: 0px; padding: 0px; background: url('../img/bg.png') repeat-x #FBFBFB; font-family: 'Arial', 'Trebuchet MS', Sans-Serif; font-size: 12px; color: #333; }
+﻿body { margin: 0px; padding: 0px; background: url('../img/bg.png') repeat-x #FBFBFB; font-family: 'PT Sans', sans-serif; font-size: 13px; color: #333; }
 
 .clear { clear:both; }
 a { color: #4982B9; font-weight: bold; text-decoration: none; }
@@ -22,9 +22,9 @@ a { color: #4982B9; font-weight: bold; text-decoration: none; }
 
 .btFacebook { cursor: pointer; background: url('../img/btface.png'); width: 250px; height: 50px; margin: 0 auto; margin-top: 15px; }
 
-h2 { color: #333; font-size: 26px; font-weight: normal;letter-spacing: -0.08em; margin-top: 0px; text-transform: uppercase; } /*#4982B9*/
-h2 .legenda { float: right; font-size: 9px; color: #333; text-transform: uppercase; letter-spacing: 0; margin-top: 2px; text-align:right; }
-h2 .legenda b { font-size: 11px; }
+h2 { color: #333; font-size: 30px; font-weight: bold; letter-spacing: -0.08em; margin-top: 0px; text-transform: uppercase; } /*#4982B9*/
+h2 .legenda { float: right; font-size: 9px; color: #333; font-weight: normal; text-transform: uppercase; letter-spacing: 0; margin-top: 2px; text-align:right; font-family: 'Arial' }
+h2 .legenda b { font-size: 11px; font-weight: bold; }
 h3 { text-transform: uppercase; }
 
 .caixa { border: 1px solid #CBDBEB; padding: 10px; border-top: 2px solid #4982B9; border-radius: 3px; margin-bottom: 10px; }
@@ -42,7 +42,7 @@ h3 { text-transform: uppercase; }
 .tr-temporario td { color: #0066CC; }
 .tr-temporario td a { color: #0066CC; }
 
-.botao { display:block; cursor: pointer; width: 260px; height: 18px; text-align: center; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
+.botao { display:block; cursor: pointer; width: 260px; height: 18px; text-align: center; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Ubuntu'; font-weight:normal; text-transform: uppercase; font-size: 14px; }
 
 #right { width: 280px; float: right; }
 #left { width: 650px; float: left; }
@@ -69,8 +69,8 @@ hr { border: none; border-bottom: 1px #CBDBEB solid; }
 #plantel-proximo { float: right; width: 260px; }
 
 #plantel-posicao { height: 50px; width: 650px; float:left; }
-    .posicao-vazio { float: left; margin-right: 5px; width: 34px; background: #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; text-align: center; }
-    .posicao-preenchido { float: left; margin-right: 5px; width: 34px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; text-align: center; }
+    .posicao-vazio { float: left; margin-right: 5px; width: 34px; background: #CBDBEB; color: #4982B9; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Ubuntu'; font-size: 14px; text-align: center; }
+    .posicao-preenchido { float: left; margin-right: 5px; width: 34px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Ubuntu'; font-size: 14px; text-align: center; }
 
 #plantel-visualizar { height: 50px; float: right; font-size: 14px; }
     .con { display: none; }
@@ -113,7 +113,7 @@ hr { border: none; border-bottom: 1px #CBDBEB solid; }
 
 .confirmar-link { display: block; width: 50px; height: 32px; background: url('../img/confirmar.png') center center no-repeat; float: right }
 .cancelar-link { display: block; width: 50px; height: 32px; background: url('../img/confirmar.png') center center no-repeat; float: right }
-.voltar-link { font-family: 'Trebuchet MS'; text-decoration: underline; text-transform: uppercase; font-size: 14px; margin-left: 25px;}
+.voltar-link { font-family: 'Ubuntu'; text-decoration: underline; text-transform: uppercase; font-size: 14px; margin-left: 25px;}
 
 .porcentagem { border: 1px solid #CBDBEB; border-radius: 3px; height: 40px; background: }
     .porcentagem .porcentagem-valor { position: absolute; font-size: 22px; font-weight: bold;  text-align: center; width: 925px; padding-top: 6px;}
@@ -126,8 +126,8 @@ hr { border: none; border-bottom: 1px #CBDBEB solid; }
 .select-escalacao { background: #FBFBFB; padding: 0px; border: none; font-size: 14px; font-weight: bold; text-align: center; width: 48px; }
 .lesionado { display: block; height: 20px; width: 20px; background: url('../img/lesionado.png') center center no-repeat; }
 
-input[type="text"], input[type="password"], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; padding: 10px; border-radius: 3px; }
-.submit { cursor: pointer; min-width: 200px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Trebuchet MS'; font-weight: bold; text-transform: uppercase; font-size: 14px; }
+input[type="text"], input[type="password"], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; padding: 10px; border-radius: 3px; font-family: 'Ubuntu'; }
+.submit { cursor: pointer; min-width: 200px; background: #333; border: 0px; color: #fff; border-top: 2px solid #4982B9; padding: 10px; border-radius: 3px; font-family: 'Ubuntu'; font-weight: normal; text-transform: uppercase; font-size: 14px; }
 .submit:hover { background: #444; }
 
 #loading { position: absolute; z-index: 10000; text-align: center; background: url('../img/bgtrans.png'); display: none; }

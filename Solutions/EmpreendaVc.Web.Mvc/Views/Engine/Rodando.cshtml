@@ -43,6 +43,10 @@
                 {
                     @: window.location.replace("../Engine/AtualizarTransferencias");
                 }
+                else if (!(bool)ViewBag.AtualizarTransferencias)
+                {
+                    @: window.location.replace("../Engine/AtualizarLeiloes");
+                }
                 else if ((int)ViewBag.VariarJogador < 2)
                 {
                     @: window.location.replace("../Engine/VariarJogador?fase=@((int)ViewBag.VariarJogador)");
