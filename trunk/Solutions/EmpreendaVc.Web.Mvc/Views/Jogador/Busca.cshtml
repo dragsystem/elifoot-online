@@ -11,7 +11,7 @@
     var olheiro = (bool)ViewBag.Olheiro;
 }
 <h2>
-    Buscar</h2>
+    Buscar Jogadores</h2>
 @{ Html.RenderAction("Index", "Mensagem"); }
 
 @if (olheiro)
@@ -98,9 +98,10 @@
     <div id="jogador-lista" class="caixa">
         <h1>
             Opções</h1>
-        <a><b>Buscar</b></a><br />
-        <a href="@Url.Action("MinhasPropostas", "Jogador")" >Minhas Propostas</a><br />
-        <a href="@Url.Action("MeusJogadores", "Jogador")">Propostas Recebidas</a><br />
+        <a><b>Buscar Jogadores</b></a><br />
+        <a href="@Url.Action("Busca", "Leilao")">Buscar Leilões</a><br />
+        <a href="@Url.Action("MinhasPropostas", "Leilao")" >Minhas Propostas</a><br />
+        <a href="@Url.Action("MeusJogadores", "Leilao")">Meus Leilões</a><br />
     </div>
     @{ Html.RenderAction("_Menu", "Clube"); }
 </div>

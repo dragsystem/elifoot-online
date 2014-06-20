@@ -60,11 +60,11 @@ namespace EmpreendaVc.Domain
                 if (Clube != null)
                 {
                     if (Situacao == 1)
-                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 1500 + (Posicao * 200000);
+                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 900 + (Posicao * 50000);
                     else if (Situacao == 2)
-                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 1300 + (Posicao * 200000);
+                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 600 + (Posicao * 50000);
                     else
-                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 1000 + (Posicao * 200000);
+                        return (H * (H - 20 > 1 ? H - 20 : 1)) * 300 + (Posicao * 50000);
                 }
                 else
                     return 0;

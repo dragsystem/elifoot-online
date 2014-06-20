@@ -174,6 +174,7 @@
     <Compile Include="Controllers\ControllerCustom.cs" />
     <Compile Include="Controllers\ClubeController.cs" />
     <Compile Include="Controllers\AIController.cs" />
+    <Compile Include="Controllers\LeilaoController.cs" />
     <Compile Include="Controllers\PatrocinioController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\JogadorController.cs" />
@@ -183,6 +184,8 @@
     <Compile Include="Controllers\MensagemController.cs" />
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\SendMailController.cs" />
+    <Compile Include="Controllers\ViewModels\PosicaoCompradaView.cs" />
+    <Compile Include="Controllers\ViewModels\GolPossibilidadeView.cs" />
     <Compile Include="Controllers\ViewModels\JogadorFiltroView.cs" />
     <Compile Include="Controllers\ViewModels\StaffFiltroView.cs" />
     <Compile Include="Controllers\ViewModels\ErrorDictionary.cs" />
@@ -461,6 +464,11 @@
     <Content Include="Views\Patrocinio\PatrocinioEncerrar.cshtml" />
     <Content Include="Views\Patrocinio\PatrocinioOferta.cshtml" />
     <Content Include="Views\Patrocinio\MeusPatrocinios.cshtml" />
+    <Content Include="Views\Leilao\Busca.cshtml" />
+    <Content Include="Views\Leilao\JogadorOferta.cshtml" />
+    <Content Include="Views\Leilao\JogadorPedido.cshtml" />
+    <Content Include="Views\Leilao\MinhasPropostas.cshtml" />
+    <Content Include="Views\Leilao\MeusJogadores.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -509,7 +517,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>16151</DevelopmentServerPort>
+          <DevelopmentServerPort>47132</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

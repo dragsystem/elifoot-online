@@ -75,7 +75,7 @@
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
-            if (usuario.Clube.Id == id)
+            if (usuario.Clube != null && usuario.Clube.Id == id)
                 return RedirectToAction("Plantel", "Clube");
 
             var clube = clubeRepository.Get(id);
@@ -568,15 +568,16 @@
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
-            if (usuario.Clube == null)
-                return RedirectToAction("Index", "Conta");
-
-            ViewBag.Usuario = usuario;
-
-            var clube = usuario.Clube;
+            var clube = new Clube();
 
             if (id.HasValue)
                 clube = clubeRepository.Get(id.Value);
+            else if (usuario.Clube != null)
+                clube = usuario.Clube;
+            else
+                clube = null;
+
+            ViewBag.Usuario = usuario;           
 
             return View(clube);
         }
