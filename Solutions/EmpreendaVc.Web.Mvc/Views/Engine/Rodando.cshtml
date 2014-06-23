@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Index</title>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="@Url.Content("~/Content/js/jquery-1.9.1.js")" ></script>
 
     <script type="text/javascript">
         $(function () {
@@ -43,7 +43,7 @@
                 {
                     @: window.location.replace("../Engine/AtualizarTransferencias");
                 }
-                else if (!(bool)ViewBag.AtualizarTransferencias)
+                else if (!(bool)ViewBag.AtualizarLeiloes)
                 {
                     @: window.location.replace("../Engine/AtualizarLeiloes");
                 }
@@ -109,6 +109,10 @@
         <tr>
             <th>AtualizarTransferencias...............................................</th>
             <td>@((bool)ViewBag.AtualizarTransferencias ? "OK" : "")</td>
+        </tr>
+        <tr>
+            <th>AtualizarLeiloes......................................................</th>
+            <td>@((bool)ViewBag.AtualizarLeiloes ? "OK" : "")</td>
         </tr>
         <tr>
             <th>VariarJogador.............................................................</th>

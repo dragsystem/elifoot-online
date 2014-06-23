@@ -479,7 +479,7 @@
         //}
 
         [Authorize]
-        public ActionResult Resultados(int? divisao, int? rodada, int? taca)
+        public ActionResult Resultados(int? divisao, int? rodada, int? taca, int? mao)
         {
             var usuario = authenticationService.GetUserAuthenticated();
 
@@ -522,35 +522,64 @@
                 if (rodada.HasValue)
                 {
                     var ultrodada = rodada.Value;
-                    if (ultrodada == 16)
-                        ViewBag.Rodada = "1ª Eliminatória";
-                    else if (ultrodada == 8)
-                        ViewBag.Rodada = "Oitavas de Final";
-                    else if (ultrodada == 4)
-                        ViewBag.Rodada = "Quartas de Final";
-                    else if (ultrodada == 2)
-                        ViewBag.Rodada = "Semi Final";
-                    else if (ultrodada == 1)
-                        ViewBag.Rodada = "FINAL";
+
+                    lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == ultrodada && x.Realizada).ToList();
+
+                    if (!taca.HasValue)
+                        mao = lstPartidas.Last().Mao;
+                    
+                    if (ultrodada == 16 && mao == 1)
+                        ViewBag.Rodada = "1ª Eliminatória - 1ª Mão";
+                    else if (ultrodada == 16 && mao == 2)
+                        ViewBag.Rodada = "1ª Eliminatória - 2ª Mão";
+                    else if (ultrodada == 8 && mao == 1)
+                        ViewBag.Rodada = "Oitavas de Final - 1ª Mão";
+                    else if (ultrodada == 8 && mao == 2)
+                        ViewBag.Rodada = "Oitavas de Final - 2ª Mão";
+                    else if (ultrodada == 4 && mao == 1)
+                        ViewBag.Rodada = "Quartas de Final - 1ª Mão";
+                    else if (ultrodada == 4 && mao == 2)
+                        ViewBag.Rodada = "Quartas de Final - 2ª Mão";
+                    else if (ultrodada == 2 && mao == 1)
+                        ViewBag.Rodada = "Semi Final - 1ª Mão";
+                    else if (ultrodada == 2 && mao == 2)
+                        ViewBag.Rodada = "Semi Final - 2ª Mão";
+                    else if (ultrodada == 1 && mao == 1)
+                        ViewBag.Rodada = "FINAL - 1ª Mão";
+                    else if (ultrodada == 1 && mao == 2)
+                        ViewBag.Rodada = "FINAL - 2ª Mão";
 
                     ViewBag.RodadaNum = ultrodada;
-                    lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == ultrodada && x.Realizada).ToList();
+                    lstPartidas = lstPartidas.Where(x => x.Mao == mao).ToList();
+
                 }
                 else
                 {
                     lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada).OrderBy(x => x.Rodada).ToList();
                     var ultrodada = lstPartidas.Count() > 0 ? lstPartidas.First().Rodada : 16;
-                    if (ultrodada == 16)
-                        ViewBag.Rodada = "1ª Eliminatória";
-                    else if (ultrodada == 8)
-                        ViewBag.Rodada = "Oitavas de Final";
-                    else if (ultrodada == 4)
-                        ViewBag.Rodada = "Quartas de Final";
-                    else if (ultrodada == 2)
-                        ViewBag.Rodada = "Semi Final";
-                    else if (ultrodada == 1)
-                        ViewBag.Rodada = "FINAL";
-                    lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada).ToList();
+                    mao = lstPartidas.Last().Mao;
+                    if (ultrodada == 16 && mao == 1)
+                        ViewBag.Rodada = "1ª Eliminatória - 1ª Mão";
+                    else if (ultrodada == 16 && mao == 2)
+                        ViewBag.Rodada = "1ª Eliminatória - 2ª Mão";
+                    else if (ultrodada == 8 && mao == 1)
+                        ViewBag.Rodada = "Oitavas de Final - 1ª Mão";
+                    else if (ultrodada == 8 && mao == 2)
+                        ViewBag.Rodada = "Oitavas de Final - 2ª Mão";
+                    else if (ultrodada == 4 && mao == 1)
+                        ViewBag.Rodada = "Quartas de Final - 1ª Mão";
+                    else if (ultrodada == 4 && mao == 2)
+                        ViewBag.Rodada = "Quartas de Final - 2ª Mão";
+                    else if (ultrodada == 2 && mao == 1)
+                        ViewBag.Rodada = "Semi Final - 1ª Mão";
+                    else if (ultrodada == 2 && mao == 2)
+                        ViewBag.Rodada = "Semi Final - 2ª Mão";
+                    else if (ultrodada == 1 && mao == 1)
+                        ViewBag.Rodada = "FINAL - 1ª Mão";
+                    else if (ultrodada == 1 && mao == 2)
+                        ViewBag.Rodada = "FINAL - 2ª Mão";
+
+                    lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada && x.Mao == mao).ToList();
 
                     ViewBag.RodadaNum = ultrodada;
                 }

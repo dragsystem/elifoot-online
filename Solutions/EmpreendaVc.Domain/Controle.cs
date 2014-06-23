@@ -21,6 +21,8 @@ namespace EmpreendaVc.Domain
 
         public virtual int Taca { get; set; }
 
+        public virtual bool Manutencao { get; set; }
+
         public Controle()
         {
             Data = DateTime.Now;

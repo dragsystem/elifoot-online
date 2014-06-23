@@ -115,7 +115,9 @@
         {
             try
             {
-                //var controle = controleRepository.GetAll().FirstOrDefault();
+                var controle = controleRepository.GetAll().FirstOrDefault();
+                controle.Manutencao = false;
+                controleRepository.SaveOrUpdate(controle);
 
                 //GerarCampeonato();
                 //AtualizaTabela();
@@ -466,13 +468,13 @@
                     var dif2 = 0;
 
                     if ((Diferenca * -1) < 10)
-                        ProbEmpate = 40;
+                        ProbEmpate = 50;
                     else if ((Diferenca * -1) < 20)
-                        ProbEmpate = 30;
+                        ProbEmpate = 40;
                     else if ((Diferenca * -1) < 30)
-                        ProbEmpate = 12;
+                        ProbEmpate = 20;
                     else if ((Diferenca * -1) >= 30)
-                        ProbEmpate = 6;
+                        ProbEmpate = 10;
 
                     Prob1 = (Prob1 + (Diferenca));
                     Prob2 = (Prob2 - (Diferenca));                    
@@ -765,13 +767,13 @@
                         jogador.Jogos = jogador.Jogos + 1;
                         jogador.H = jogador.H - 1;
 
-                        if (jogador.H < (jogador.HF - 20))
-                            jogador.H = jogador.HF - 20;
+                        if (jogador.H < (jogador.HF - 10))
+                            jogador.H = jogador.HF - 10;
 
                         if (jogador.H < 1)
                             jogador.H = 1;
 
-                        if (jogador.Posicao != 1 && !jogador.Temporario)
+                        if (jogador.Posicao != 1 && !jogador.Temporario && jogador.Clube != null && jogador.Clube.Usuario != null)
                             jogador.Condicao = jogador.Condicao - 15;
 
                         jogadorRepository.SaveOrUpdate(jogador);
@@ -779,11 +781,12 @@
                         if (gol1 > 0)
                         {
                             var gp = new GolPossibilidadeView();
+                            var comp = lstgoleadores1.Count() > 0 ? lstgoleadores1.OrderByDescending(x => x.P).FirstOrDefault().P : 0; 
                             gp.Jogador = jogador;
-                            if (jogador.Posicao == 1)
-                                gp.P = 1;
+                            if (escalacao.Posicao == 1)
+                                gp.P = 0;
                             else
-                                gp.P = lstgoleadores1.Sum(x => x.P) + (jogador.Posicao + (jogador.H / 10));
+                                gp.P = comp + escalacao.HGol;
 
                             lstgoleadores1.Add(gp);
                         }
@@ -795,13 +798,13 @@
                         jogador.Jogos = jogador.Jogos + 1;
                         jogador.H = jogador.H - 1;
 
-                        if (jogador.H < (jogador.HF - 20))
-                            jogador.H = jogador.HF - 20;
+                        if (jogador.H < (jogador.HF - 10))
+                            jogador.H = jogador.HF - 10;
 
                         if (jogador.H < 1)
                             jogador.H = 1;
 
-                        if (jogador.Posicao != 1 && !jogador.Temporario)
+                        if (jogador.Posicao != 1 && !jogador.Temporario && jogador.Clube != null && jogador.Clube.Usuario != null)
                             jogador.Condicao = jogador.Condicao - 15;
 
                         jogadorRepository.SaveOrUpdate(jogador);
@@ -809,11 +812,12 @@
                         if (gol2 > 0)
                         {
                             var gp = new GolPossibilidadeView();
+                            var comp = lstgoleadores2.Count() > 0 ? lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P : 0; 
                             gp.Jogador = jogador;
-                            if (jogador.Posicao == 1)
-                                gp.P = 1;
+                            if (escalacao.Posicao == 1)
+                                gp.P = 0;
                             else
-                                gp.P = lstgoleadores2.Sum(x => x.P) + (jogador.Posicao + (jogador.H / 10));
+                                gp.P = comp + escalacao.HGol;
 
                             lstgoleadores2.Add(gp);
                         }
@@ -829,8 +833,8 @@
                             gol.Clube = clube1;
                             gol.Minuto = rnd.Next(1, 94);
                             gol.Partida = partida;
-                            var goleador = rnd.Next(1, lstgoleadores1.OrderByDescending(x => x.P).FirstOrDefault().P);
-                            gol.Jogador = lstgoleadores1.FirstOrDefault(x => goleador >= x.P).Jogador;
+                            var goleador = rnd.Next(1, lstgoleadores1.OrderByDescending(x => x.P).FirstOrDefault().P + 1);
+                            gol.Jogador = lstgoleadores1.FirstOrDefault(x => goleador <= x.P).Jogador;
 
                             golRepository.SaveOrUpdate(gol);
                         }
@@ -848,8 +852,8 @@
                             gol.Clube = clube2;
                             gol.Minuto = rnd.Next(1, 94);
                             gol.Partida = partida;
-                            var goleador = rnd.Next(1, lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P);
-                            gol.Jogador = lstgoleadores2.FirstOrDefault(x => goleador >= x.P).Jogador;
+                            var goleador = rnd.Next(1, lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P +1);
+                            gol.Jogador = lstgoleadores2.FirstOrDefault(x => goleador <= x.P).Jogador;
 
                             golRepository.SaveOrUpdate(gol);
                         }
@@ -1730,31 +1734,39 @@
 
             var rnd = new Random();
             foreach (var jogador in lstJogador.Skip(skip).Take(take))
-            {
-                var variavel = rnd.Next(-2, 3);
+            {                                
+                var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
 
-                jogador.H = jogador.H + (variavel);
+                if (escalacao == null)
+                {
+                    var variavel = rnd.Next(0, 1);
+                    jogador.H = jogador.H + (variavel);
 
-                if (jogador.H > (jogador.HF + 20))
-                    jogador.H = jogador.HF + 20;
-                else if (jogador.H < (jogador.HF - 20))
-                    jogador.H = jogador.HF - 20;
+                    if (jogador.H > (jogador.HF + 10))
+                        jogador.H = jogador.HF + 10;
+                    else if (jogador.H < (jogador.HF - 10))
+                        jogador.H = jogador.HF - 10;
 
-                if (jogador.H > 99)
-                    jogador.H = 99;
-                else if (jogador.H < 1)
-                    jogador.H = 1;               
+                    if (jogador.H > 99)
+                        jogador.H = 99;
+                    else if (jogador.H < 1)
+                        jogador.H = 1;
+                }
 
                 if (jogador.Lesionado == 0 && jogador.Clube != null)
                 {
                     var chancelesionar = 2;
 
-                    if (jogador.Condicao < 50)
+                    if (jogador.Condicao < 30)
+                        chancelesionar = 80;
+                    else if (jogador.Condicao < 40)
                         chancelesionar = 20;
-                    else if (jogador.Condicao < 60)
+                    else if (jogador.Condicao < 50)
                         chancelesionar = 10;
-                    else if (jogador.Condicao < 80)
+                    else if (jogador.Condicao < 60)
                         chancelesionar = 5;
+                    else if (jogador.Condicao < 80)
+                        chancelesionar = 1;
 
                     if (rnd.Next(1, 101) > chancelesionar)
                     {
@@ -1825,10 +1837,6 @@
                             jogador.Condicao = jogador.Condicao + 10;
                         else
                             jogador.Condicao = 100;
-
-                        //var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
-                        //if (escalacao == null)
-                        //    jogador.NotaUlt = 0;
                     }
                     else
                     {
@@ -1853,7 +1861,6 @@
                         jogador.Lesionado = tempo;
                         jogadorRepository.SaveOrUpdate(jogador);
 
-                        var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
                         if (escalacao != null)
                         {
                             escalacao.Jogador = null;
@@ -1932,8 +1939,9 @@
 
                     if (clube.Jogadores.Where(x => x.Posicao == pos && !x.Temporario && x.Lesionado == 0).Count() < min)
                     {
-                        var temporarios = clube.Jogadores.Where(x => x.Posicao == pos && x.Temporario).Count();
-                        if (min == 2 && temporarios == 1 || min == 1 && temporarios == 0)
+                        var qnttemp = min - clube.Jogadores.Where(x => x.Posicao == pos && x.Lesionado == 0).Count();
+
+                        for (int novos = 1; novos <= qnttemp; novos++)
                         {
                             var jogador = new Jogador();
                             jogador.Clube = clube;
@@ -1976,6 +1984,7 @@
             ViewBag.GerarTesteJogador = false;
 
             return View("Rodando");
+            //return View("Index");
         }
 
         [Transaction]

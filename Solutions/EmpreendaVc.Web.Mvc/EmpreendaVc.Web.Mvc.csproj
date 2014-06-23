@@ -322,6 +322,7 @@
     <Content Include="Content\adm\tipsy.css" />
     <Content Include="Content\adm\visualize.css" />
     <Content Include="Content\adm\wysiwyg.css" />
+    <Content Include="Content\css\jquery-ui.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\img\bg.png" />
     <Content Include="Content\img\bgtrans.png" />
@@ -342,6 +343,7 @@
     <Content Include="Content\img\star.4.png" />
     <Content Include="Content\img\star.5.png" />
     <Content Include="Content\img\vender.png" />
+    <Content Include="Content\js\jquery-1.9.1.js" />
     <Content Include="Content\js\facebook.js" />
     <Content Include="Content\js\fullcalendar\fullcalendar.css" />
     <Content Include="Content\js\fullcalendar\fullcalendar.js" />
@@ -351,7 +353,7 @@
     <Content Include="Content\js\Jqgrid\grid.locale-en.js" />
     <Content Include="Content\js\Jqgrid\grid.locale-pt-br.js" />
     <Content Include="Content\js\Jqgrid\jquery.jqGrid.min.js" />
-    <Content Include="Content\js\jquery-ui.min.js" />
+    <Content Include="Content\js\jquery-ui.js" />
     <Content Include="Content\js\jquery.meio.mask.min.js" />
     <Content Include="Content\js\jquery.ui.datepicker-pt-BR.js" />
     <Content Include="Content\js\jquery.visualize.js" />
