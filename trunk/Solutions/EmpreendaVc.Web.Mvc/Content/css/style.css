@@ -123,7 +123,7 @@ hr { border: none; border-bottom: 1px #CBDBEB solid; }
 #msg-erro { padding: 10px 10px 10px 40px; background: url('../img/msg-erro.png') 10px 8px no-repeat #C80000; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
 #msg-alerta { padding: 10px 10px 10px 40px; background: url('../img/msg-alerta.png') 10px 8px no-repeat #CAAC00; font-weight: bold; font-size: 14px; color: #fff; margin-bottom: 20px; border-radius: 3px; }
 
-.select-escalacao { background: #FBFBFB; padding: 0px; border: none; font-size: 14px; font-weight: bold; text-align: center; width: 48px; }
+.select-escalacao { background: #FBFBFB; padding: 0px; border: none; font-size: 12px; font-weight: bold; text-align: center; width: 48px; }
 .lesionado { display: block; height: 20px; width: 20px; background: url('../img/lesionado.png') center center no-repeat; }
 
 input[type="text"], input[type="password"], textarea, select { background: #EEF3F9; border: 1px solid #CBDBEB; color: #4982B9; padding: 10px; border-radius: 3px; font-family: 'Ubuntu'; }
@@ -131,5 +131,4 @@ input[type="text"], input[type="password"], textarea, select { background: #EEF3
 .submit:hover { background: #444; }
 
 #loading { position: absolute; z-index: 10000; text-align: center; background: url('../img/bgtrans.png'); display: none; }
-#loading-image { height: 80px; width: 80px; margin: 0 auto; margin-top: 300px; z-index: 11000; background: #fff; border: 1px solid #CBDBEB; border-radius: 3px; }
-#loading-image img { margin-top: 10px; margin-left: -3px; }
+#loading-image { height: 128px; width: 128px; margin: 0 auto; margin-top: 300px; z-index: 11000; border-radius: 3px; }

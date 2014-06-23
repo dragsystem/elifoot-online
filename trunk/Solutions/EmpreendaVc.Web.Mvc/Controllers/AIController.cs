@@ -329,8 +329,10 @@
         {
             var controle = controleRepository.GetAll().FirstOrDefault();
 
-            foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null))//.GetAll()
+            foreach (var clube in clubeRepository.GetAll().Where(x => x.Usuario == null))
             {
+                //if ((clube.DivisaoTabelas.Count() > 0 && clube.DivisaoTabelas.FirstOrDefault(x => x.Clube.Id == clube.Id && x.Divisao.Id == clube.Divisao.Id).Posicao > 3) || clube.DivisaoTabelas.Count() == 0)
+                //{
                 var dinheiro = clube.Dinheiro - 600000;
                 var gtotal = clube.Jogadores.Where(x => x.Posicao == 1 && !x.Temporario).Count();
                 var ldtotal = clube.Jogadores.Where(x => x.Posicao == 2 && !x.Temporario).Count();
@@ -441,6 +443,7 @@
                     jogadoroferta.Contrato = 2;
                     jogadorleilaoofertaRepository.SaveOrUpdate(jogadoroferta);
                 }
+                //}
             }
             return RedirectToAction("Index", "AI");
         }
