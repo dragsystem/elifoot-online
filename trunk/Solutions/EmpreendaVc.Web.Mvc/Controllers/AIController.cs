@@ -341,7 +341,7 @@
                 var vtotal = clube.Jogadores.Where(x => x.Posicao == 5 && !x.Temporario).Count();
                 var mototal = clube.Jogadores.Where(x => x.Posicao == 6 && !x.Temporario).Count();
                 var atotal = clube.Jogadores.Where(x => x.Posicao == 7 && !x.Temporario).Count();
-                var lstjogadores = jogadorleilaoRepository.GetAll().Where(x => (x.Clube != null && x.Clube.Id != clube.Id) && x.Jogador.JogadorPreContrato.Count() == 0 && x.Jogador.H > (clube.Jogadores.Average(y => y.H) - 15) && x.Jogador.H < (clube.Jogadores.Average(y => y.H) + 40) && !x.Jogador.Temporario && x.Valor < dinheiro); // && 
+                var lstjogadores = jogadorleilaoRepository.GetAll().Where(x => x.Estagio < 2 && (x.Clube != null && x.Clube.Id != clube.Id) && x.Jogador.JogadorPreContrato.Count() == 0 && x.Jogador.H > (clube.Jogadores.Average(y => y.H) - 15) && x.Jogador.H < (clube.Jogadores.Average(y => y.H) + 40) && !x.Jogador.Temporario && x.Valor < dinheiro); // && 
                                                                             //((x.Jogador.Posicao == 1 && x.Jogador.H >= g) ||
                                                                             //(x.Jogador.Posicao == 2 && x.Jogador.H >= ld) ||
                                                                             //(x.Jogador.Posicao == 3 && x.Jogador.H >= z) ||

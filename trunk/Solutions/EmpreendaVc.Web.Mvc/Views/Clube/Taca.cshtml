@@ -28,7 +28,7 @@
     else
     { 
         @: FINAL
-            }
+                }
 </h2>
 <div id="left">
     <div id="classificacao-taca">
@@ -36,12 +36,12 @@
         {
             <table class="classificacao" cellpadding="0" cellspacing="0">
                 <tr>
-                    <th>
+                    <th colspan="3">
                         Clube (CASA)
                     </th>
-                    <th colspan="5">
-                    </th>
                     <th>
+                    </th>
+                    <th colspan="3">
                         Clube (FORA)
                     </th>
                 </tr>
@@ -79,6 +79,10 @@
                             <td style="text-align: right;@style2">@item.Clube2.Nome
                             </td>
                             <td>
+                                @if (!string.IsNullOrEmpty(item.Penalti) && item.Vencedor.Id == item.Clube2.Id)
+                                {
+                                    @: <a class="penalti" title="@item.Penalti" style="color: Red">P</a> &nbsp;&nbsp;
+                                }   
                                 (@jogoida.Gol1)
                             </td>
                             <td>@item.Gol2
@@ -90,6 +94,10 @@
                             </td>
                             <td>
                                 (@jogoida.Gol2)
+                                @if (!string.IsNullOrEmpty(item.Penalti) && item.Vencedor.Id == item.Clube1.Id)
+                                {
+                                    @: &nbsp;&nbsp;<a class="penalti" title="@item.Penalti" style="color: Red;">P</a> 
+                                } 
                             </td>
                             <td style="text-align: left;@style1">@item.Clube1.Nome
                             </td>
@@ -149,7 +157,8 @@
         @if (rodada > 1)
         { <a href="@Url.Action("Taca", "Clube", new { rodada = (rodada / 2) })" >Próxima fase</a> }
     </div>
-    <h2>ARTILHEIROS</h2>
+    <h2>
+        ARTILHEIROS</h2>
     <div id="classificacao-artilheiro">
         <table class="classificacao" cellpadding="0" cellspacing="0">
             <tr>
@@ -174,10 +183,14 @@
                 else { style = ""; }
             
                 <tr @style>
-                    <td>@i</td>
-                    <td style="text-align: left;">@item.Jogador.Nome</td>
-                    <td style="text-align: left;">@item.Clube.Nome</td>
-                    <td style="text-align: left;">@item.Taca</td>
+                    <td>@i
+                    </td>
+                    <td style="text-align: left;">@item.Jogador.Nome
+                    </td>
+                    <td style="text-align: left;">@item.Clube.Nome
+                    </td>
+                    <td style="text-align: left;">@item.Taca
+                    </td>
                 </tr>
                 i++;
             }
@@ -195,6 +208,4 @@
         }
     </div>
     @{ Html.RenderAction("_Menu", "Clube"); }
-
 </div>
-

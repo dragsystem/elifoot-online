@@ -129,7 +129,7 @@
                 jogadorfiltro = (JogadorFiltroView)Session["JogadorLeilaoFiltroView"];
 
                 var lstJogador = jogadorleilaoRepository.GetAll()
-                            .Where(x => x.Clube != null && x.Clube.Id != usuario.Clube.Id);
+                            .Where(x => x.Clube != null && x.Clube.Id != usuario.Clube.Id && x.Estagio < 2);
 
                 if (!string.IsNullOrEmpty(jogadorfiltro.Nome))
                     lstJogador = lstJogador.Where(x => x.Jogador.Nome.Contains(jogadorfiltro.Nome.ToUpper()));
@@ -411,6 +411,63 @@
             {
                 TempData["MsgErro"] = "Erro na validação dos campos!";
                 return View(jogadorpedido);
+            }
+        }
+
+        [Authorize]
+        public ActionResult BotarLeilao(int id)
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var jogador = jogadorRepository.Get(id);
+            var jogadorleilao = jogadorleilaoRepository.GetAll().FirstOrDefault(x => x.Clube.Id == usuario.Clube.Id && x.Jogador.Id == jogador.Id);
+
+            if (jogadorleilao == null)
+                jogadorleilao = new JogadorLeilao();
+
+            jogadorleilao.Jogador = jogador;
+
+            ViewBag.Clube = usuario.Clube;
+
+            return View(jogadorleilao);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Transaction]
+        public ActionResult BotarLeilao(int id, FormCollection form)
+        {
+            var controle = controleRepository.GetAll().FirstOrDefault();
+            var usuario = authenticationService.GetUserAuthenticated();
+
+            if (usuario.Clube == null)
+                return RedirectToAction("Index", "Conta");
+
+            var jogador = jogadorRepository.Get(id);
+            var jogadorleilao = new JogadorLeilao();
+
+            TryUpdateModel(jogadorleilao, form);
+
+            jogadorleilao.Jogador = jogador;
+            jogadorleilao.Clube = usuario.Clube;
+            jogadorleilao.Dia = controle.Dia;
+            jogadorleilao.Estagio = 2;
+
+            if (jogadorleilao.IsValid())
+            {
+                jogadorleilaoRepository.SaveOrUpdate(jogadorleilao);
+
+                TempData["MsgOk"] = "Leilão de jogador efetuado com sucesso!";
+                return RedirectToAction("Index", "Jogador", new { id = jogador.Id });
+            }
+            else
+            {
+                TempData["MsgErro"] = "Erro na validação dos campos!";
+                return View(jogadorleilao);
             }
         }
     }

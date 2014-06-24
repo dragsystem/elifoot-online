@@ -36,18 +36,24 @@
                 <tr>
                     <td>
                         @if ((item.Clube1.Id == clube.Id && id == 0) || (item.Clube1.Id == id))
-                        { @item.Clube2.Nome }
+                        { 
+                            <a href="@Url.Action("Index", "Clube", new { id = item.Clube2.Id })">@item.Clube2.Nome </a>
+                        }
                         else
-                        { @item.Clube1.Nome }
+                        { 
+                            <a href="@Url.Action("Index", "Clube", new { id = item.Clube2.Id })">@item.Clube1.Nome </a>
+                        }
                     </td>
                     <td>@(DateTime.Now.AddDays(item.Dia - dia).ToShortDateString())
                     </td>
                     <td>
                         @if (item.Tipo == "DIVISAO")
-                        { @clube.Divisao.Nome }
+                        { 
+                            <a href="@Url.Action("Classificacao", "Clube", new { iddivisao = clube.Divisao.Id })">@clube.Divisao.Nome </a>
+                        }
                         else
                         {
-                            @:<span style="font-size: 10px;">
+                            @:<a href="@Url.Action("Taca", "Clube")"><span style="font-size: 10px;">
                             if (item.Rodada == 16)
                             {
                                 @: TAÇA - 1ª Eliminatória - @(item.Mao)ª Mão
@@ -68,7 +74,7 @@
                             {
                                 @: TAÇA - FINAL - @(item.Mao)ª Mão
                             }
-                            @: </span>
+                            @:</span></a>
                         }
                     </td>
                     <td>

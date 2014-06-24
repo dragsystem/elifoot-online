@@ -33,6 +33,7 @@ UPDATE [dbElifoot].[elifoot].[Clubes]
 
 UPDATE [dbElifoot].[elifoot].[Jogadors]
   SET Contrato = 2,
+  H = HF,
   Jogos = 0,
   NotaUlt = 0,
   NotaTotal = 0,
@@ -58,3 +59,5 @@ UPDATE Jogadors
   UPDATE Jogadors
   SET Salario = (5000 + (Posicao * 3000))
   WHERE H > 0 AND H < 20
+
+update [dbElifoot].[elifoot].[Staffs] set UsuarioId = NULL
