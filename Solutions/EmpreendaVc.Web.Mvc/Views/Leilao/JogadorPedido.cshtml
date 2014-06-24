@@ -1,0 +1,44 @@
+﻿@model EmpreendaVc.Domain.JogadorPedidoLeilao
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+}
+<h2>
+    Pedir que @Model.Jogador.Nome @(Model.Jogador.Clube != null ? "(" + Model.Jogador.Clube.Nome + ")" : "") vá a leilão.
+</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<table class="classificacao" cellpadding="0" cellspacing="0">
+    <tr>
+        <th width="33%">Posição</th>
+        <th width="33%">Salário</th>
+        <th width="33%">Contrato</th>
+    </tr>
+    <tr>
+        <td>@Util.RetornaPosicaoCompleta(Model.Jogador.Posicao)</td>
+        @if (Model.Jogador.Clube != null)
+        {
+            <td>$@Model.Jogador.Salario.ToString("N2")</td>
+            <td>@Model.Jogador.Contrato ano(s)</td>
+        }
+        else
+        {
+            <td>-</td>
+            <td>-</td>
+        }
+    </tr>
+</table>
+
+<div id="jogador-valorproposta">
+    @using (Html.BeginForm("JogadorPedido", "Leilao", new { id = Model.Jogador.Id }))
+    {
+        @:Valor pedido: @this.Select("Valor").Options(Util.RetornaValorVenda(clube.Dinheiro)).FirstOption("Selecione").Selected(Model.Valor != 0 ? Model.Valor.ToString("N2") : "")
+        
+        <input type="submit" class="submit" value="Confirmar" />
+        <a href="@Url.Action("Index", "Jogador", new { id = Model.Jogador.Id })" >Voltar</a>
+    }
+</div>

@@ -471,6 +471,7 @@
     <Content Include="Views\Leilao\JogadorPedido.cshtml" />
     <Content Include="Views\Leilao\MinhasPropostas.cshtml" />
     <Content Include="Views\Leilao\MeusJogadores.cshtml" />
+    <Content Include="Views\Leilao\BotarLeilao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

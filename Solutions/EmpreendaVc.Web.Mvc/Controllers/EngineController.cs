@@ -74,7 +74,7 @@
             INHibernateRepository<Staff> staffRepository,
             INHibernateRepository<Artilheiro> artilheiroRepository,
             INHibernateRepository<JogadorHistorico> jogadorhistoricoRepository,
-            INHibernateRepository<JogadorTeste> jogadortesteRepository, 
+            INHibernateRepository<JogadorTeste> jogadortesteRepository,
             INHibernateRepository<Patrocinio> patrocinioRepository,
             INHibernateRepository<PatrocinioClube> patrocinioclubeRepository,
             INHibernateRepository<PatrocinioRecusa> patrociniorecusaRepository)
@@ -109,7 +109,7 @@
         }
 
         //OK - GerarCampeonato(); 
-        
+
         [Transaction]
         public ActionResult Index()
         {
@@ -138,7 +138,7 @@
 
             return View();
         }
-        
+
         public ActionResult MudarDia()
         {
             ViewBag.AtualizarDataDia = false;
@@ -306,7 +306,7 @@
 
                     if (clube.Formacao.Substring(0, 1) == "4")
                         zagueiros = lstJogadores.Where(x => x.Posicao == 3).OrderByDescending(x => x.H).Take(2);
-                    
+
                     foreach (var vol in volantes)
                     {
                         escalacao = new Escalacao();
@@ -477,7 +477,7 @@
                         ProbEmpate = 10;
 
                     Prob1 = (Prob1 + (Diferenca));
-                    Prob2 = (Prob2 - (Diferenca));                    
+                    Prob2 = (Prob2 - (Diferenca));
 
                     Random rnd = new Random();
 
@@ -781,7 +781,7 @@
                         if (gol1 > 0)
                         {
                             var gp = new GolPossibilidadeView();
-                            var comp = lstgoleadores1.Count() > 0 ? lstgoleadores1.OrderByDescending(x => x.P).FirstOrDefault().P : 0; 
+                            var comp = lstgoleadores1.Count() > 0 ? lstgoleadores1.OrderByDescending(x => x.P).FirstOrDefault().P : 0;
                             gp.Jogador = jogador;
                             if (escalacao.Posicao == 1)
                                 gp.P = 0;
@@ -812,7 +812,7 @@
                         if (gol2 > 0)
                         {
                             var gp = new GolPossibilidadeView();
-                            var comp = lstgoleadores2.Count() > 0 ? lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P : 0; 
+                            var comp = lstgoleadores2.Count() > 0 ? lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P : 0;
                             gp.Jogador = jogador;
                             if (escalacao.Posicao == 1)
                                 gp.P = 0;
@@ -826,7 +826,7 @@
                     //DECIDE QUEM FEZ OS GOLS
                     rnd = new Random();
                     if (gol1 > 0)
-                    {                       
+                    {
                         for (int i = 1; i <= gol1; i++)
                         {
                             var gol = new Gol();
@@ -852,7 +852,7 @@
                             gol.Clube = clube2;
                             gol.Minuto = rnd.Next(1, 94);
                             gol.Partida = partida;
-                            var goleador = rnd.Next(1, lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P +1);
+                            var goleador = rnd.Next(1, lstgoleadores2.OrderByDescending(x => x.P).FirstOrDefault().P + 1);
                             gol.Jogador = lstgoleadores2.FirstOrDefault(x => goleador <= x.P).Jogador;
 
                             golRepository.SaveOrUpdate(gol);
@@ -867,6 +867,11 @@
                         publico = publico / 2;
                     else if (clube1.Ingresso > 25)
                         publico = (publico / 4) * 3;
+
+                    if (partida.Tipo == "TACA" && partida.Rodada < 2)
+                        publico = publico * 2;
+                    else if (partida.Tipo == "TACA" && partida.Rodada < 4)
+                        publico = publico + (publico / 2);
 
                     publico = rnd.Next((publico - 3000), publico);
                     if (publico > clube1.Estadio)
@@ -979,80 +984,83 @@
             var lstTaca = new List<Clube>();
             var rodada = controle.Taca / 2;
 
-            var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada && x.Mao == 2 && x.Rodada == rodada).OrderByDescending(x => x.Rodada);
-
-            var dia1 = 0;
-            var dia2 = 0;
-
-            if (partidas.Count() > 0)
+            if (controle.Taca > 2)
             {
-                foreach (var part in partidas)
-                {
-                    lstTaca.Add(part.Vencedor);
-                }
+                var partidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada && x.Mao == 2 && x.Rodada == rodada).OrderByDescending(x => x.Rodada);
 
-                controle.Taca = rodada;
-                controleRepository.SaveOrUpdate(controle);
+                var dia1 = 0;
+                var dia2 = 0;
 
-                if (rodada == 16)
+                if (partidas.Count() > 0)
                 {
-                    rodada = 8;
-                    dia1 = 10;
-                    dia2 = 13;
-                }
-                else if (rodada == 8)
-                {
-                    rodada = 4;
-                    dia1 = 16;
-                    dia2 = 19;
-                }
-                else if (rodada == 4)
-                {
-                    rodada = 2;
-                    dia1 = 22;
-                    dia2 = 25;
-                }
-                else
-                {
-                    rodada = 1;
-                    dia1 = 28;
-                    dia2 = 32;
-                }
-
-                for (int i = 0; i < rodada; i++) //rodada = numero de partidas
-                {
-                    Random rnd = new Random();
-
-                    var maxclubes = (rodada * 2) - (2 * i);
-                    var clube1 = lstTaca[rnd.Next(0, maxclubes)];
-                    var clube2 = lstTaca[rnd.Next(0, maxclubes)];
-
-                    while (clube1.Id == clube2.Id)
+                    foreach (var part in partidas)
                     {
-                        clube2 = lstTaca[rnd.Next(0, maxclubes)];
+                        lstTaca.Add(part.Vencedor);
                     }
 
-                    var partida1 = new Partida();
-                    partida1.Dia = dia1;
-                    partida1.Mao = 1;
-                    partida1.Rodada = rodada;
-                    partida1.Tipo = "TACA";
-                    partida1.Clube1 = clube1;
-                    partida1.Clube2 = clube2;
+                    controle.Taca = rodada;
+                    controleRepository.SaveOrUpdate(controle);
 
-                    var partida2 = new Partida();
-                    partida2.Dia = dia2;
-                    partida2.Mao = 2;
-                    partida2.Rodada = rodada;
-                    partida2.Tipo = "TACA";
-                    partida2.Clube1 = clube2;
-                    partida2.Clube2 = clube1;
+                    if (rodada == 16)
+                    {
+                        rodada = 8;
+                        dia1 = 10;
+                        dia2 = 13;
+                    }
+                    else if (rodada == 8)
+                    {
+                        rodada = 4;
+                        dia1 = 16;
+                        dia2 = 19;
+                    }
+                    else if (rodada == 4)
+                    {
+                        rodada = 2;
+                        dia1 = 22;
+                        dia2 = 25;
+                    }
+                    else
+                    {
+                        rodada = 1;
+                        dia1 = 28;
+                        dia2 = 32;
+                    }
 
-                    partidaRepository.SaveOrUpdate(partida1);
-                    partidaRepository.SaveOrUpdate(partida2);
+                    for (int i = 0; i < rodada; i++) //rodada = numero de partidas
+                    {
+                        Random rnd = new Random();
 
-                    lstTaca.Remove(clube1);
-                    lstTaca.Remove(clube2);
+                        var maxclubes = (rodada * 2) - (2 * i);
+                        var clube1 = lstTaca[rnd.Next(0, maxclubes)];
+                        var clube2 = lstTaca[rnd.Next(0, maxclubes)];
+
+                        while (clube1.Id == clube2.Id)
+                        {
+                            clube2 = lstTaca[rnd.Next(0, maxclubes)];
+                        }
+
+                        var partida1 = new Partida();
+                        partida1.Dia = dia1;
+                        partida1.Mao = 1;
+                        partida1.Rodada = rodada;
+                        partida1.Tipo = "TACA";
+                        partida1.Clube1 = clube1;
+                        partida1.Clube2 = clube2;
+
+                        var partida2 = new Partida();
+                        partida2.Dia = dia2;
+                        partida2.Mao = 2;
+                        partida2.Rodada = rodada;
+                        partida2.Tipo = "TACA";
+                        partida2.Clube1 = clube2;
+                        partida2.Clube2 = clube1;
+
+                        partidaRepository.SaveOrUpdate(partida1);
+                        partidaRepository.SaveOrUpdate(partida2);
+
+                        lstTaca.Remove(clube1);
+                        lstTaca.Remove(clube2);
+                    }
                 }
             }
 
@@ -1263,7 +1271,7 @@
                     jogador.Treinos = 0;
                     jogador.TreinoUlt = 0;
                     jogador.TreinoTotal = 0;
-                    jogadorRepository.SaveOrUpdate(jogador);                    
+                    jogadorRepository.SaveOrUpdate(jogador);
 
                     if (clubecomprador.Usuario != null)
                     {
@@ -1734,7 +1742,7 @@
 
             var rnd = new Random();
             foreach (var jogador in lstJogador.Skip(skip).Take(take))
-            {                                
+            {
                 var escalacao = escalacaoRepository.GetAll().FirstOrDefault(x => x.Jogador != null && x.Jogador.Id == jogador.Id);
 
                 if (escalacao == null)
@@ -1872,7 +1880,7 @@
                         {
                             var noticia = new Noticia();
                             noticia.Dia = controle.Dia;
-                            noticia.Texto =  Util.Util.LinkaJogador(jogador) + " se lesionou por " + jogador.Lesionado + " dia(s)";
+                            noticia.Texto = Util.Util.LinkaJogador(jogador) + " se lesionou por " + jogador.Lesionado + " dia(s)";
                             noticia.Usuario = jogador.Clube.Usuario;
                             noticiaRepository.SaveOrUpdate(noticia);
                         }
@@ -1888,11 +1896,11 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto =  Util.Util.LinkaJogador(jogador) + " está recuperado da lesão e disponível para jogar.";
+                        noticia.Texto = Util.Util.LinkaJogador(jogador) + " está recuperado da lesão e disponível para jogar.";
                         noticia.Usuario = jogador.Clube.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
-                }                
+                }
 
                 jogadorRepository.SaveOrUpdate(jogador);
             }
@@ -2160,7 +2168,7 @@
             {
                 jogadorofertaRepository.Delete(jogadoroferta);
             }
-            
+
             return RedirectToAction("Index", "Engine");
             //return RedirectToAction("ZerarAnoStaff", "Engine");
         }
@@ -2185,7 +2193,7 @@
                     {
                         var noticia = new Noticia();
                         noticia.Dia = controle.Dia;
-                        noticia.Texto = "Seu contrato com " +  Util.Util.LinkaPatrocinio(patrocinioclube.Patrocinio) + " terminou.";
+                        noticia.Texto = "Seu contrato com " + Util.Util.LinkaPatrocinio(patrocinioclube.Patrocinio) + " terminou.";
                         noticia.Usuario = patrocinioclube.Clube.Usuario;
                         noticiaRepository.SaveOrUpdate(noticia);
                     }
@@ -2218,7 +2226,7 @@
 
                     staff.Usuario = null;
                     staff.Salario = 0;
-                }                
+                }
 
                 staffRepository.SaveOrUpdate(staff);
             }
@@ -2284,7 +2292,7 @@
 
                     var noticia = new Noticia();
                     noticia.Dia = controle.Dia;
-                    noticia.Texto = "Parabéns! Você foi o CAMPEÃO da " + divisao.Nome +"!";
+                    noticia.Texto = "Parabéns! Você foi o CAMPEÃO da " + divisao.Nome + "!";
                     noticiaRepository.SaveOrUpdate(noticia);
                 }
                 else
@@ -2629,7 +2637,7 @@
         [Transaction]
         public ActionResult GerarTacaAno()
         {
-            var lstTaca = clubeRepository.GetAll().Where(x => x.Taca).ToList();         
+            var lstTaca = clubeRepository.GetAll().Where(x => x.Taca).ToList();
 
 
             for (int i = 0; i < 16; i++) // 16 partidas
@@ -2721,7 +2729,7 @@
         }
 
         #endregion
-        
+
         #region GerarJogador
 
         [Transaction]
@@ -2748,9 +2756,9 @@
 
             for (int i = 0; i < 18; i++)
             {
-                var jogador = new Jogador();               
+                var jogador = new Jogador();
 
-                if (g > 0) {   jogador.Posicao = 1; g--; }
+                if (g > 0) { jogador.Posicao = 1; g--; }
                 else if (ld > 0) { jogador.Posicao = 2; ld--; }
                 else if (z > 0) { jogador.Posicao = 3; z--; }
                 else if (le > 0) { jogador.Posicao = 4; le--; }
@@ -2803,10 +2811,10 @@
             var nomes = nomeRepository.GetAll();
             var sobrenomes = sobrenomeRepository.GetAll();
             var rnd = new Random();
-            
+
             for (int i = 0; i < 25; i++)
             {
-                var staff = new Staff();                
+                var staff = new Staff();
 
                 var nome = nomes.ElementAt(rnd.Next(0, nomes.Count()));
                 var sobrenome = sobrenomes.ElementAt(rnd.Next(0, sobrenomes.Count()));
@@ -2935,7 +2943,7 @@
 
                 decimal notaclube1 = 0;
                 decimal notaclube2 = 0;
-                
+
                 //notas CLUBE 1
                 foreach (var escalacao in clube1.Escalacao)
                 {

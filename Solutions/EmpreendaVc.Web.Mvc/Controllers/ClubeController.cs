@@ -269,17 +269,19 @@
             if (usuario.Clube == null)
                 return RedirectToAction("Index", "Conta");
 
-            ViewBag.Clube = usuario.Clube;
+            
 
             if (id.HasValue)
             {
                 var lstPartidas = clubeQueryRepository.PartidasClube(id.Value).OrderBy(x => x.Dia);
+                ViewBag.Clube = clubeRepository.Get(id.Value);
                 ViewBag.ClubeId = id;
                 return View(lstPartidas);
             }
             else
             {
                 var lstPartidas = clubeQueryRepository.PartidasClube(usuario.Clube.Id).OrderBy(x => x.Dia);
+                ViewBag.Clube = usuario.Clube;
                 ViewBag.ClubeId = 0;
                 return View(lstPartidas);
             }            
@@ -525,8 +527,8 @@
 
                     lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Rodada == ultrodada && x.Realizada).ToList();
 
-                    if (!taca.HasValue)
-                        mao = lstPartidas.Last().Mao;
+                    if (!mao.HasValue)
+                        mao = lstPartidas.Count() > 0 ? lstPartidas.Last().Mao : 1;
                     
                     if (ultrodada == 16 && mao == 1)
                         ViewBag.Rodada = "1ª Eliminatória - 1ª Mão";
@@ -550,14 +552,14 @@
                         ViewBag.Rodada = "FINAL - 2ª Mão";
 
                     ViewBag.RodadaNum = ultrodada;
-                    lstPartidas = lstPartidas.Where(x => x.Mao == mao).ToList();
+                    //lstPartidas = lstPartidas.Where(x => x.Mao == mao).ToList();
 
                 }
                 else
                 {
                     lstPartidas = partidaRepository.GetAll().Where(x => x.Tipo == "TACA" && x.Realizada).OrderBy(x => x.Rodada).ToList();
                     var ultrodada = lstPartidas.Count() > 0 ? lstPartidas.First().Rodada : 16;
-                    mao = lstPartidas.Last().Mao;
+                    mao = lstPartidas.Count() > 0 ? lstPartidas.First().Mao : 1;
                     if (ultrodada == 16 && mao == 1)
                         ViewBag.Rodada = "1ª Eliminatória - 1ª Mão";
                     else if (ultrodada == 16 && mao == 2)
@@ -579,12 +581,13 @@
                     else if (ultrodada == 1 && mao == 2)
                         ViewBag.Rodada = "FINAL - 2ª Mão";
 
-                    lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada && x.Mao == mao).ToList();
+                    lstPartidas = lstPartidas.Where(x => x.Rodada == ultrodada).ToList();
 
                     ViewBag.RodadaNum = ultrodada;
                 }
             }
 
+            ViewBag.Mao = mao;
             ViewBag.Clube = usuario.Clube;
 
             ViewBag.lstDivisao = divisaoRepository.GetAll();

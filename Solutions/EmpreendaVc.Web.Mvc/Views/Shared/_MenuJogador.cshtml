@@ -27,7 +27,7 @@
         else
         {
             <a class="botao" href="@Url.Action("JogadorRenovar", "Jogador", new { id = Model.Id })">Renovar Contrato</a><br />
-            <a class="botao" href="@Url.Action("JogadorVender", "Jogador", new { id = Model.Id })">Botar em Leilão</a><br />
+            <a class="botao" href="@Url.Action("BotarLeilao", "Leilao", new { id = Model.Id })">Botar em Leilão</a><br />
             <a class="botao" href="@Url.Action("JogadorDispensar", "Jogador", new { id = Model.Id })">Dispensar</a><br />
         }
     </div>

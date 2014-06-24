@@ -39,6 +39,8 @@ h3 { text-transform: uppercase; }
 .classificacao .promove { color: #62AF41; }
 .classificacao .rebaixa { color: #F00000; }
 
+.classificacao .penalti { color: Red; font-weight: normal; cursor: pointer; }
+
 .tr-temporario td { color: #0066CC; }
 .tr-temporario td a { color: #0066CC; }
 
@@ -88,6 +90,21 @@ hr { border: none; border-bottom: 1px #CBDBEB solid; }
 #resultados-lista { width: 260px; float: right; font-size: 16px; line-height: 30px; }
 #resultados-lista a { font-weight: normal; margin-left: 15px; }
 #resultados-tabela { float: left; width: 650px; min-height: 300px; }
+
+.resultado { border: 1px solid #CBDBEB; padding: 0px; border-top: 2px solid #4982B9; border-radius: 3px; width:100%; margin-bottom: 10px; font-size: 13px; }
+.resultado th { padding: 8px; background: #EEF3F9; border-bottom: 4px solid #CBDBEB; font-size: 11px; font-weight: normal; color: #4982B9; text-transform: uppercase; }
+.resultado .time1 { text-align: right; padding: 4px; background: #EEF3F9;  border-bottom: 1px solid #CBDBEB; }
+.resultado .time1gol { font-size: 14px; color: #4982B9; font-weight: bold; text-align: right; padding: 4px; background: #EEF3F9; border-bottom: 1px solid #CBDBEB; }
+.resultado .time2 { text-align: left; padding: 4px; background: #EEF3F9; border-bottom: 1px solid #CBDBEB; }
+.resultado .time2gol { font-size: 14px; color: #4982B9; font-weight: bold; text-align: left; padding: 4px; background: #EEF3F9; border-bottom: 1px solid #CBDBEB; }
+.resultado .publico { text-align: center; padding: 4px; background: #EEF3F9; border-bottom: 1px solid #CBDBEB; }
+.resultado .x { text-align: center; background: #EEF3F9; }
+.resultado .time1goln { text-align: right; padding: 8px; font-size: 12px; vertical-align: top; }
+.resultado .time2goln { text-align: left; padding: 8px; font-size: 12px; vertical-align: top; }
+.resultado .quebra { border-bottom: 1px solid #CBDBEB; height: 20px; }
+.resultado .penalti { color: Red; font-weight: normal; cursor: pointer; }
+.resultado span { font-weight: normal; }
+
 
 #transferencias-tabela { float: left; width: 650px; }
 

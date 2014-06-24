@@ -119,8 +119,12 @@
             
                 <tr @style>
                     <td>@i</td>
-                    <td style="text-align: left;">@item.Jogador.Nome</td>
-                    <td style="text-align: left;">@item.Clube.Nome</td>
+                    <td style="text-align: left;">
+                        <a href="@Url.Action("Index", "Jogador", new { id = item.Jogador.Id })">@item.Jogador.Nome</a>
+                    </td>
+                    <td style="text-align: left;">
+                        <a href="@Url.Action("Index", "Clube", new { id = item.Clube.Id })">@item.Clube.Nome</a>
+                    </td>
                     <td style="text-align: left;">@item.Divisao</td>
                 </tr>
                 i++;

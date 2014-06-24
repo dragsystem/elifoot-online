@@ -1,0 +1,57 @@
+﻿@model EmpreendaVc.Domain.JogadorLeilaoOferta
+@using EmpreendaVc.Web.Mvc.Util
+@using MvcContrib
+@using MvcContrib.FluentHtml
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var clube = (EmpreendaVc.Domain.Clube)ViewBag.Clube;
+}
+<h2>
+    Proposta por @Model.JogadorLeilao.Jogador.Nome @(Model.JogadorLeilao.Jogador.Clube != null ? "(" + Model.JogadorLeilao.Jogador.Clube.Nome + ")" : "")
+</h2>
+@{ Html.RenderAction("Index", "Mensagem"); }
+
+<table class="classificacao" cellpadding="0" cellspacing="0">
+    <tr>
+        <th width="33%">Posição</th>
+        <th width="33%">Salário</th>
+        <th width="33%">Contrato</th>
+    </tr>
+    <tr>
+        <td>@Util.RetornaPosicaoCompleta(Model.JogadorLeilao.Jogador.Posicao)</td>
+        @if (Model.JogadorLeilao.Jogador.Clube != null)
+        {
+            <td>$@Model.JogadorLeilao.Jogador.Salario.ToString("N2")</td>
+            <td>@Model.JogadorLeilao.Jogador.Contrato ano(s)</td>
+        }
+        else
+        {
+            <td>-</td>
+            <td>-</td>
+        }
+    </tr>
+</table>
+
+<div id="jogador-valorproposta">
+    @using (Html.BeginForm("JogadorOferta", "Leilao", new { id = Model.JogadorLeilao.Id }))
+    {
+        if (Model.Id != 0)
+        {
+            <p>
+                Você já possui uma oferta no valor de $@Model.JogadorLeilao.Valor.ToString("N2"). Se quiser cancelar clique 
+                <a href="@Url.Action("CancelarOferta", "Jogador", new { id = Model.Id })">AQUI</a>.<br />
+                Caso queira apenas alterar, faça uma nova proposta abaixo que a antiga será alterada.
+            </p>
+        }
+
+        @:Tipo de Proposta: Proposta de Compra<br /><br />
+        @:Valor: $@Model.JogadorLeilao.Valor.ToString("N2")
+        
+        <h3>Contrato proposto ao jogador</h3>
+        @:Salário ofertado: @this.Select("Salario").Options(Util.RetornaValorSalario()).FirstOption("Selecione").Selected(Model.Salario != 0 ? Model.Salario.ToString() : "")
+        @:Duração do contrato: @this.Select("Contrato").Options(Util.RetornaDuracaoContrato()).FirstOption("Selecione").Selected(Model.Contrato != 0 ? Model.Contrato.ToString() : "")<br /><br />
+        <input type="submit" class="submit" value="Confirmar" />
+        <a href="@Url.Action("Busca", "Leilao")" >Voltar</a>
+    }
+</div>
