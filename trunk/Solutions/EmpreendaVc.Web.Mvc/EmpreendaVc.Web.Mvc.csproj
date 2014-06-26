@@ -184,6 +184,8 @@
     <Compile Include="Controllers\MensagemController.cs" />
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\SendMailController.cs" />
+    <Compile Include="Controllers\ViewModels\GolView.cs" />
+    <Compile Include="Controllers\ViewModels\PartidaView.cs" />
     <Compile Include="Controllers\ViewModels\PosicaoCompradaView.cs" />
     <Compile Include="Controllers\ViewModels\GolPossibilidadeView.cs" />
     <Compile Include="Controllers\ViewModels\JogadorFiltroView.cs" />
@@ -361,7 +363,6 @@
     <Content Include="Content\js\modernizr-1.7.js" />
     <Content Include="Content\js\modernizr-1.7.min.js" />
     <Content Include="Content\js\script.js" />
-    <Content Include="EmpreendaVc.Web.Mvc.Publish.xml" />
     <Content Include="Global.asax" />
     <Content Include="Views\Conta\Cadastro.cshtml" />
     <Content Include="Views\Conta\CadastroSucesso.cshtml" />
@@ -472,6 +473,8 @@
     <Content Include="Views\Leilao\MinhasPropostas.cshtml" />
     <Content Include="Views\Leilao\MeusJogadores.cshtml" />
     <Content Include="Views\Leilao\BotarLeilao.cshtml" />
+    <Content Include="Views\Clube\PropostaAceitar.cshtml" />
+    <Content Include="Views\Clube\Teste.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

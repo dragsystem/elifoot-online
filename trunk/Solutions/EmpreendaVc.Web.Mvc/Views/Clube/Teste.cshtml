@@ -1,0 +1,116 @@
+﻿@model IEnumerable<EmpreendaVc.Domain.Partida>
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    var idelemento = '';
+    var lst;
+
+    $(function () {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("TesteJson", "Clube")',
+            //            data: {  },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (lstgols) {
+                lst = lstgols;
+                //                $.each(eval(lstpartidas), function () {
+                //                    $('.resultado').append('<tr> \
+                //                        <td id="time1-' + this.Clube1Id + '" class="time1" width="30%">' + this.Clube1Nome + '</td> \
+                //                        <td id="time1gol-' + this.Clube1Id + '" class="time1gol" width="10%">0</td> \
+                //                        <td class="x" width="5%"> X </td> \
+                //                        <td id="time2gol-' + this.Clube2Id + '" class="time2gol" width="10%">0</td> \
+                //                        <td id="time2-' + this.Clube2Id + '" class="time2" width="30%">' + this.Clube2Nome + '</td> \
+                //                        <td id="publico-' + this.PartidaId + '" class="publico" width="15%">' + this.Publico + '</td> \
+                //                    </tr> \
+                //                    <tr> \
+                //                        <td id="time1goln-' + this.Clube1Id + '" class="time1goln" colspan="2"> </td> \
+                //                        <td class="x"> </td> \
+                //                        <td id="time2goln-' + this.Clube2Id + '" class="time2goln" colspan="2"> </td> \
+                //                        <td> </td> \
+                //                    </tr> \
+                //                    <tr> \
+                //                        <td class="quebra" colspan="2"></td> \
+                //                        <td class="quebra x"></td> \
+                //                        <td class="quebra" colspan="3"></td> \
+                //                    </tr>');
+                //                });
+            }
+        });
+
+        console.log(lst);
+        var timer = setInterval(function () {
+
+            var t = parseInt($('#timer').text());
+            t++;
+            $('#timer').text(t);
+
+            $.each(eval(lst), function () {
+                var gol = 0;
+                if (this.Minuto == t) {
+                    gol = parseInt($('#timegol-' + this.ClubeId).text());
+                    gol++;
+                    $('#timegol-' + this.ClubeId).text(gol);
+                    $('#timegoln-' + this.ClubeId).append(this.JogadorNome + ' ' + this.Minuto + '\'');
+                }
+                else {
+
+                }
+
+            });
+
+            if (t == 95) {
+                $('#timer').text('FINAL');
+                clearInterval(timer);
+            }
+
+        }, 1000);
+    });
+</script>
+<div id="resultados-tabela">
+    TIMER = <span id="timer">0</span>
+    <table class="resultado" cellpadding="0" cellspacing="0">
+        <tr>
+            <th style="text-align: right;" width="30%">
+                CLUBE (CASA)
+            </th>
+            <th style="text-align: right;" width="10%">
+            </th>
+            <th width="5%">
+            </th>
+            <th style="text-align: left;" width="10%">
+            </th>
+            <th style="text-align: left;" width="30%">
+                CLUBE (FORA)
+            </th>
+            <th width="15%">
+                PÚBLICO
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td id="time-@item.Clube1.Id" class="time1" width="30%">@item.Clube1.Nome</td>
+                <td id="timegol-@item.Clube1.Id" class="time1gol" width="10%">0</td>
+                <td class="x" width="5%"> X </td> 
+                <td id="timegol-@item.Clube2.Id" class="time2gol" width="10%">0</td>
+                <td id="time-@item.Clube2.Id" class="time2" width="30%">@item.Clube2.Nome</td>
+                <td id="publico-@item.Id" class="publico" width="15%">@item.Publico</td>
+            </tr>
+            <tr>
+                <td id="timegoln-@item.Clube1.Id" class="time1goln" colspan="2"> </td>
+                <td class="x"> </td>
+                <td id="timegoln-@item.Clube2.Id" class="time2goln" colspan="2"> </td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td class="quebra" colspan="2"></td>
+                <td class="quebra x"></td>
+                <td class="quebra" colspan="3"></td>
+            </tr>
+        }        
+    </table>
+</div>

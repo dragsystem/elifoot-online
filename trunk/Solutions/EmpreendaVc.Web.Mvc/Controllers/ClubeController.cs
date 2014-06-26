@@ -191,6 +191,7 @@
         {
             var usuario = authenticationService.GetUserAuthenticated();
             var clube = clubeRepository.Get(id);
+            var controle = controleRepository.GetAll().FirstOrDefault();
 
             if ((usuario.Clube != null && usuario.Clube.Id == id) || usuario.IdUltimoClube == id || clube.Usuario != null)
                 return RedirectToAction("Index", "Conta");
@@ -199,12 +200,27 @@
             clube.ReputacaoAI = 30;
             clubeRepository.SaveOrUpdate(clube);
 
+            var noticia = new Noticia();
+            noticia.Dia = controle.Dia;
+            noticia.Texto = "A diretoria do " + clube.Nome + " está satisfeita com sua contratação e lhe deseja muito sucesso no cargo.";
+            noticia.Usuario = usuario;
+            noticiaRepository.SaveOrUpdate(noticia);
+
+            foreach (var item in clube.Divisao.Clubes)
+            {
+                noticia = new Noticia();
+                noticia.Dia = controle.Dia;
+                noticia.Texto = "O " + Util.Util.LinkaClube(clube) + " contratou " + usuario.NomeCompleto + " como novo treinador.";
+                noticia.Usuario = usuario;
+                noticiaRepository.SaveOrUpdate(noticia);
+            }            
+
             usuario.Clube = clube;
-            usuario.DelayTroca = 5;
+            usuario.DelayTroca = 4;
             usuario.Reputacao = 30;
             usuarioRepository.SaveOrUpdate(usuario);
 
-            return View(clube);
+            return RedirectToAction("Plantel");
         }
 
         //[Authorize]
@@ -460,6 +476,41 @@
                                                                                                                 });
 
             return Json(oSerializer.Serialize(novaescalacao), JsonRequestBehavior.AllowGet);
+        }
+
+        [Transaction]
+        public ActionResult Teste()
+        {
+            var lstpartida = partidaRepository.GetAll().Where(x => x.Id == 3749);
+
+            return View(lstpartida);
+        }
+
+        [Transaction]
+        [HttpGet]
+        public JsonResult TesteJson()
+        {
+            System.Web.Script.Serialization.JavaScriptSerializer oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+            var lstpartida = partidaRepository.GetAll().Where(x => x.Id == 3749);
+
+            var lstgolview = new List<GolView>();
+
+            foreach (var item in lstpartida)
+            {
+                foreach (var gol in item.Gols)
+                {
+                    var g = new GolView();
+
+                    g.ClubeId = gol.Clube.Id;
+                    g.JogadorNome = gol.Jogador.Nome;
+                    g.Minuto = gol.Minuto;
+
+                    lstgolview.Add(g);
+                }
+            }
+
+            return Json(oSerializer.Serialize(lstgolview.ToArray()), JsonRequestBehavior.AllowGet);
         }
 
         //[Authorize]

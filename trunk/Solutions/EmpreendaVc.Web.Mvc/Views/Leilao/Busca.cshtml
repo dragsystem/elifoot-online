@@ -48,7 +48,7 @@
                     foreach (var item in lst)
                     {
                         <tr>
-                            <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Id })">@item.Jogador.Nome.ToUpper()</a></td>
+                            <td style="text-align: left;"><a href="@Url.Action("Index", "Jogador", new { id = item.Jogador.Id })">@item.Jogador.Nome.ToUpper()</a></td>
                             <td>@if (item.Clube != null) {
                                     <a href=" + @Url.Action("Index", "Clube", new { id = item.Clube.Id }) + ">@item.Clube.Nome</a>
                                 }
