@@ -79,6 +79,8 @@ namespace EmpreendaVc.Domain
 
         public virtual IList<JogadorOferta> JogadorOfertas { get; set; }
 
+        public virtual IList<JogadorLeilao> JogadorLeilaos { get; set; }
+
         public virtual IList<JogadorPreContrato> JogadorPreContrato { get; set; }
 
         public virtual IList<JogadorHistorico> Historico { get; set; }
@@ -94,6 +96,7 @@ namespace EmpreendaVc.Domain
             JogadorOfertas = new List<JogadorOferta>();
             JogadorPreContrato = new List<JogadorPreContrato>();
             Historico = new List<JogadorHistorico>();
+            JogadorLeilaos = new List<JogadorLeilao>();
         }
     }
 }

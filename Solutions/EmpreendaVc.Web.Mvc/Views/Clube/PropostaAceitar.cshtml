@@ -1,0 +1,27 @@
+﻿@model EmpreendaVc.Domain.Clube
+@using EmpreendaVc.Web.Mvc.Util
+@{
+    ViewBag.Title = "Plantel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>
+    CARGO DE TREINADOR</h2>
+
+
+@if ((bool)ViewBag.Aceita)
+{
+    <p>
+        O @Model.Nome ficaria muito feliz em poder contar com o seus serviços.<br /> Deseja continuar?
+    </p>
+    
+    <a href="@Url.Action("PropostaAceitar", "Clube", new { id = Model.Id })" class="submit">CONFIRMAR</a>
+}
+else
+{
+    <p>
+        O @Model.Nome agradece, mas não tem intesse em contar com seus serviços no momento.
+    </p>
+}   
+
+    <a class="voltar-link" href="javascript:history.back()">VOLTAR</a>

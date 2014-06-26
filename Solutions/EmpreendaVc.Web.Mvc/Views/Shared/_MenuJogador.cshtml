@@ -8,20 +8,30 @@
     <div id="plantel-menu">
         @if ((Model.Clube != null && Model.Clube.Id != clube.Id) || Model.Clube == null)
         {
-            //var frase = "Fazer Proposta";
-            //if (Model.JogadorOfertas.Where(x => x.Clube.Id == clube.Id && x.Estagio != 0 && x.Estagio != 3).Count() > 0)
-            //{
-            //    frase = "Alterar Proposta"; 
-            //}
-            if (Model.Clube != null)
+            
+            if (Model.JogadorLeilaos.Where(x => x.Estagio < 2).Count() > 0)
             {
-                <a class="botao" href="@Url.Action("JogadorPedido", "Leilao", new { id = Model.Id, tipo = 1 })">Pedir Leilão</a><br />
-                @*<a class="botao" href="@Url.Action("PedirRelatorio", "Jogador", new { id = Model.Id })">Pedir Relatório</a><br />*@
+                var frase = "Fazer Proposta no Leilão";
+                var leilao = Model.JogadorLeilaos.FirstOrDefault(x => x.Estagio < 2);
+
+                if (leilao.LeilaoOfertas.Where(y => y.Clube.Id == clube.Id).Count() > 0)
+                {
+                    frase = "Alterar Proposta";
+                }
+                <a class="botao" href="@Url.Action("JogadorOferta", "Leilao", new { id = leilao.Id })">@frase</a><br />
+                
             }
-            if (Model.Clube == null)
-            {
-                <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id, tipo = 2 })">Fazer proposta</a><br />
-                @*<a class="botao" href="@Url.Action("ProporTeste", "Jogador", new { id = Model.Id })">Propor Teste</a><br />*@
+            else {
+                if (Model.Clube != null)
+                {
+                    <a class="botao" href="@Url.Action("JogadorPedido", "Leilao", new { id = Model.Id, tipo = 1 })">Pedir Leilão</a><br />
+                    @*<a class="botao" href="@Url.Action("PedirRelatorio", "Jogador", new { id = Model.Id })">Pedir Relatório</a><br />*@
+                }
+                if (Model.Clube == null)
+                {
+                    <a class="botao" href="@Url.Action("JogadorOferta", "Jogador", new { id = Model.Id, tipo = 2 })">Fazer proposta</a><br />
+                    @*<a class="botao" href="@Url.Action("ProporTeste", "Jogador", new { id = Model.Id })">Propor Teste</a><br />*@
+                }
             }
         }
         else

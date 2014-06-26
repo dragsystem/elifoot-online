@@ -974,6 +974,7 @@
             ViewBag.GerarTesteJogador = false;
 
             return View("Rodando");
+            //return View("Index");
         }
 
         [Transaction]
